@@ -1,0 +1,114 @@
+.field {
+    position: relative;
+}
+.field-wrapper {
+    position: relative;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.field-wrapper label {
+    position: absolute;
+    left: 16px;
+    top: 24%;
+    color: #6c757d;
+    font-size: 1.6rem;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+.field-wrapper svg {
+    cursor: pointer;
+    color: #aaa;
+}
+.field-wrapper:focus-within svg {
+    color: black;
+}
+.field-wrapper.active svg {
+    cursor: pointer;
+    color: black;
+}
+
+.field-wrapper fieldset {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    pointer-events: none;
+    transition: border-color 0.2s ease;
+}
+.field-wrapper legend {
+    font-size: 1.2rem;
+    margin-left: 12px;
+    visibility: hidden;
+    max-width: 0;
+    transition: max-width 0.2s ease;
+}
+
+.field-wrapper.active legend {
+    max-width: none;
+    padding-left: 2px;
+}
+
+// Css for specific type
+.field-wrapper input,
+.field-wrapper select {
+    width: 100%;
+    padding: 4px;
+    font-size: 1.6rem;
+    background: none;
+    border: none;
+    outline: none;
+    flex-grow: 1;
+}
+
+.field-wrapper input::placeholder {
+    opacity: 0;
+}
+.field-wrapper input:focus::placeholder {
+    opacity: 1;
+    color: #aaa;
+    transition: opacity 0.2s ease;
+}
+
+.field-wrapper.active input:not([type='radio']):not([type='checkbox']) + label,
+.field-wrapper.active select + label {
+    top: -20%;
+    left: 14px;
+    font-size: 1.2rem;
+    color: rgba($color: #000000, $alpha: 0.6);
+}
+
+input[type='date'] {
+    color: transparent;
+}
+
+input[type='date']:not(:focus)::-webkit-calendar-picker-indicator {
+    filter: invert(50%);
+}
+
+.field-wrapper.active input[type='date'] {
+    color: black;
+}
+
+// Css for input type number
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.field-wrapper.error fieldset {
+    border-color: red !important;
+}
+.field-wrapper.error label {
+    color: red !important;
+}
+
+.error-msg {
+    font-size: 12px;
+    color: red;
+    margin: 4px;
+}
