@@ -1,73 +1,37 @@
-// Use BE Authenticate
-// import apiService from './apiService';
+import apiService from './apiService';
 
-// const API_AUTH_PREFIX = process.env.REACT_APP_API_AUTH_PREFIX;
+const API_AUTH_PREFIX = process.env.REACT_APP_API_AUTH_PREFIX;
 
-// export const login = async (username, password) => {
-//     try {
-//         const response = await apiService.post(`${API_AUTH_PREFIX}/authenticate`, {
-//             username,
-//             password,
-//         });
-//         const { accessToken, refreshToken } = response.data.data;
-//         return { accessToken, refreshToken };
-//     } catch (error) {
-//         if (error.response) {
-//             const { applicationCode, message } = error.response.data;
-//             throw new Error(`Code: ${applicationCode}, Message: ${message}`);
-//         } else {
-//             throw new Error('Network Error');
-//         }
-//     }
-// };
-
-// export const logout = async (accessToken) => {
-//     try {
-//         await apiService.post(`${API_AUTH_PREFIX}/logout`, {
-//             accessToken,
-//         }, {
-//             headers: {
-//                 'Authorization': `Bearer ${accessToken}`
-//             }
-//         });
-//     } catch (error) {
-//         if (error.response) {
-//             const { applicationCode, message } = error.response.data;
-//             throw new Error(`Code: ${applicationCode}, Message: ${message}`);
-//         } else {
-//             throw new Error('Network Error');
-//         }
-//     }
-// };
-
-// Use Firebase Authenticate
-import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
-import { auth } from '~/firebase/firebase';
-
-export const login = async (email, password) => {
+export const login = async (username, password) => {
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        return userCredential.user;
-    } catch (error) {
-        throw new Error('Login failed: ' + error.message);
-    }
-};
+        const response = await apiService.get(`${API_AUTH_PREFIX}/authenticate.json`, {
+            username,
+            password,
+        });
+        const data = response.data;
 
-export const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-        const userCredential = await signInWithPopup(auth, provider);
-        return userCredential.user;
+        // Kiểm tra username và password
+        if (username === 'gura1231@gmail.com' && password === '123123') {
+            return data.success;
+        } else {
+            return data.failed;
+        }
     } catch (error) {
-        throw new Error('Login with Google failed: ' + error.message);
+        console.error(error);
+        throw new Error('Unexpected Error');
     }
 };
 
 export const logout = async () => {
     try {
-        await signOut(auth);
+        const response = await apiService.get(`${API_AUTH_PREFIX}/logout.json`);
+        const data = response.data;
+
+        // Kiểm tra username và password
+        const checkLogout = true;
+        return checkLogout ? data.success : data.failed;
     } catch (error) {
-        console.error('Logout error:', error.message);
-        throw error;
+        console.error(error);
+        throw new Error('Unexpected Error');
     }
 };

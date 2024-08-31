@@ -5,30 +5,24 @@ import { validators } from '~/utils/validators';
 import './LoginPage.scss';
 import { Form } from '~/components';
 import { useAuth } from '~/hooks/useAuth';
-import { useAuthActions } from '~/hooks/useAuthActions';
+import { useToast } from '~/hooks/useToast';
+import { login } from '~/services/authService';
+import Cookies from 'js-cookie';
 
 function LoginPage() {
-    const { userLoggedIn } = useAuth();
-    const { handleLogin, handleGoogleLogin } = useAuthActions();
+    const { isAuthenticated, setIsAuthenticated } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
+    const { toast } = useToast();
     const navigate = useNavigate();
-
-    // Return to home page if user is already logged in
-    useEffect(() => {
-        console.log('userLoggedIn:', userLoggedIn);
-        if (userLoggedIn) {
-            navigate('/');
-        }
-    }, [userLoggedIn, navigate]);
 
     // Pass field properties to the form
     // Can be input[type="text, email, number, date, checkbox, radio, password"], select
     const fields = [
         {
-            name: 'email',
-            label: 'Email',
+            name: 'username',
+            label: 'Username',
             value: 'gura1231@gmail.com',
-            type: 'email',
+            type: 'text',
             validators: [validators.isRequired('onChange'), validators.isEmail('onChange')],
         },
         {
@@ -53,6 +47,33 @@ function LoginPage() {
         );
     };
 
+    // Handle logic
+    const handleLogin = async ({ username, password }) => {
+        try {
+            const response = await login(username, password);
+            if (response.httpStatusCode === 200) {
+                const { accessToken, refreshToken } = response.data;
+                Cookies.set('accessToken', accessToken, {
+                    path: '/',
+                    secure: true,
+                    sameSite: 'Strict',
+                });
+                Cookies.set('refreshToken', refreshToken, {
+                    path: '/',
+                    secure: true,
+                    sameSite: 'Strict',
+                });
+                setIsAuthenticated(!!Cookies.get('accessToken'));
+                navigate('/');
+                toast(response.message, 'success');
+            } else {
+                toast(response.message, 'error');
+            }
+        } catch (error) {
+            toast(error.message, 'error');
+        }
+    };
+
     return (
         <div className="login-container center">
             <div className="login-background"></div>
@@ -65,11 +86,11 @@ function LoginPage() {
                     <div className="divider-line"></div>
                 </div>
                 <div className="login-social">
-                    <button className="google-btn center" onClick={handleGoogleLogin}>
+                    <button className="google-btn center" onClick={handleLogin}>
                         <img src="https://img.icons8.com/color/40/google-logo.png" alt="google-logo" />
                         <span>Login with google</span>
                     </button>
-                    <button className="facebook-btn center" onClick={handleGoogleLogin}>
+                    <button className="facebook-btn center" onClick={handleLogin}>
                         <img src="https://img.icons8.com/fluency/48/facebook-new.png" alt="facebook-new" />
                         <span>Login with facebook</span>
                     </button>

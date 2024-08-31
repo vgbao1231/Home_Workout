@@ -1,0 +1,19 @@
+{
+    "success": {
+        "applicationCode": 0,
+        "message": "Authenticate successfully",
+        "httpStatusCode": 200,
+        "data": {
+            "refreshToken": "this_is_access_token",
+            "accessToken": "this_is_refresh_token"
+        },
+        "responseTime": [2024, 8, 28, 8, 29, 54, 885256300]
+    },
+    "failed": {
+        "applicationCode": 1001,
+        "message": "Username or Password is invalid",
+        "httpStatusCode": 401,
+        "data": null,
+        "responseTime": [2024, 8, 28, 8, 29, 54, 885256300]
+    }
+}
