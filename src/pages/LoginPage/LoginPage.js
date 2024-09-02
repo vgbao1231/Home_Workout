@@ -1,5 +1,5 @@
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { validators } from '~/utils/validators';
 import './LoginPage.scss';
@@ -51,18 +51,7 @@ function LoginPage() {
     const handleLogin = async ({ username, password }) => {
         try {
             const response = await login(username, password);
-            if (response.httpStatusCode === 200) {
-                const { accessToken, refreshToken } = response.data;
-                Cookies.set('accessToken', accessToken, {
-                    path: '/',
-                    secure: true,
-                    sameSite: 'Strict',
-                });
-                Cookies.set('refreshToken', refreshToken, {
-                    path: '/',
-                    secure: true,
-                    sameSite: 'Strict',
-                });
+            if (response.ok) {
                 setIsAuthenticated(!!Cookies.get('accessToken'));
                 navigate('/');
                 toast(response.message, 'success');

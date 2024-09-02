@@ -8,6 +8,8 @@ const publicRoutes = [
     { path: '/register', component: LoginPage }, // Test
     { path: '/forgot-password', component: LoginPage }, // Test
 ];
+
+// Private routes
 const privateRoutes = [
     { path: '/', component: HomePage },
     { path: '/profile', component: ProfilePage }, // Test
