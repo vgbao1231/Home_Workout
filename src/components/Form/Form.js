@@ -1,24 +1,25 @@
-import PropTypes from 'prop-types';
-import { useCallback, useState, useMemo } from 'react';
-import Field from '../Field/Field';
+import { useCallback, useState, useMemo, Children, isValidElement, cloneElement } from 'react';
+import './Form.scss';
+import MultiSelect from '../MultiSelect/MultiSelect';
 
-function Form({ fields, btnContent, moreFeatures, onSubmit }) {
+function Form({ children, onSubmit }) {
     const [errorMessage, setErrorMessage] = useState({});
+    const fields = Children.toArray(children).filter((child) => isValidElement(child) && child.props.name);
     const [formData, setFormData] = useState(
         fields.reduce((acc, field) => {
-            acc[field.name] = field.value || '';
+            acc[field.props.name] = field.props.value || (field.type === MultiSelect ? [] : '');
             return acc;
         }, {}),
     );
 
-    const getInputValue = useCallback((name, value) => {
+    const getFieldValue = useCallback((name, value) => {
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
     }, []);
 
-    const getInputErrorMsg = useCallback((name, value) => {
+    const getFieldErrorMsg = useCallback((name, value) => {
         setErrorMessage((prevData) => ({
             ...prevData,
             [name]: value,
@@ -26,18 +27,19 @@ function Form({ fields, btnContent, moreFeatures, onSubmit }) {
     }, []);
 
     const eventListeners = useMemo(() => {
-        return fields.reduce((obj, field) => {
-            obj[field.name] = {
-                validators: field.validators || [],
-                formatters: field.formatters || [],
+        return fields.reduce((acc, field) => {
+            acc[field.props.name] = {
+                validators: field.props.validators || [],
+                formatters: field.props.formatters || [],
             };
-            return obj;
+            return acc;
         }, {});
     }, [fields]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const errorObj = {};
+        console.log(formData);
         Object.entries(eventListeners).forEach(([field, { validators }]) => {
             validators.forEach(({ check }) => {
                 if (!errorObj[field]) {
@@ -56,28 +58,22 @@ function Form({ fields, btnContent, moreFeatures, onSubmit }) {
 
     return (
         <form className="form" onSubmit={handleSubmit}>
-            {fields.map(({ value, validators, formatters, ...props }) => {
-                return (
-                    <Field
-                        key={props.name}
-                        value={formData[props.name]}
-                        errorMessage={errorMessage[props.name]}
-                        setInputValue={getInputValue}
-                        setErrorMessage={getInputErrorMsg}
-                        eventListeners={eventListeners[props.name]}
-                        {...props}
-                    />
-                );
+            {Children.map(children, (child) => {
+                // Checks if child is a React element and has a name attribute
+                if (isValidElement(child) && child.props.name) {
+                    const { value, ...props } = child.props;
+                    return cloneElement(child, {
+                        value: formData[child.props.name],
+                        errorMessage: errorMessage[child.props.name],
+                        setFieldValue: getFieldValue,
+                        setErrorMessage: getFieldErrorMsg,
+                        ...props,
+                    });
+                }
+                return child;
             })}
-            {moreFeatures.map((component, index) => component(index))}
-            <button type="submit">{btnContent}</button>
         </form>
     );
 }
-
-Form.propTypes = {
-    fields: PropTypes.array.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-};
 
 export default Form;

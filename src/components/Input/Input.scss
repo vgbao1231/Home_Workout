@@ -1,0 +1,41 @@
+.input {
+    input {
+        width: 100%;
+        padding: 4px;
+        font-size: 1.6rem;
+        background: none;
+        border: none;
+        outline: none;
+        flex-grow: 1;
+        &::placeholder {
+            opacity: 0;
+        }
+        &:focus::placeholder {
+            opacity: 1;
+            color: #aaa;
+            transition: opacity 0.2s ease;
+        }
+    }
+    input[type='date'] {
+        color: transparent;
+    }
+    input[type='date']:not(:focus)::-webkit-calendar-picker-indicator {
+        filter: invert(50%);
+    }
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    &.active {
+        input:not([type='radio']):not([type='checkbox']) + label {
+            top: -16%;
+            left: 14px;
+            font-size: 1.2rem;
+            color: rgba($color: #000000, $alpha: 0.6);
+        }
+        input[type='date'] {
+            color: black;
+        }
+    }
+}

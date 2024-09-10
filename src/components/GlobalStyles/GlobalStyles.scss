@@ -37,3 +37,10 @@ ul {
 li {
     margin: 0; /* Loại bỏ khoảng cách mặc định của các mục danh sách */
 }
+
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 40px;
+    z-index: 1;
+}

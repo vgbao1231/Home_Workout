@@ -1,34 +1,31 @@
-import Cookies from 'js-cookie';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '~/hooks/useAuth';
-import { useToast } from '~/hooks/useToast';
-import { logout } from '~/services/authService';
+import { logoutThunk } from '~/store/authSlice';
+import { addToast } from '~/store/toastSlice';
 
 const HomePage = () => {
-    const { setIsAuthenticated } = useAuth();
-    const { toast } = useToast();
+    const dispatch = useDispatch();
+    const state = useSelector((state) => state.auth);
     const navigate = useNavigate();
+    console.log(state);
 
     const handleLogout = async () => {
-        try {
-            const response = await logout();
-            if (response.httpStatusCode === 200) {
-                Cookies.remove('accessToken');
-                Cookies.remove('refershToken');
-                setIsAuthenticated(!!Cookies.get('accessToken'));
+        dispatch(logoutThunk()).then((result) => {
+            console.log(result);
+            if (result.meta.requestStatus === 'fulfilled') {
                 navigate('/login');
-                toast(response.message, 'success');
+                dispatch(addToast(result.payload.message, 'success'));
             } else {
-                toast(response.message, 'error');
+                dispatch(addToast(result.payload.message, 'error'));
             }
-        } catch (error) {
-            toast(error.message, 'error');
-        }
+        });
+        console.log('state: ');
+        console.log(state);
     };
 
     return (
-        <div>
+        <div className="homepage">
             <h1>Homepage </h1>
             <button onClick={handleLogout}>Log Out</button>
         </div>

@@ -1,5 +1,5 @@
 function ProfilePage() {
-    return <h1>Gủa Profile</h1>;
+    return <h1>Profile</h1>;
 }
 
 export default ProfilePage;

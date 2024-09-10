@@ -1,20 +1,28 @@
 import { useState, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './Field.scss';
+import './Input.scss';
 
-function Field({ eventListeners = {}, setInputValue, errorMessage, setErrorMessage, iconSupport, ...props }) {
+function Input({
+    validators = [],
+    formatters = [],
+    setFieldValue,
+    errorMessage,
+    setErrorMessage,
+    iconSupport,
+    ...props
+}) {
     const [isActive, setIsActive] = useState(props.value);
 
     let events = {
         onChange: (e) => {
             setErrorMessage(props.name, '');
-            setInputValue(props.name, e.target.value);
+            setFieldValue(props.name, e.target.value);
         },
         onBlur: (e) => setIsActive(e.target.value !== ''),
         onFocus: (e) => setIsActive(true),
     };
 
-    Object.entries(eventListeners).forEach(([type, typeObjs]) => {
+    Object.entries({ validators, formatters }).forEach(([type, typeObjs]) => {
         typeObjs.forEach(({ event, check }) => {
             if (events[event]) {
                 const originalEvent = events[event];
@@ -29,7 +37,7 @@ function Field({ eventListeners = {}, setInputValue, errorMessage, setErrorMessa
                         }
                     } else {
                         e.target.value = check(e.target.value);
-                        setInputValue(props.name, e.target.value);
+                        setFieldValue(props.name, e.target.value);
                         originalEvent(e);
                     }
                 };
@@ -40,20 +48,9 @@ function Field({ eventListeners = {}, setInputValue, errorMessage, setErrorMessa
     const { icon, handleIconClick } = iconSupport || {};
 
     return (
-        <div className="field">
-            <div className={`field-wrapper center ${isActive ? 'active' : ''} ${errorMessage ? 'error' : ''}`}>
-                {props.type === 'select' ? (
-                    <select {...props} {...events}>
-                        <option hidden></option>
-                        {props.options.map((option, index) => (
-                            <option key={index} value={option.value} selected={option.selected}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                ) : (
-                    <input {...props} {...events} />
-                )}
+        <div className={`field input${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
+            <div className="field-wrapper center">
+                <input {...props} {...events} />
                 <label htmlFor={props.id}>{props.label}</label>
                 <fieldset>
                     <legend>
@@ -67,4 +64,4 @@ function Field({ eventListeners = {}, setInputValue, errorMessage, setErrorMessa
     );
 }
 
-export default memo(Field);
+export default memo(Input);

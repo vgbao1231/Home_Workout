@@ -1,0 +1,56 @@
+.multi-select {
+    .field-wrapper {
+        display: flex;
+    }
+    .selected-values {
+        display: flex;
+        gap: 8px;
+        font-size: 1.6rem;
+        flex-wrap: wrap;
+        padding-right: 4px;
+        .selected-value {
+            gap: 8px;
+            padding: 4px 8px;
+            background-color: #ddd;
+            border-radius: 10px;
+            svg {
+                font-size: 1.2rem;
+            }
+        }
+    }
+
+    .input-wrapper {
+        flex: 1;
+        input {
+            font-size: 1.6rem;
+            width: 100%;
+            min-width: 40px;
+            height: 100%;
+            border: none;
+            outline: none;
+        }
+    }
+
+    .options-container {
+        border: 1px solid #ccc;
+        width: 100%;
+        background-color: white;
+        position: absolute;
+        top: 100%;
+    }
+
+    .option {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .option:hover {
+        background-color: #f0f0f0;
+    }
+    &.active .selected-values + label {
+        top: -16%;
+        left: 14px;
+        font-size: 1.2rem;
+        color: rgba($color: #000000, $alpha: 0.6);
+    }
+}

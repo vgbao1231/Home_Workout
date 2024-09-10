@@ -2,15 +2,19 @@ import { faCircleCheck, faCircleExclamation, faXmark } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect } from 'react';
 import './Toast.scss';
+import { removeToast } from '~/store/toastSlice';
+import { useDispatch } from 'react-redux';
 
-function Toast({ toast, close }) {
+function Toast({ toast }) {
+    const dispatch = useDispatch();
+
     useEffect(() => {
         const timer = setTimeout(() => {
-            close(toast.id);
+            dispatch(removeToast(toast.id));
         }, 4000);
 
         return () => clearTimeout(timer);
-    }, [toast.id, close]);
+    }, [toast.id, dispatch]);
     return (
         <div className={`toast ${toast.type === 'success' ? 'toast__success' : 'toast__error'} center`}>
             <div className="toast__icon">
@@ -25,7 +29,7 @@ function Toast({ toast, close }) {
                 <p className="toast__message">{toast.message}</p>
             </div>
             <div className="toast__close">
-                <FontAwesomeIcon icon={faXmark} onClick={() => close(toast.id)} />
+                <FontAwesomeIcon icon={faXmark} onClick={() => dispatch(removeToast(toast.id))} />
             </div>
         </div>
     );

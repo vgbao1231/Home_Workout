@@ -3,18 +3,16 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from './components/GlobalStyles';
-import { ToastProvider } from './context/ToastContext';
-import { AuthProvider } from './context/AuthContext';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
     <GlobalStyles>
-        <AuthProvider>
-            <ToastProvider>
-                <App />
-            </ToastProvider>
-        </AuthProvider>
+        <Provider store={store}>
+            <App />
+        </Provider>
     </GlobalStyles>,
     // </React.StrictMode>
 );

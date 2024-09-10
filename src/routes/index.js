@@ -1,3 +1,4 @@
+import SidebarLayout from '~/layout/SidebarLayout/SidebarLayout';
 import HomePage from '~/pages/HomePage/HomePage';
 import LoginPage from '~/pages/LoginPage/LoginPage';
 import ProfilePage from '~/pages/ProfilePage/Profile';
@@ -11,7 +12,7 @@ const publicRoutes = [
 
 // Private routes
 const privateRoutes = [
-    { path: '/', component: HomePage },
+    { path: '/', component: HomePage, layout: SidebarLayout },
     { path: '/profile', component: ProfilePage }, // Test
     { path: '/homepage', component: HomePage }, // Test
 ];

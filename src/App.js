@@ -1,19 +1,38 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { privateRoutes, publicRoutes } from './routes';
-import { useAuth } from './hooks/useAuth';
+import { useSelector } from 'react-redux';
+import Toast from './components/Toast/Toast';
+import SidebarLayout from './layout/SidebarLayout/SidebarLayout';
 
 function App() {
-    const { isAuthenticated } = useAuth();
-    console.log(isAuthenticated);
+    const { isAuthenticated } = useSelector((state) => state.auth);
+    const { toasts } = useSelector((state) => state.toast);
+    console.log('isAuthenticated: ' + isAuthenticated);
 
     return (
         <Router>
             <div className="App">
+                <div className="toast-container">
+                    {toasts.map((toast) => {
+                        return <Toast key={toast.id} toast={toast} />;
+                    })}
+                </div>
                 <Routes>
                     {isAuthenticated
                         ? privateRoutes.map((route, index) => {
                               const Page = route.component;
-                              return <Route key={index} path={route.path} element={<Page />} />;
+                              const Layout = SidebarLayout;
+                              return (
+                                  <Route
+                                      key={index}
+                                      path={route.path}
+                                      element={
+                                          <Layout>
+                                              <Page />
+                                          </Layout>
+                                      }
+                                  />
+                              );
                           })
                         : publicRoutes.map((route, index) => {
                               const Page = route.component;

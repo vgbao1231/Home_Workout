@@ -9,28 +9,21 @@ export const login = async (username, password) => {
             username,
             password,
         });
-        const data = response.data;
-
-        //Test
-        if (username === 'gura1231@gmail.com' && password === '123123') {
-            const { accessToken, refreshToken } = response.data;
-            Cookies.set('accessToken', accessToken, {
-                path: '/',
-                secure: true,
-                sameSite: 'Strict',
-            });
-            Cookies.set('refreshToken', refreshToken, {
-                path: '/',
-                secure: true,
-                sameSite: 'Strict',
-            });
-            return data.success;
-        } else {
-            return data.failed;
-        }
+        const { accessToken, refreshToken } = response.data.data;
+        Cookies.set('accessToken', accessToken, {
+            path: '/',
+            secure: true,
+            sameSite: 'Strict',
+        });
+        Cookies.set('refreshToken', refreshToken, {
+            path: '/',
+            secure: true,
+            sameSite: 'Strict',
+        });
+        return response.data;
     } catch (error) {
         console.error(error);
-        throw new Error('Unexpected Error');
+        throw error.response ? error.response.data : error;
     }
 };
 
@@ -39,7 +32,7 @@ export const logout = async () => {
         const accessToken = Cookies.get('accessToken');
         const refreshToken = Cookies.get('refreshToken');
         const response = await apiService.get(
-            `${API_AUTH_PREFIX}/logout`,
+            `${API_AUTH_PREFIX}/logout.json`,
             { accessToken },
             {
                 headers: {
@@ -47,12 +40,11 @@ export const logout = async () => {
                 },
             },
         );
-        const data = response.data;
-
-        const checkLogout = true; // Test
-        return checkLogout ? data.success : data.failed;
+        Cookies.remove('accessToken');
+        Cookies.remove('refershToken');
+        return response.data;
     } catch (error) {
         console.error(error);
-        throw new Error('Unexpected Error');
+        throw error.response ? error.response.data : error;
     }
 };

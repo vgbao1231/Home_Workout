@@ -1,0 +1,65 @@
+.field {
+    position: relative;
+    .field-wrapper {
+        position: relative;
+        padding: 10px;
+        font-size: 16px;
+        min-height: 50px;
+        label {
+            position: absolute;
+            left: 16px;
+            top: 30%;
+            color: #6c757d;
+            font-size: 1.6rem;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+        svg {
+            cursor: pointer;
+            color: #aaa;
+        }
+        fieldset {
+            position: absolute;
+            top: -8px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            pointer-events: none;
+            transition: border-color 0.2s ease;
+        }
+        legend {
+            font-size: 1.2rem;
+            margin-left: 12px;
+            visibility: hidden;
+            max-width: 0;
+            transition: max-width 0.2s ease;
+            span {
+                white-space: nowrap;
+            }
+        }
+    }
+    &.active {
+        svg {
+            color: black;
+        }
+        legend {
+            max-width: none;
+            padding-left: 2px;
+        }
+    }
+    &.error {
+        fieldset {
+            border-color: red !important;
+        }
+        label {
+            color: red !important;
+        }
+        .error-msg {
+            font-size: 12px;
+            color: red;
+            margin: 4px;
+        }
+    }
+}
