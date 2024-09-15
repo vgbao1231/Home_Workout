@@ -4,11 +4,12 @@ import './Select.scss';
 function Select({
     validators = [],
     formatters = [],
+    className = '',
     setFieldValue,
     errorMessage,
     setErrorMessage,
     iconSupport,
-    children,
+    options,
     ...props
 }) {
     const [isActive, setIsActive] = useState(props.value);
@@ -46,18 +47,30 @@ function Select({
     });
 
     return (
-        <div className={`field select${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
-            <div className="field-wrapper center">
-                <select {...props} {...events}>
-                    <option hidden></option>
-                    {children}
-                </select>
-                <label htmlFor={props.id}>{props.label}</label>
-                <fieldset>
-                    <legend>
-                        <span>{props.label}</span>
-                    </legend>
-                </fieldset>
+        <div className={`${className} field select${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
+            <div className="field-wrapper">
+                {props.readOnly ? (
+                    <span>{options.find((option) => option.value === props.value)?.text}</span>
+                ) : (
+                    <select {...props} {...events}>
+                        <option hidden></option>
+                        {options.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.text}
+                            </option>
+                        ))}
+                    </select>
+                )}
+                {props.label && (
+                    <>
+                        <label htmlFor={props.id}>{props.label}</label>
+                        <fieldset>
+                            <legend>
+                                <span>{props.label}</span>
+                            </legend>
+                        </fieldset>
+                    </>
+                )}
             </div>
             {errorMessage && <div className="error-msg">{errorMessage}</div>}
         </div>

@@ -1,23 +1,45 @@
-import { useCallback, useState, useMemo, Children, isValidElement, cloneElement } from 'react';
+import {
+    useCallback,
+    useState,
+    useMemo,
+    Children,
+    isValidElement,
+    cloneElement,
+    forwardRef,
+    memo,
+    useEffect,
+} from 'react';
 import './Form.scss';
 import MultiSelect from '../MultiSelect/MultiSelect';
 
-function Form({ children, onSubmit }) {
-    const [errorMessage, setErrorMessage] = useState({});
+function Form({ children, className = '', onSubmit, onChange, ...props }, ref) {
+    // console.log('form render');
     const fields = Children.toArray(children).filter((child) => isValidElement(child) && child.props.name);
-    const [formData, setFormData] = useState(
-        fields.reduce((acc, field) => {
+    const getInitialData = useCallback(() => {
+        const initialData = fields.reduce((acc, field) => {
             acc[field.props.name] = field.props.value || (field.type === MultiSelect ? [] : '');
             return acc;
-        }, {}),
-    );
+        }, {});
+        return initialData;
+    }, [fields]);
 
-    const getFieldValue = useCallback((name, value) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }, []);
+    const [errorMessage, setErrorMessage] = useState({});
+    const [formData, setFormData] = useState(getInitialData);
+
+    useEffect(() => {
+        setFormData(getInitialData);
+    }, [getInitialData]);
+
+    const getFieldValue = useCallback(
+        (name, value) => {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+            onChange && onChange({ [name]: value });
+        },
+        [onChange],
+    );
 
     const getFieldErrorMsg = useCallback((name, value) => {
         setErrorMessage((prevData) => ({
@@ -39,7 +61,6 @@ function Form({ children, onSubmit }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const errorObj = {};
-        console.log(formData);
         Object.entries(eventListeners).forEach(([field, { validators }]) => {
             validators.forEach(({ check }) => {
                 if (!errorObj[field]) {
@@ -57,17 +78,17 @@ function Form({ children, onSubmit }) {
     };
 
     return (
-        <form className="form" onSubmit={handleSubmit}>
+        <form className={`${className} form`} onSubmit={handleSubmit} ref={ref} {...props}>
             {Children.map(children, (child) => {
                 // Checks if child is a React element and has a name attribute
                 if (isValidElement(child) && child.props.name) {
-                    const { value, ...props } = child.props;
                     return cloneElement(child, {
-                        value: formData[child.props.name],
+                        value: child.props.value || formData[child.props.name],
                         errorMessage: errorMessage[child.props.name],
                         setFieldValue: getFieldValue,
                         setErrorMessage: getFieldErrorMsg,
-                        ...props,
+                        readOnly: props.readOnly,
+                        ...child.props,
                     });
                 }
                 return child;
@@ -76,4 +97,7 @@ function Form({ children, onSubmit }) {
     );
 }
 
-export default Form;
+export default memo(forwardRef(Form), (prevProps, nextProps) => {
+    // So sánh props cũ và mới
+    return prevProps.children === nextProps.children;
+});

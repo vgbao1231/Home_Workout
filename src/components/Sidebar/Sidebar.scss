@@ -4,9 +4,6 @@
     display: flex;
     flex-direction: column;
     .logo-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         margin-bottom: 20px;
         .logo {
             width: 0;
@@ -35,8 +32,10 @@
         font-size: 2.4rem;
         .item {
             margin-top: 10px;
-            padding: 4px 8px;
             border-radius: 10px;
+            a {
+                padding: 4px 10px;
+            }
             .item-text {
                 width: 0;
                 transition: all 0.4s ease;
@@ -57,7 +56,7 @@
                 padding: 4px;
                 font-size: 1.4rem;
                 border-radius: 4px;
-                z-index: 1;
+                z-index: 10;
                 pointer-events: none;
                 transition: all 0.2s ease;
                 .tooltip-text::before {

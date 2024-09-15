@@ -1,14 +1,17 @@
 .field {
     position: relative;
     .field-wrapper {
-        position: relative;
         padding: 10px;
+        position: relative;
+        flex: 1;
         font-size: 16px;
-        min-height: 50px;
+        display: flex;
+        align-items: center;
         label {
             position: absolute;
             left: 16px;
-            top: 30%;
+            top: 50%;
+            transform: translateY(-50%);
             color: #6c757d;
             font-size: 1.6rem;
             pointer-events: none;

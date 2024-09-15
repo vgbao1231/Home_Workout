@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function SidebarItem({ icon, text, path, isExpanded }) {
     const location = useLocation();
@@ -7,10 +7,10 @@ function SidebarItem({ icon, text, path, isExpanded }) {
     };
     return (
         <li className={`item center${isActive(path) ? ' active' : ''}`}>
-            <a href={path}>
+            <Link to={path}>
                 {icon}
                 <span className={`item-text${isExpanded ? ' expand' : ''}`}>{text}</span>
-            </a>
+            </Link>
             {!isExpanded && (
                 <div className="tooltip">
                     <span className="tooltip-text">{text}</span>

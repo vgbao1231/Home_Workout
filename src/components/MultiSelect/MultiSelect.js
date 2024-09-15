@@ -1,103 +1,131 @@
-import { useState, memo, useRef, useEffect } from 'react';
+import { useState, memo, useRef } from 'react';
 import './MultiSelect.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 
-function MultiSelect({ validators = [], setFieldValue, errorMessage, setErrorMessage, children, ...props }) {
-    const [isActive, setIsActive] = useState(props.value.length !== 0);
-    const [isFocused, setIsFocused] = useState(false);
+function MultiSelect({
+    validators = [],
+    className = '',
+    setFieldValue,
+    errorMessage,
+    setErrorMessage,
+    options,
+    value = [],
+    ...props
+}) {
+    const [isActive, setIsActive] = useState(value.length);
+    const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    const multiSelectRef = useRef();
     const inputRef = useRef();
+
+    console.log('multi render');
+
+    const toggleDropdown = () => {
+        if (!props.readOnly) {
+            console.log('toggleDropdown');
+            inputRef.current && inputRef.current.focus();
+            setIsActive(true);
+            setIsOpen(true);
+        }
+    };
 
     const handleSelect = (optionValue) => {
         setErrorMessage(props.name, '');
-        if (!props.value.includes(optionValue)) {
+        if (!value.includes(optionValue)) {
             setInputValue('');
-            inputRef.current.focus();
-            setFieldValue(props.name, [...props.value, optionValue]);
+            inputRef.current && inputRef.current.focus();
+            setFieldValue(props.name, [...value, optionValue]);
         }
     };
 
-    const handleRemove = (option) => {
-        setFieldValue(
-            props.name,
-            props.value.filter((value) => value !== option),
-        );
-        setIsActive(isFocused || props.value.length !== 1);
+    const handleRemove = (e, option) => {
+        e.stopPropagation();
+        console.log('handleRemove');
+        const newValue = value.filter((value) => value !== option);
+        setFieldValue(props.name, newValue);
+        setIsActive(isOpen || newValue.length);
+        setInputValue('');
     };
 
-    useEffect(() => {
-        if (isFocused) {
-            const handleClickOutside = (e) => {
-                setIsFocused(false);
-                setIsActive(props.value.length !== 0);
-                setInputValue('');
-                validators.forEach(({ check }) => {
-                    if (check(props.value)) {
-                        setErrorMessage(props.name, check(props.value));
-                    }
-                });
-            };
-            const handleClickBackspace = (e) => {
-                if (e.key === 'Backspace') {
-                    setFieldValue(props.name, props.value.slice(0, -1));
-                }
-            };
-
-            const currentInputRef = inputRef.current; // Lưu giá trị hiện tại của ref
-
-            document.addEventListener('click', handleClickOutside);
-            currentInputRef.addEventListener('keydown', handleClickBackspace);
-
-            return () => {
-                document.removeEventListener('click', handleClickOutside);
-                currentInputRef.removeEventListener('keydown', handleClickBackspace); // Sử dụng biến lưu ref
-            };
+    const handleBackspace = (e) => {
+        if (e.key === 'Backspace' && !inputValue) {
+            setFieldValue(props.name, value.slice(0, -1));
         }
-    }, [props, validators, isFocused, setErrorMessage, setFieldValue]);
+    };
+
+    const handleClickOutside = () => {
+        setIsOpen(false);
+        setIsActive(value.length !== 0);
+        setInputValue('');
+        validators.forEach(({ check }) => {
+            if (check(value)) {
+                setErrorMessage(props.name, check(value));
+            }
+        });
+    };
 
     return (
-        <div
-            className={`field multi-select${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}
-            onClick={(e) => e.stopPropagation()}
-            onFocus={() => {
-                setIsFocused(true);
-                setIsActive(true);
-            }}
-        >
-            <div className="field-wrapper">
-                <div className="selected-values">
-                    {props.value.map((value) => (
-                        <div key={value} className="selected-value center">
-                            <span>{children.find((option) => option.props.value === value).props.children}</span>
-                            <FontAwesomeIcon onClick={() => handleRemove(value)} icon={faX} />
-                        </div>
-                    ))}
-                    <div className="input-wrapper">
-                        <input ref={inputRef} value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
+        <>
+            <div
+                ref={multiSelectRef}
+                className={`${className} field multi-select${isActive ? ' active' : ''}${isOpen ? ' open' : ''}${
+                    errorMessage ? ' error' : ''
+                }`}
+            >
+                <div className={`field-wrapper`} onClick={toggleDropdown}>
+                    <div className="selected-values">
+                        {value.map((value) => (
+                            <div key={value} className="selected-value center">
+                                <span>{options.find((option) => option.value === value)?.text}</span>
+                                {!props.readOnly && (
+                                    <FontAwesomeIcon onClick={(e) => handleRemove(e, value)} icon={faX} />
+                                )}
+                            </div>
+                        ))}
+                        {!props.readOnly && (
+                            <div className="input-wrapper">
+                                <input
+                                    ref={inputRef}
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    onKeyDown={handleBackspace}
+                                    readOnly={props.readOnly}
+                                />
+                            </div>
+                        )}
                     </div>
-                </div>
-                <label htmlFor={props.id}>{props.label}</label>
-                <fieldset>
-                    <legend>
-                        <span>{props.label}</span>
-                    </legend>
-                </fieldset>
-            </div>
-            {isFocused && (
-                <div className="options-container">
-                    {children.map(
-                        (option, index) =>
-                            option.props.children.includes(inputValue) && (
-                                <div key={index} className="option" onClick={() => handleSelect(option.props.value)}>
-                                    <span>{option.props.children}</span>
-                                </div>
-                            ),
+                    {props.label && (
+                        <>
+                            <label htmlFor={props.id}>{props.label}</label>
+                            <fieldset>
+                                <legend>
+                                    <span>{props.label}</span>
+                                </legend>
+                            </fieldset>
+                        </>
                     )}
                 </div>
-            )}
-            {errorMessage && <div className="error-msg">{errorMessage}</div>}
-        </div>
+                {isOpen && (
+                    <div className="options-container">
+                        {options.map(
+                            (option) =>
+                                option.text.toLowerCase().includes(inputValue.toLowerCase()) && (
+                                    <div
+                                        key={option.value}
+                                        className="option"
+                                        onClick={() => handleSelect(option.value)}
+                                    >
+                                        <span>{option.text}</span>
+                                    </div>
+                                ),
+                        )}
+                    </div>
+                )}
+                {errorMessage && <div className="error-msg">{errorMessage}</div>}
+            </div>
+            {isOpen && <div className="multi-select-background" onClick={handleClickOutside}></div>}
+        </>
     );
 }
 

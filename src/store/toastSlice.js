@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const toastSlice = createSlice({
-    name: 'auth',
+    name: 'toast',
     initialState: {
         toasts: [],
     },
@@ -17,15 +17,17 @@ const toastSlice = createSlice({
                 return { payload: { id, message, type } };
             },
         },
-        removeToast: (state, action) => {
-            const id = action.payload.id;
-            state.toasts.filter((toast) => toast.id !== id);
+        removeToast: {
+            reducer: (state, action) => {
+                const id = action.payload.id;
+                state.toasts = state.toasts.filter((toast) => toast.id !== id);
+            },
+            prepare: (id) => {
+                return { payload: { id } };
+            },
         },
     },
 });
-
-console.log('slice: ');
-console.log(toastSlice);
 
 export const { addToast, removeToast } = toastSlice.actions;
 export default toastSlice.reducer;

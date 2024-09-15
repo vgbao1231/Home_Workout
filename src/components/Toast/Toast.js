@@ -28,8 +28,8 @@ function Toast({ toast }) {
                 <h3 className="toast__title">{toast.type === 'success' ? 'Thành công' : 'Thất bại'}</h3>
                 <p className="toast__message">{toast.message}</p>
             </div>
-            <div className="toast__close">
-                <FontAwesomeIcon icon={faXmark} onClick={() => dispatch(removeToast(toast.id))} />
+            <div className="toast__close" onClick={() => dispatch(removeToast(toast.id))}>
+                <FontAwesomeIcon icon={faXmark} />
             </div>
         </div>
     );

@@ -7,7 +7,6 @@ import SidebarLayout from './layout/SidebarLayout/SidebarLayout';
 function App() {
     const { isAuthenticated } = useSelector((state) => state.auth);
     const { toasts } = useSelector((state) => state.toast);
-    console.log('isAuthenticated: ' + isAuthenticated);
 
     return (
         <Router>

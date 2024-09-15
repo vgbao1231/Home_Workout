@@ -1,0 +1,41 @@
+.context-menu {
+    position: fixed;
+    z-index: 2;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 200px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba($color: #000, $alpha: 0.2);
+    padding: 6px 4px;
+    border-radius: 10px;
+    &.shown {
+        display: flex;
+    }
+    .menu-item {
+        background-color: transparent;
+        border: none;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.4rem;
+        padding: 0 10px;
+        border-radius: 6px;
+        &:hover {
+            background-color: rgba($color: #555, $alpha: 0.1);
+        }
+        svg {
+            width: 16px;
+        }
+    }
+}
+.context-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+}

@@ -1,0 +1,12 @@
+{
+    "applicationCode": 0,
+    "message": "Get All Excercise Successfully",
+    "httpStatusCode": 200,
+    "data": [
+        { "id": 1, "name": "Push-up", "muscle": [1, 2], "level": 1, "basicReps": "15" },
+        { "id": 2, "name": "Squat", "muscle": [4], "level": 2, "basicReps": "20" },
+        { "id": 3, "name": "Pull-up", "muscle": [6], "level": 1, "basicReps": "10" },
+        { "id": 4, "name": "Plank", "muscle": [0], "level": 3, "basicReps": "30" }
+    ],
+    "responseTime": [2024, 8, 28, 8, 29, 54, 885256300]
+}

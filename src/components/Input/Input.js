@@ -5,21 +5,23 @@ import './Input.scss';
 function Input({
     validators = [],
     formatters = [],
+    className = '',
     setFieldValue,
     errorMessage,
     setErrorMessage,
     iconSupport,
     ...props
 }) {
-    const [isActive, setIsActive] = useState(props.value);
+    // console.log('input render');
 
+    const [isActive, setIsActive] = useState(props.value);
     let events = {
         onChange: (e) => {
             setErrorMessage(props.name, '');
             setFieldValue(props.name, e.target.value);
         },
         onBlur: (e) => setIsActive(e.target.value !== ''),
-        onFocus: (e) => setIsActive(true),
+        onFocus: () => setIsActive(true),
     };
 
     Object.entries({ validators, formatters }).forEach(([type, typeObjs]) => {
@@ -48,15 +50,19 @@ function Input({
     const { icon, handleIconClick } = iconSupport || {};
 
     return (
-        <div className={`field input${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
-            <div className="field-wrapper center">
-                <input {...props} {...events} />
-                <label htmlFor={props.id}>{props.label}</label>
-                <fieldset>
-                    <legend>
-                        <span>{props.label}</span>
-                    </legend>
-                </fieldset>
+        <div className={`${className} field input${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
+            <div className="field-wrapper">
+                {props.readOnly ? <span>{props.value}</span> : <input {...props} {...events} />}
+                {props.label && (
+                    <>
+                        <label htmlFor={props.id}>{props.label}</label>
+                        <fieldset>
+                            <legend>
+                                <span>{props.label}</span>
+                            </legend>
+                        </fieldset>
+                    </>
+                )}
                 {icon && <FontAwesomeIcon icon={icon} onClick={handleIconClick} />}
             </div>
             {errorMessage && <div className="error-msg">{errorMessage}</div>}

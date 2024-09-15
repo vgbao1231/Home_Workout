@@ -1,0 +1,72 @@
+.table-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 70vw;
+
+    .table-header {
+        display: flex;
+        .table-cell:not(:first-child) {
+            flex: 1;
+            justify-content: center;
+        }
+        input[type='checkbox'] {
+            padding: 0 10px;
+        }
+    }
+
+    .table-body {
+        display: flex;
+        flex-direction: column;
+        z-index: 2;
+        .table-row {
+            border-top: 1px solid #ccc;
+            display: flex;
+            transition: background-color 0.2s ease;
+            input[type='checkbox'] {
+                outline: none;
+            }
+
+            &:has(input[type='checkbox']:checked) {
+                background-color: #e0edfb;
+            }
+
+            &:last-child {
+                border-bottom: 1px solid #ccc;
+            }
+
+            &.active {
+                background-color: #e0edfb;
+                z-index: 2;
+            }
+        }
+        .table-row-background {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+    }
+    .table-cell {
+        min-width: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px;
+        & > svg {
+            width: 16px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            &:hover {
+                transform: scale(1.2) rotate(45deg);
+            }
+        }
+        &:not(:first-child) {
+            flex: 1;
+        }
+        &:not(:last-child) {
+            border-right: 1px solid #ccc;
+        }
+    }
+}

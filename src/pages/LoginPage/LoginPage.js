@@ -2,11 +2,10 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { validators } from '~/utils/validators';
-import { Form } from '~/components';
+import { Form, Input } from '~/components';
 import { useDispatch } from 'react-redux';
 import { loginThunk } from '~/store/authSlice';
 import { addToast } from '~/store/toastSlice';
-import Input from '~/components/Input/Input';
 import './LoginPage.scss';
 
 function LoginPage() {
@@ -17,7 +16,6 @@ function LoginPage() {
     // Handle logic
     const handleLogin = async ({ username, password }) => {
         dispatch(loginThunk(username, password)).then((result) => {
-            // console.log(result);
             if (result.meta.requestStatus === 'fulfilled') {
                 navigate('/');
                 dispatch(addToast(result.payload.message, 'success'));
@@ -30,14 +28,13 @@ function LoginPage() {
     return (
         <div className="login-container center">
             <div className="login-background"></div>
-            <div className={'login-form'}>
+            <div className="login-form">
                 <div className={'login-title'}>Login</div>
                 <Form onSubmit={handleLogin}>
                     <Input
                         name="username"
                         label="Username"
                         value="gura1231@gmail.com"
-                        type="text"
                         validators={[validators.isRequired('onChange'), validators.isEmail('onChange')]}
                     />
                     <Input

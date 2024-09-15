@@ -7,10 +7,12 @@ function SidebarLayout({ children }) {
         <div className="container" style={{ display: 'flex', width: '100vw', height: '100vh' }}>
             <Sidebar>
                 <SidebarItem icon={<LayoutDashboard />} text="Dashboard" path="/" active />
-                <SidebarItem icon={<ChartColumn />} text="Statistic" path="/profile" />
+                <SidebarItem icon={<ChartColumn />} text="Statistic" path="/test" />
                 <SidebarItem icon={<SquareUserRound />} text="Account" path="/homepage" />
             </Sidebar>
-            <div className="content">{children}</div>
+            <div className="content" style={{ margin: '10px' }}>
+                {children}
+            </div>
         </div>
     );
 }

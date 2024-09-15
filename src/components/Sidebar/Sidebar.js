@@ -7,7 +7,7 @@ function Sidebar({ children }) {
 
     return (
         <aside className={`sidebar`}>
-            <div className="logo-container">
+            <div className="logo-container center">
                 <div className={`logo${isExpanded ? ' expand' : ''}`}>
                     <img src="https://img.logoipsum.com/297.svg" alt="" />
                 </div>

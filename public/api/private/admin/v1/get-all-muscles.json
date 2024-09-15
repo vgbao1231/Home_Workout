@@ -1,0 +1,16 @@
+{
+    "applicationCode": 0,
+    "message": "Create new Session successfully",
+    "httpStatusCode": 200,
+    "data": [
+        { "id": 0, "name": "Chest" },
+        { "id": 1, "name": "Biceps" },
+        { "id": 2, "name": "Triceps" },
+        { "id": 3, "name": "Back&Lats" },
+        { "id": 4, "name": "Leg" },
+        { "id": 5, "name": "Abs" },
+        { "id": 6, "name": "Shoulders" },
+        { "id": 7, "name": "Cardio" }
+    ],
+    "responseTime": [2024, 8, 28, 8, 29, 54, 885256300]
+}
