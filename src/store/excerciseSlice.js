@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getAllExcercises } from '~/services/excerciseService';
 
 // Thunk get data from API
-export const getInitialData = createAsyncThunk('excercise/getInitialData', async (_, { rejectWithValue }) => {
+export const fetchExcerciseData = createAsyncThunk('excercise/fetchExcerciseData', async (_, { rejectWithValue }) => {
     try {
         const response = await getAllExcercises();
         return response;
@@ -15,7 +15,7 @@ const excerciseSlice = createSlice({
     name: 'excercise',
     initialState: {
         selectedRows: {},
-        data: [],
+        excerciseData: [],
         loading: false,
         // message: '',
     },
@@ -26,7 +26,7 @@ const excerciseSlice = createSlice({
         },
         selectAllRows: (state, action) => {
             state.selectedRows = action.payload
-                ? state.data.reduce((acc, row) => {
+                ? state.excerciseData.reduce((acc, row) => {
                       acc[row.id] = true;
                       return acc;
                   }, {})
@@ -34,21 +34,21 @@ const excerciseSlice = createSlice({
         },
         updateRow: (state, action) => {
             const { id, ...changes } = action.payload;
-            state.data = state.data.map((currentRow) => {
+            state.excerciseData = state.excerciseData.map((currentRow) => {
                 return currentRow.id === id ? { ...currentRow, ...changes } : currentRow;
             });
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getInitialData.pending, (state) => {
+            .addCase(fetchExcerciseData.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(getInitialData.fulfilled, (state, action) => {
+            .addCase(fetchExcerciseData.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data = action.payload;
+                state.excerciseData = action.payload;
             })
-            .addCase(getInitialData.rejected, (state, action) => {
+            .addCase(fetchExcerciseData.rejected, (state, action) => {
                 state.loading = false;
                 // state.message = action.payload.message;
             });

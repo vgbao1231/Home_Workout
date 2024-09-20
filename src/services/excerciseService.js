@@ -12,16 +12,6 @@ export const getAllExcercises = async () => {
         throw error.response ? error.response.data : error;
     }
 };
-export const getAllLevels = async () => {
-    try {
-        const response = await apiService.get(`${API_ADMIN_PREFIX}/get-all-levels.json`);
-        const levelData = response.data.data;
-        return levelData;
-    } catch (error) {
-        console.error(error);
-        throw error.response ? error.response.data : error;
-    }
-};
 export const getAllMuscles = async () => {
     try {
         const response = await apiService.get(`${API_ADMIN_PREFIX}/get-all-muscles.json`);

@@ -1,42 +1,89 @@
 import { Send } from 'lucide-react';
-import { cloneElement, memo } from 'react';
+import { cloneElement, memo, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import Form from '~/components/Form/Form';
+import { toggleSelectRow, updateRow } from '~/store/excerciseSlice';
 
-const TableRow = memo(({ row, rowActive, onClick, onChange, onContextMenu }) => {
-    console.log('Rendering row:', row.id);
+function TableRow({ rowData, columns, setEditableRow, isSelected = false, isEditable, handleContextMenu }) {
+    console.log('Rendering row:', rowData.id);
+    const dispatch = useDispatch();
+    const tableRowRef = useRef();
+    const [originalRowData, setOriginalRowData] = useState(null);
+
+    // Handle update data row onChange
+    const handleRowChange = (field) => {
+        dispatch(updateRow({ id: rowData.id, ...field }));
+    };
+
+    // Handle click on row
+    const handleRowClick = () => {
+        !isEditable && dispatch(toggleSelectRow(rowData.id));
+    };
+
+    const handleRowSubmit = (rowData) => {
+        const { id, ...originalData } = originalRowData;
+
+        if (JSON.stringify(rowData) !== JSON.stringify(originalData)) {
+            if (window.confirm('Save?')) {
+                dispatch(updateRow(rowData));
+                // Call API update row
+            } else {
+                dispatch(updateRow(originalRowData));
+            }
+        }
+        setEditableRow();
+    };
+
+    useEffect(() => {
+        // Save original row data to restore if not submit
+        isEditable && !originalRowData && setOriginalRowData(rowData);
+    }, [isEditable, originalRowData, rowData]);
 
     return (
-        <Form
-            ref={rowActive === row.id ? formRef : null}
-            readOnly={rowActive !== row.id}
-            className={`table-row${rowActive === row.id ? ' active' : ''}`}
-            onClick={() => onClick(row)}
-            onChange={(field) => onChange(field, row.id)}
-            onContextMenu={(e) => onContextMenu(e, row)}
-            onSubmit={handleSubmit}
-        >
-            <div className="table-cell">
-                {rowActive === row.id ? (
-                    <Send onClick={handleClickSubmit} />
-                ) : (
-                    <input
-                        type="checkbox"
-                        checked={!!selectedRows[row.id]}
-                        onChange={() => onClick(row)}
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                )}
-            </div>
-            {columns.map((column) => {
-                return cloneElement(column.type, {
-                    key: column.name,
-                    className: 'table-cell',
-                    name: column.name,
-                    value: row[column.name],
-                    ...column.props,
-                });
-            })}
-        </Form>
+        <>
+            <Form
+                ref={isEditable ? tableRowRef : null}
+                readOnly={!isEditable}
+                className={`table-row${isEditable ? ' active' : ''}`}
+                onClick={handleRowClick}
+                onChange={handleRowChange}
+                onContextMenu={(e) => handleContextMenu(e, rowData)}
+                onSubmit={handleRowSubmit}
+            >
+                <div className="table-cell">
+                    {isEditable ? (
+                        <Send onClick={() => tableRowRef.current.requestSubmit()} />
+                    ) : (
+                        <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={handleRowClick}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    )}
+                </div>
+                {columns.map((column) => {
+                    return cloneElement(column.type, {
+                        key: column.name,
+                        className: 'table-cell',
+                        name: column.name,
+                        value: rowData[column.name],
+                        ...column.props,
+                    });
+                })}
+            </Form>
+            {isEditable && (
+                <div className="table-row-overlay" onClick={() => tableRowRef.current.requestSubmit()}></div>
+            )}
+        </>
+    );
+}
+
+// export default memo(TableRow);
+export default memo(TableRow, (prevProps, nextProps) => {
+    return (
+        JSON.stringify(prevProps.rowData) === JSON.stringify(nextProps.rowData) &&
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.isEditable === nextProps.isEditable
     );
 });
-
-export default TableRow;

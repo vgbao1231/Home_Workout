@@ -30,7 +30,7 @@ function TestPage() {
                 <Input
                     name="username"
                     label="Username"
-                    // value="gura1231@gmail.com"
+                    value="gura1231@gmail.com"
                     type="text"
                     validators={[validators.isRequired('onChange'), validators.isEmail('onChange')]}
                 />

@@ -1,7 +1,6 @@
-import { forwardRef } from 'react';
 import './ContextMenu.scss';
 
-function ContextMenu({ menuItems, contextMenu, setContextMenu }, ref) {
+function ContextMenu({ contextMenuItems, contextMenu, setContextMenu }) {
     const handleClick = (item) => {
         item.onClick();
         setContextMenu({});
@@ -15,9 +14,8 @@ function ContextMenu({ menuItems, contextMenu, setContextMenu }, ref) {
                     left: contextMenu.x + 'px',
                 }}
                 className={`context-menu${contextMenu.isShown ? ' shown' : ''}`}
-                ref={ref}
             >
-                {menuItems.map((item, index) => {
+                {contextMenuItems.map((item, index) => {
                     return (
                         <button key={index} className="menu-item" onClick={() => handleClick(item)}>
                             <span>{item.icon}</span>
@@ -26,9 +24,9 @@ function ContextMenu({ menuItems, contextMenu, setContextMenu }, ref) {
                     );
                 })}
             </div>
-            {contextMenu.isShown && <div className="context-background" onClick={() => setContextMenu({})}></div>}
+            {contextMenu.isShown && <div className="context-overlay" onClick={() => setContextMenu({})}></div>}
         </>
     );
 }
 
-export default forwardRef(ContextMenu);
+export default ContextMenu;

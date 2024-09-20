@@ -19,8 +19,6 @@ function MultiSelect({
     const multiSelectRef = useRef();
     const inputRef = useRef();
 
-    console.log('multi render');
-
     const toggleDropdown = () => {
         if (!props.readOnly) {
             console.log('toggleDropdown');
@@ -124,7 +122,7 @@ function MultiSelect({
                 )}
                 {errorMessage && <div className="error-msg">{errorMessage}</div>}
             </div>
-            {isOpen && <div className="multi-select-background" onClick={handleClickOutside}></div>}
+            {isOpen && <div className="multi-select-overlay" onClick={handleClickOutside}></div>}
         </>
     );
 }
