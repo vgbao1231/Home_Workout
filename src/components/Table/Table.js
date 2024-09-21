@@ -21,6 +21,7 @@ function Table({ columns, title, data, selectedRows, editableRow, setEditableRow
         [dispatch],
     );
 
+    //Handle open menu when right click
     const handleContextMenu = useCallback((e, row) => {
         e.preventDefault();
         setContextMenu({

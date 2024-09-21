@@ -1,5 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Input, MultiSelect, Select, Table } from '~/components';
@@ -20,6 +20,7 @@ const HomePage = () => {
 
     console.log('home');
 
+    // Handle log out
     const handleLogout = async () => {
         dispatch(logoutThunk()).then((result) => {
             if (result.meta.requestStatus === 'fulfilled') {
@@ -31,41 +32,50 @@ const HomePage = () => {
         });
     };
 
-    const [editableRow, setEditableRow] = useState(null);
-    const excerciseTableProps = useMemo(() => {
-        const muscleOptions = muscleData.map((option) => ({ value: option.id, text: option.name }));
-        const levelOptions = levelData.map((option) => ({ value: option.level, text: option.name }));
-        return {
-            title: 'Excercise',
-            columns: [
-                {
-                    name: 'name',
-                    text: 'Name',
-                    type: <Input />,
-                    props: { validators: [validators.isRequired('onChange')] },
-                },
-                { name: 'muscle', text: 'Muscle', type: <MultiSelect />, props: { options: muscleOptions } },
-                { name: 'level', text: 'Level', type: <Select />, props: { options: levelOptions } },
-                { name: 'basicReps', text: 'Basic Reps', type: <Input />, props: {} },
-            ],
-            data: excerciseData || [],
-            selectedRows: selectedExcerciseRows,
-            editableRow: editableRow,
-            setEditableRow: setEditableRow,
-            contextMenuItems: (row) => [
-                {
-                    text: 'Update Exercise',
-                    icon: <Pencil />,
-                    onClick: () => setEditableRow(row.id),
-                },
-                {
-                    text: 'Delete Exercise',
-                    icon: <Trash2 />,
-                    onClick: () => console.log('Delete Row: ' + row.id),
-                },
-            ],
-        };
-    }, [editableRow, excerciseData, levelData, muscleData, selectedExcerciseRows]);
+    const [editableRow, setEditableRow] = useState(null); // Row that can be edited
+    const muscleOptions = useMemo(
+        () => muscleData.map((option) => ({ value: option.id, text: option.name })),
+        [muscleData],
+    );
+
+    const levelOptions = useMemo(
+        () => levelData.map((option) => ({ value: option.level, text: option.name })),
+        [levelData],
+    );
+
+    /* ============================== GENERATE EXCERCISE TABLE ============================== */
+    // Excercise columns props (or cell props in table body)
+    const excerciseColumns = useMemo(
+        () => [
+            {
+                name: 'name',
+                text: 'Name',
+                type: <Input />,
+                props: { validators: [validators.isRequired('onChange')] },
+            },
+            { name: 'muscle', text: 'Muscle', type: <MultiSelect />, props: { options: muscleOptions } },
+            { name: 'level', text: 'Level', type: <Select />, props: { options: levelOptions } },
+            { name: 'basicReps', text: 'Basic Reps', type: <Input />, props: {} },
+        ],
+        [muscleOptions, levelOptions],
+    );
+
+    // Menu items for excercise table
+    const contextMenuItems = useCallback(
+        (row) => [
+            {
+                text: 'Update Exercise',
+                icon: <Pencil />,
+                onClick: () => setEditableRow(row.id),
+            },
+            {
+                text: 'Delete Exercise',
+                icon: <Trash2 />,
+                onClick: () => console.log('Delete Row: ' + row.id),
+            },
+        ],
+        [],
+    );
 
     useEffect(() => {
         dispatch(fetchMuscleData());
@@ -77,7 +87,15 @@ const HomePage = () => {
         <div className="homepage">
             <h1>Homepage </h1>
             <button onClick={handleLogout}>Log Out</button>
-            <Table {...excerciseTableProps} />
+            <Table
+                title="Excercise"
+                columns={excerciseColumns}
+                data={excerciseData}
+                selectedRows={selectedExcerciseRows}
+                editableRow={editableRow}
+                setEditableRow={setEditableRow}
+                contextMenuItems={contextMenuItems}
+            />
         </div>
     );
 };

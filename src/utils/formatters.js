@@ -1,4 +1,4 @@
-export const formatter = {
+export const formatters = {
     capitalizeWords: (event) => {
         return {
             event: event,
