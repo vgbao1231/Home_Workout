@@ -89,7 +89,7 @@ function Input({
     let events = {};
 
     useEffect(() => {
-        var events = validators.forEach(({ event, check }) => {
+        validators.forEach(({ event, check }) => {
             events[event] = (e) => {
                 const errMsg = check(e.target.value);
                 if (errMsg) {
