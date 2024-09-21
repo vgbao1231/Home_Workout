@@ -112,8 +112,8 @@ function Input({
     };
 
     useEffect(() => {
-        validators.forEach({ eventName, check } => {
-            events[eventName] = (e) => {
+        validators.forEach({ event, check } => {
+            events[event] = (e) => {
                 const errMsg = check(e.target.value);
                 if (errMsg) {
                     upsertErrMsg(errMsg);
@@ -124,8 +124,8 @@ function Input({
                 }        
             };
         });
-        formatters.forEach(formatter => {
-
+        formatters.forEach({ event, check } => {
+            events[event] = (e) => setCurValue(preivous => check(previous));
         });
     }, []);
 
