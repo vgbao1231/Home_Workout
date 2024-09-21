@@ -27,10 +27,12 @@ function Form({ children, className = '', onSubmit, onChange, ...props }, ref) {
             return acc;
         }, {});
     }, [formFieldCompos]);
-    const initialValidations = formFieldCompos.reduce((acc, component) => {
-        acc[component.props.name] = false;
-        return acc;
-    }, {});
+    const initialValidations = useEffect(() => {
+        return formFieldCompos.reduce((acc, component) => {
+            acc[component.props.name] = false;
+            return acc;
+        }, {});
+    }, []);
 
     const [currentFormData, setCurrentFormData] = useState(initialData);
     const [fieldsValidation, updateFieldsValidation] = useState(initialValidations);
@@ -44,7 +46,7 @@ function Form({ children, className = '', onSubmit, onChange, ...props }, ref) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (Object.values(fieldsValidation).every(validateRes -> validateRes)) {
+        if (Object.values(fieldsValidation).every(validateRes => validateRes)) {
             onSubmit(currentFormData);
         } else {
             //toast
@@ -82,16 +84,12 @@ function Input({
     // console.log('input render');
 
     const [curValue, setCurValue] = useState(props.value);
-    const [isActive, setIsActive] = useState(props.value);  //css-support
     const [errMsg, upsertErrMsg] = useState("");
 
-    let events = {
-        onBlur: (e) => setIsActive(e.target.value !== ''),
-        onFocus: () => setIsActive(true),
-    };
+    let events = {};
 
     useEffect(() => {
-        validators.forEach(({ event, check }) => {
+        var events = validators.forEach(({ event, check }) => {
             events[event] = (e) => {
                 const errMsg = check(e.target.value);
                 if (errMsg) {
@@ -104,7 +102,7 @@ function Input({
             };
         });
         formatters.forEach(({ event, check }) => {
-            events[event] = (e) => setCurValue(preivous => check(previous));
+            events[event] = (e) => setCurValue(previous => check(previous));
         });
     }, []);
 
