@@ -1,54 +1,47 @@
 import { Send } from 'lucide-react';
-import { cloneElement, memo, useEffect, useRef, useState } from 'react';
+import { cloneElement, memo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Form from '~/components/Form/Form';
-import { toggleSelectRow, updateRow } from '~/store/excerciseSlice';
+import Form from '~/components/ui/Form/Form';
+import { toggleSelectRow, updateRow } from '~/store/exerciseSlice';
 
-function TableRow({ rowData, columns, setEditableRow, isSelected = false, isEditable, handleContextMenu }) {
+function TableRow({ rowData, columns, constrainStates, isSelected = false, handleOpenContextMenu }) {
     console.log('Rendering row:', rowData.id);
     const dispatch = useDispatch();
     const tableRowRef = useRef();
-    const [originalRowData, setOriginalRowData] = useState(null);
+    const [originalRowData, setOriginalRowData] = useState(rowData); // Save original row data to restore if not submit
+    const isEditable = constrainStates.updatingRowId === rowData.id;
 
-    // Handle update data row onChange
-    const handleRowChange = (field) => {
-        dispatch(updateRow({ id: rowData.id, ...field }));
-    };
-
-    // Handle click on row
+    // Select row when click
     const handleRowClick = () => {
         !isEditable && dispatch(toggleSelectRow(rowData.id));
     };
 
-    const handleRowSubmit = (rowData) => {
+    const handleUpdateRow = (formData) => {
         const { id, ...originalData } = originalRowData;
 
-        if (JSON.stringify(rowData) !== JSON.stringify(originalData)) {
+        if (JSON.stringify(formData) !== JSON.stringify(originalData)) {
             if (window.confirm('Save?')) {
-                dispatch(updateRow(rowData));
+                // Update new original row data
+                setOriginalRowData(formData);
+                dispatch(updateRow({ id: rowData.id, ...formData }));
+
                 // Call API update row
             } else {
                 dispatch(updateRow(originalRowData));
             }
         }
-        setEditableRow();
+        constrainStates.setUpdatingRowId();
     };
-
-    useEffect(() => {
-        // Save original row data to restore if not submit
-        isEditable && !originalRowData && setOriginalRowData(rowData);
-    }, [isEditable, originalRowData, rowData]);
 
     return (
         <>
             <Form
                 ref={isEditable ? tableRowRef : null}
-                readOnly={!isEditable}
                 className={`table-row${isEditable ? ' active' : ''}`}
+                disabled={!isEditable}
                 onClick={handleRowClick}
-                onChange={handleRowChange}
-                onContextMenu={(e) => handleContextMenu(e, rowData)}
-                onSubmit={handleRowSubmit}
+                onContextMenu={(e) => handleOpenContextMenu(e, rowData.id)}
+                onSubmit={handleUpdateRow}
             >
                 <div className="table-cell">
                     {isEditable ? (
@@ -84,6 +77,6 @@ export default memo(TableRow, (prevProps, nextProps) => {
     return (
         JSON.stringify(prevProps.rowData) === JSON.stringify(nextProps.rowData) &&
         prevProps.isSelected === nextProps.isSelected &&
-        prevProps.isEditable === nextProps.isEditable
+        prevProps.constrainStates.updatingRowId === nextProps.constrainStates.updatingRowId
     );
 });

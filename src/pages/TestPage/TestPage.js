@@ -8,6 +8,7 @@
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { Input, MultiSelect, Select, Form } from '~/components';
+import { formatters } from '~/utils/formatters';
 import { validators } from '~/utils/validators';
 
 function TestPage() {
@@ -32,7 +33,13 @@ function TestPage() {
                     label="Username"
                     value="gura1231@gmail.com"
                     type="text"
-                    validators={[validators.isRequired('onChange'), validators.isEmail('onChange')]}
+                    validators={{
+                        onBlur: [validators.isRequired],
+                        onChange: [validators.isEmail],
+                    }}
+                    formatters={{
+                        onChange: [formatters.capitalizeWords],
+                    }}
                 />
                 <Input
                     name="password"
@@ -43,13 +50,24 @@ function TestPage() {
                         icon: showPassword ? faEyeSlash : faEye,
                         handleIconClick: () => setShowPassword(!showPassword),
                     }}
-                    validators={[validators.isRequired('onBlur')]}
+                    validators={{
+                        onBlur: [validators.isRequired],
+                    }}
                 />
-                <Select name="select" label="Select" validators={[validators.isRequired('onBlur')]} options={options} />
+                <Select
+                    name="select"
+                    label="Select"
+                    validators={{
+                        onBlur: [validators.isRequired],
+                    }}
+                    options={options}
+                />
                 <MultiSelect
                     name="multi-select"
                     label="Multiple Select"
-                    validators={[validators.isRequired('onBlur')]}
+                    validators={{
+                        onBlur: [validators.isRequired],
+                    }}
                     options={options}
                 />
                 <div className="forgot-password">

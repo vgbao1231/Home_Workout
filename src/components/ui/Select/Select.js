@@ -6,51 +6,41 @@ function Select({
     formatters = [],
     className = '',
     setFieldValue,
+    setFieldError,
     errorMessage,
-    setErrorMessage,
     iconSupport,
     options,
     ...props
 }) {
     const [isActive, setIsActive] = useState(props.value);
 
-    let events = {
-        onChange: (e) => {
-            setErrorMessage(props.name, '');
-            setFieldValue(props.name, e.target.value);
+    let rootEvents = {
+        onChange: (value) => {
+            setFieldValue([props.name], value);
         },
-        onBlur: (e) => setIsActive(e.target.value !== ''),
-        onFocus: (e) => setIsActive(true),
+        onBlur: (value) => setIsActive(value !== ''),
+        onFocus: () => setIsActive(true),
     };
 
-    Object.entries({ validators, formatters }).forEach(([type, typeObjs]) => {
-        typeObjs.forEach(({ event, check }) => {
-            if (events[event]) {
-                const originalEvent = events[event];
-                events[event] = (e) => {
-                    if (type === 'validators') {
-                        if (originalEvent(e)) return;
-                        const value = e.target.value;
-                        // Xử lý validate input
-                        if (check(value)) {
-                            setErrorMessage(props.name, check(value));
-                            return true;
-                        }
-                    } else {
-                        e.target.value = check(e.target.value);
-                        setFieldValue(props.name, e.target.value);
-                        originalEvent(e);
-                    }
-                };
-            }
-        });
-    });
+    let eventNames = new Set([...Object.keys(rootEvents), ...Object.keys(validators), ...Object.keys(formatters)]);
+    let events = [...eventNames].reduce((acc, eventName) => {
+        acc[eventName] = (e) => {
+            validators[eventName] &&
+                validators[eventName].forEach((validator) => {
+                    setFieldError([props.name], '');
+                    validator(e.target.value) && setFieldError([props.name], validator(e.target.value));
+                });
+            formatters[eventName] && formatters[eventName].forEach((formatter) => formatter(e.target.value));
+            rootEvents[eventName] && rootEvents[eventName](e.target.value);
+        };
+        return acc;
+    }, {});
 
     return (
         <div className={`${className} field select${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
             <div className="field-wrapper">
-                {props.readOnly ? (
-                    <span>{options.find((option) => option.value === props.value)?.text}</span>
+                {props.disabled ? (
+                    <span>{options.find((option) => option.value == props.value)?.text}</span>
                 ) : (
                     <select {...props} {...events}>
                         <option hidden></option>

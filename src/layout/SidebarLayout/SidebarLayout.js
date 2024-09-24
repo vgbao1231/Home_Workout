@@ -1,6 +1,6 @@
 import { ChartColumn, LayoutDashboard, SquareUserRound } from 'lucide-react';
-import Sidebar from '~/components/Sidebar/Sidebar';
-import SidebarItem from '~/components/Sidebar/SidebarItem/SidebarItem';
+import Sidebar from '~/components/ui/Sidebar/Sidebar';
+import SidebarItem from '~/components/ui/Sidebar/SidebarItem/SidebarItem';
 
 function SidebarLayout({ children }) {
     return (

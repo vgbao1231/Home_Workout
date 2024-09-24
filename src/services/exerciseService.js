@@ -2,9 +2,9 @@ import apiService from './apiService';
 
 const API_ADMIN_PREFIX = process.env.REACT_APP_API_ADMIN_PREFIX;
 
-export const getAllExcercises = async () => {
+export const getAllExercises = async () => {
     try {
-        const response = await apiService.get(`${API_ADMIN_PREFIX}/get-all-excercises.json`);
+        const response = await apiService.get(`${API_ADMIN_PREFIX}/get-all-exercises.json`);
         const data = response.data.data;
         return data;
     } catch (error) {

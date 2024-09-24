@@ -1,25 +1,20 @@
 export const formatters = {
-    capitalizeWords: (event) => {
-        return {
-            event: event,
-            check: (str) =>
-                str
-                    .toLowerCase()
-                    .split(' ')
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' '),
-        };
-    },
+    capitalizeWords: (str) =>
+        str
+            .toLowerCase()
+            .split(' ')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' '),
     trimWords: (event) => {
         return {
             event: event,
-            check: (str) => str.trim(),
+            formatter: (str) => str.trim(),
         };
     },
     formatCurrency: (event) => {
         return {
             event: event,
-            check: (value) => new Intl.NumberFormat('vi-VN').format(value),
+            formatter: (value) => new Intl.NumberFormat('vi-VN').format(value),
         };
     },
 

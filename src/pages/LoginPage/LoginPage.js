@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { loginThunk } from '~/store/authSlice';
 import { addToast } from '~/store/toastSlice';
 import './LoginPage.scss';
+import { formatters } from '~/utils/formatters';
 
 function LoginPage() {
     const dispatch = useDispatch();
@@ -35,7 +36,13 @@ function LoginPage() {
                         name="username"
                         label="Username"
                         value="gura1231@gmail.com"
-                        validators={[validators.isRequired('onChange'), validators.isEmail('onChange')]}
+                        validators={{
+                            onBlur: [validators.isRequired],
+                            onChange: [validators.isEmail],
+                        }}
+                        formatters={{
+                            onChange: [formatters.capitalizeWords],
+                        }}
                     />
                     <Input
                         name="password"
@@ -46,7 +53,9 @@ function LoginPage() {
                             icon: showPassword ? faEyeSlash : faEye,
                             handleIconClick: () => setShowPassword(!showPassword),
                         }}
-                        validators={[validators.isRequired('onBlur')]}
+                        validators={{
+                            onBlur: [validators.isRequired],
+                        }}
                     />
                     <div className="forgot-password">
                         <Link to="/forgot-password">Forgot Password?</Link>

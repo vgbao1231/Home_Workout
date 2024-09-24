@@ -4,11 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 
 function MultiSelect({
-    validators = [],
+    validators = {},
     className = '',
     setFieldValue,
+    setFieldError,
     errorMessage,
-    setErrorMessage,
     options,
     value = [],
     ...props
@@ -20,8 +20,7 @@ function MultiSelect({
     const inputRef = useRef();
 
     const toggleDropdown = () => {
-        if (!props.readOnly) {
-            console.log('toggleDropdown');
+        if (!props.disabled) {
             inputRef.current && inputRef.current.focus();
             setIsActive(true);
             setIsOpen(true);
@@ -29,7 +28,7 @@ function MultiSelect({
     };
 
     const handleSelect = (optionValue) => {
-        setErrorMessage(props.name, '');
+        setFieldError(props.name, '');
         if (!value.includes(optionValue)) {
             setInputValue('');
             inputRef.current && inputRef.current.focus();
@@ -56,10 +55,11 @@ function MultiSelect({
         setIsOpen(false);
         setIsActive(value.length !== 0);
         setInputValue('');
-        validators.forEach(({ check }) => {
-            if (check(value)) {
-                setErrorMessage(props.name, check(value));
-            }
+        Object.values(validators).forEach((eventValidators) => {
+            eventValidators.forEach((validator) => {
+                const error = validator(value.length);
+                error && setFieldError([props.name], error);
+            });
         });
     };
 
@@ -76,19 +76,19 @@ function MultiSelect({
                         {value.map((value) => (
                             <div key={value} className="selected-value center">
                                 <span>{options.find((option) => option.value === value)?.text}</span>
-                                {!props.readOnly && (
+                                {!props.disabled && (
                                     <FontAwesomeIcon onClick={(e) => handleRemove(e, value)} icon={faX} />
                                 )}
                             </div>
                         ))}
-                        {!props.readOnly && (
+                        {!props.disabled && (
                             <div className="input-wrapper">
                                 <input
                                     ref={inputRef}
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleBackspace}
-                                    readOnly={props.readOnly}
+                                    disabled={props.disabled}
                                 />
                             </div>
                         )}

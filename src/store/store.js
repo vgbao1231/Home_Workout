@@ -1,17 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authSlice from './authSlice';
 import toastSlice from './toastSlice';
-import excerciseSlice from './excerciseSlice';
+import exerciseSlice from './exerciseSlice';
 import levelSlice from './levelSlice';
 import muscleSlice from './muscleSlice';
+import tableSlice from './tableSlice';
 
 const store = configureStore({
     reducer: {
         auth: authSlice,
         toast: toastSlice,
-        excercise: excerciseSlice,
+        exercise: exerciseSlice,
         level: levelSlice,
         muscle: muscleSlice,
+        table: tableSlice,
     },
 });
 

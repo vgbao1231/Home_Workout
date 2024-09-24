@@ -18,7 +18,7 @@ const muscleSlice = createSlice({
     name: 'muscle',
     initialState: {
         muscleData: [],
-        loading: false,
+        loading: true, // Default is true so that when there is no data, loading will appear
         // message: '',
     },
     reducers: {},

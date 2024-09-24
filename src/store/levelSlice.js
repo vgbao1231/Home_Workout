@@ -18,7 +18,7 @@ const levelSlice = createSlice({
     name: 'level',
     initialState: {
         levelData: [],
-        loading: false,
+        loading: true, // Default is true so that when there is no data, loading will appear
         // message: '',
     },
     reducers: {},

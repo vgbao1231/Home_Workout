@@ -1,6 +1,6 @@
 {
     "applicationCode": 0,
-    "message": "Get All Excercise Successfully",
+    "message": "Get All Exercise Successfully",
     "httpStatusCode": 200,
     "data": [
         { "id": 1, "name": "Push-up", "muscle": [1, 2], "level": 1, "basicReps": "15" },

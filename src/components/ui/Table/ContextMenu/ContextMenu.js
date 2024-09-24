@@ -2,7 +2,7 @@ import './ContextMenu.scss';
 
 function ContextMenu({ contextMenuItems, contextMenu, setContextMenu }) {
     const handleClick = (item) => {
-        item.onClick();
+        item.action();
         setContextMenu({});
     };
 

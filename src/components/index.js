@@ -1,6 +1,7 @@
-export { default as Form } from './Form/Form';
-export { default as Input } from './Input/Input';
-export { default as Select } from './Select/Select';
-export { default as MultiSelect } from './MultiSelect/MultiSelect';
-export { default as Table } from './Table/Table';
+export { default as Form } from './ui/Form/Form';
+export { default as Input } from './ui/Input/Input';
+export { default as Select } from './ui/Select/Select';
+export { default as MultiSelect } from './ui/MultiSelect/MultiSelect';
+export { default as Table } from './ui/Table/Table';
+export { default as ExerciseTable } from './ExerciseTable/ExerciseTable';
 export { default as TestCompo } from './TestCompo/TestCompo';

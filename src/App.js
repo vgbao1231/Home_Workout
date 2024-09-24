@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { privateRoutes, publicRoutes } from './routes';
 import { useSelector } from 'react-redux';
-import Toast from './components/Toast/Toast';
+import Toast from './components/ui/Toast/Toast';
 import SidebarLayout from './layout/SidebarLayout/SidebarLayout';
 
 function App() {

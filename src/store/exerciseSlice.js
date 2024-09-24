@@ -1,22 +1,22 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getAllExcercises } from '~/services/excerciseService';
+import { getAllExercises } from '~/services/exerciseService';
 
 // Thunk get data from API
-export const fetchExcerciseData = createAsyncThunk('excercise/fetchExcerciseData', async (_, { rejectWithValue }) => {
+export const fetchExerciseData = createAsyncThunk('exercise/fetchExerciseData', async (_, { rejectWithValue }) => {
     try {
-        const response = await getAllExcercises();
+        const response = await getAllExercises();
         return response;
     } catch (error) {
         return rejectWithValue(error.message);
     }
 });
 
-const excerciseSlice = createSlice({
-    name: 'excercise',
+const exerciseSlice = createSlice({
+    name: 'exercise',
     initialState: {
         selectedRows: {},
-        excerciseData: [],
-        loading: false,
+        exerciseData: [],
+        loading: true, // Default is true so that when there is no data, loading will appear
         // message: '',
     },
     reducers: {
@@ -26,7 +26,7 @@ const excerciseSlice = createSlice({
         },
         selectAllRows: (state, action) => {
             state.selectedRows = action.payload
-                ? state.excerciseData.reduce((acc, row) => {
+                ? state.exerciseData.reduce((acc, row) => {
                       acc[row.id] = true;
                       return acc;
                   }, {})
@@ -34,26 +34,26 @@ const excerciseSlice = createSlice({
         },
         updateRow: (state, action) => {
             const { id, ...changes } = action.payload;
-            state.excerciseData = state.excerciseData.map((currentRow) => {
+            state.exerciseData = state.exerciseData.map((currentRow) => {
                 return currentRow.id === id ? { ...currentRow, ...changes } : currentRow;
             });
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchExcerciseData.pending, (state) => {
+            .addCase(fetchExerciseData.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchExcerciseData.fulfilled, (state, action) => {
+            .addCase(fetchExerciseData.fulfilled, (state, action) => {
                 state.loading = false;
-                state.excerciseData = action.payload;
+                state.exerciseData = action.payload;
             })
-            .addCase(fetchExcerciseData.rejected, (state, action) => {
+            .addCase(fetchExerciseData.rejected, (state, action) => {
                 state.loading = false;
                 // state.message = action.payload.message;
             });
     },
 });
 
-export const { toggleSelectRow, selectAllRows, updateRow } = excerciseSlice.actions;
-export default excerciseSlice.reducer;
+export const { toggleSelectRow, selectAllRows, updateRow } = exerciseSlice.actions;
+export default exerciseSlice.reducer;
