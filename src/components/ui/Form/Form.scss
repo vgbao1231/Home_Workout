@@ -1,19 +1,20 @@
 .field {
     position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     .field-wrapper {
         padding: 4px;
         position: relative;
         flex: 1;
-        font-size: 16px;
         display: flex;
         align-items: center;
         label {
             position: absolute;
-            left: 16px;
+            left: 4%;
             top: 50%;
             transform: translateY(-50%);
             color: #6c757d;
-            font-size: 1.6rem;
             pointer-events: none;
             transition: all 0.2s ease;
         }
@@ -28,13 +29,13 @@
             right: 0;
             bottom: 0;
             border: 1px solid #ccc;
-            border-radius: 10px;
+            border-radius: 6px;
             pointer-events: none;
             transition: border-color 0.2s ease;
         }
         legend {
             font-size: 1.2rem;
-            margin-left: 12px;
+            margin-left: 4%;
             visibility: hidden;
             max-width: 0;
             transition: max-width 0.2s ease;
@@ -43,7 +44,8 @@
             }
         }
     }
-    &.active {
+    &[data-active='true'],
+    &:focus-within {
         svg {
             color: black;
         }

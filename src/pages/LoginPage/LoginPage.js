@@ -1,13 +1,14 @@
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { validators } from '~/utils/validators';
 import { Form, Input } from '~/components';
 import { useDispatch } from 'react-redux';
 import { loginThunk } from '~/store/authSlice';
 import { addToast } from '~/store/toastSlice';
 import './LoginPage.scss';
 import { formatters } from '~/utils/formatters';
+import { isRequired } from '~/utils/validators';
+import axios from 'axios';
 
 function LoginPage() {
     const dispatch = useDispatch();
@@ -15,8 +16,8 @@ function LoginPage() {
     const navigate = useNavigate();
 
     // Handle logic
-    const handleLogin = async ({ username, password }) => {
-        dispatch(loginThunk(username, password)).then((result) => {
+    const handleLogin = async (formData) => {
+        dispatch(loginThunk(formData)).then((result) => {
             if (result.meta.requestStatus === 'fulfilled') {
                 navigate('/');
                 dispatch(addToast(result.payload.message, 'success'));
@@ -31,30 +32,33 @@ function LoginPage() {
             <div className="login-background"></div>
             <div className="login-form">
                 <div className={'login-title'}>Login</div>
-                <Form onSubmit={handleLogin}>
+                <Form
+                    onSubmit={handleLogin}
+                    defaultValues={{
+                        username: 'root',
+                        password: 'rootroot',
+                    }}
+                >
                     <Input
                         name="username"
                         label="Username"
-                        value="gura1231@gmail.com"
                         validators={{
-                            onBlur: [validators.isRequired],
-                            onChange: [validators.isEmail],
+                            isRequired,
                         }}
                         formatters={{
-                            onChange: [formatters.capitalizeWords],
+                            onChange: [formatters.trimWords],
                         }}
                     />
                     <Input
                         name="password"
                         label="Password"
-                        value="123123"
                         type={showPassword ? 'text' : 'password'}
                         iconSupport={{
-                            icon: showPassword ? faEyeSlash : faEye,
+                            icon: showPassword ? <EyeOff /> : <Eye />,
                             handleIconClick: () => setShowPassword(!showPassword),
                         }}
                         validators={{
-                            onBlur: [validators.isRequired],
+                            isRequired,
                         }}
                     />
                     <div className="forgot-password">
@@ -82,6 +86,32 @@ function LoginPage() {
                     </div>
                 </Form>
             </div>
+            <button
+                onClick={() => {
+                    axios
+                        .post(
+                            'https://109f-2001-ee0-5045-9420-4935-6915-9bc3-570.ngrok-free/free',
+                            {
+                                name: 'gura',
+                                size: 12,
+                            },
+                            {
+                                headers: {
+                                    'ngrok-skip-browser-warning': true,
+                                    'Content-Type': 'application/json',
+                                },
+                            },
+                        )
+                        .then((response) => {
+                            console.log(response.data); // Handle the response data here
+                        })
+                        .catch((error) => {
+                            console.error(error); // Handle errors here
+                        });
+                }}
+            >
+                on click
+            </button>
         </div>
     );
 }

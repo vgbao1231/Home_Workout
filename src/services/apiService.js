@@ -2,22 +2,24 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const API_AUTH_PREFIX = process.env.REACT_APP_API_AUTH_PREFIX;
+const API_PRIVATE_AUTH_PREFIX = process.env.REACT_APP_API_PRIVATE_AUTH_PREFIX;
 
 const apiService = axios.create({
     baseURL: API_URL,
-    withCredentials: true, // Đảm bảo rằng cookies được gửi cùng với yêu cầu
 });
 
-// Interceptor for req and res
 apiService.interceptors.request.use(
     (request) => {
-        if (!request.headers['Authorization']) {
-            const accessToken = Cookies.get('accessToken');
-            if (accessToken) {
-                request.headers['Authorization'] = `Bearer ${accessToken}`;
-            }
+        const accessToken = Cookies.get('accessToken');
+        // Chỉ thêm các header cần thiết, không ghi đè toàn bộ headers
+        if (!request.headers) {
+            request.headers = {};
         }
+        request.headers['Content-Type'] = 'application/json';
+        if (!request.headers['Authorization']) {
+            request.headers['Authorization'] = accessToken ? `Bearer ${accessToken}` : 'none';
+        }
+        request.headers['ngrok-skip-browser-warning'] = true;
         return request;
     },
     (error) => {
@@ -30,18 +32,19 @@ apiService.interceptors.response.use(
         return response;
     },
     async (error) => {
-        const { response, request } = error;
-        if (response && response.httpStatusCode === 403 && response.applicationCode === 11003) {
-            const originalRequest = request;
+        const { response } = error;
+        const originalRequest = error.config;
+
+        if (response && response.status === 403 && response.data.body.applicationCode === 11003) {
             if (!originalRequest._retry) {
                 originalRequest._retry = true;
                 try {
                     // Call API refresh token to get new access token
                     const accessToken = Cookies.get('accessToken');
                     const refreshToken = Cookies.get('refreshToken');
-                    const res = await apiService.get(
-                        `${API_AUTH_PREFIX}/refresh-token`,
-                        { accessToken },
+                    const res = await apiService.post(
+                        `${API_PRIVATE_AUTH_PREFIX}/v1/refresh-token`,
+                        { token: accessToken },
                         {
                             headers: {
                                 Authorization: `Bearer ${refreshToken}`,
@@ -49,16 +52,19 @@ apiService.interceptors.response.use(
                         },
                     );
 
-                    if (res.httpStatusCode === 200) {
-                        const newAccessToken = res.data.accessToken;
+                    const newAccessToken = res.data.data.token;
 
-                        // Update access token in cookie and orignal request
-                        Cookies.set('accessToken', newAccessToken, { path: '/' });
-                        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    // Update access token in cookie and orignal request
+                    Cookies.set('accessToken', newAccessToken, {
+                        path: '/',
+                        secure: true,
+                        sameSite: 'Strict',
+                    });
 
-                        // Resend the original request with a new access token
-                        return apiService(originalRequest);
-                    }
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+                    // Resend the original request with a new access token
+                    return apiService(response.config);
                 } catch (err) {
                     console.error('Failed to refresh token', err);
                     // If refresh token is invalid or has error, redirect to login page

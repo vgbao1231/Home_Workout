@@ -3,12 +3,12 @@ import Cookies from 'js-cookie';
 import { login, logout } from '~/services/authService';
 
 // Create thunk to handle async
-export const loginThunk = createAsyncThunk('auth/login', async ({ username, password }, { rejectWithValue }) => {
+export const loginThunk = createAsyncThunk('auth/login', async (formData, { rejectWithValue }) => {
     try {
-        const response = await login(username, password);
+        const response = await login(formData.username, formData.password);
         return response;
     } catch (error) {
-        return rejectWithValue(error.message);
+        return rejectWithValue(error);
     }
 });
 
@@ -16,7 +16,7 @@ export const logoutThunk = createAsyncThunk('auth/logout', async (_, { rejectWit
     try {
         return await logout();
     } catch (error) {
-        return rejectWithValue(error.message);
+        return rejectWithValue(error);
     }
 });
 

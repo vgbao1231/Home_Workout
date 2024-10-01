@@ -2,22 +2,23 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getAllExercises } from '~/services/exerciseService';
 
 // Thunk get data from API
-export const fetchExerciseData = createAsyncThunk('exercise/fetchExerciseData', async (_, { rejectWithValue }) => {
+export const fetchExerciseData = createAsyncThunk('exercise/fetchExerciseData', async (page, { rejectWithValue }) => {
     try {
-        const response = await getAllExercises();
+        const response = await getAllExercises(page);
         return response;
     } catch (error) {
-        return rejectWithValue(error.message);
+        return rejectWithValue(error);
     }
 });
 
 const exerciseSlice = createSlice({
     name: 'exercise',
     initialState: {
+        primaryKey: 'exerciseId',
         selectedRows: {},
-        exerciseData: [],
+        data: [],
+        totalPages: 1,
         loading: true, // Default is true so that when there is no data, loading will appear
-        // message: '',
     },
     reducers: {
         toggleSelectRow: (state, action) => {
@@ -26,16 +27,16 @@ const exerciseSlice = createSlice({
         },
         selectAllRows: (state, action) => {
             state.selectedRows = action.payload
-                ? state.exerciseData.reduce((acc, row) => {
-                      acc[row.id] = true;
+                ? state.data.reduce((acc, row) => {
+                      acc[row.exerciseId] = true;
                       return acc;
                   }, {})
                 : {};
         },
         updateRow: (state, action) => {
-            const { id, ...changes } = action.payload;
-            state.exerciseData = state.exerciseData.map((currentRow) => {
-                return currentRow.id === id ? { ...currentRow, ...changes } : currentRow;
+            const { exerciseId, ...changes } = action.payload;
+            state.data = state.data.map((currentRow) => {
+                return currentRow.exerciseId === exerciseId ? { ...currentRow, ...changes } : currentRow;
             });
         },
     },
@@ -45,12 +46,14 @@ const exerciseSlice = createSlice({
                 state.loading = true;
             })
             .addCase(fetchExerciseData.fulfilled, (state, action) => {
+                // state.loading = false;
+                // state.data = action.payload.data;
+                // state.totalPages = action.payload.totalPages;
                 state.loading = false;
-                state.exerciseData = action.payload;
+                state.data = action.payload;
             })
-            .addCase(fetchExerciseData.rejected, (state, action) => {
+            .addCase(fetchExerciseData.rejected, (state) => {
                 state.loading = false;
-                // state.message = action.payload.message;
             });
     },
 });

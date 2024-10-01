@@ -1,87 +1,82 @@
-import { useState, memo, useRef } from 'react';
+import { useState, memo, useRef, useEffect } from 'react';
 import './MultiSelect.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { useFormContext } from 'react-hook-form';
+import { X } from 'lucide-react';
 
-function MultiSelect({
-    validators = {},
-    className = '',
-    setFieldValue,
-    setFieldError,
-    errorMessage,
-    options,
-    value = [],
-    ...props
-}) {
-    const [isActive, setIsActive] = useState(value.length);
+function MultiSelect({ name, validators, className = '', options, placeholder, ...props }) {
+    const {
+        register,
+        unregister,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useFormContext(); // Lấy register và setValue từ context
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const multiSelectRef = useRef();
-    const inputRef = useRef();
+    const inputRef = useRef(null);
+
+    const fieldValue = watch(name) || []; // Watch field value in realtime
+    useEffect(() => {
+        register(name, {
+            validate: {
+                ...validators,
+            },
+        });
+        fieldValue.length === 0 && setValue(name, []);
+    }, [register, unregister, name, validators, setValue, fieldValue.length]);
 
     const toggleDropdown = () => {
         if (!props.disabled) {
             inputRef.current && inputRef.current.focus();
-            setIsActive(true);
             setIsOpen(true);
         }
     };
 
-    const handleSelect = (optionValue) => {
-        setFieldError(props.name, '');
-        if (!value.includes(optionValue)) {
+    const handleSelect = (value) => {
+        if (!fieldValue.includes(value)) {
             setInputValue('');
             inputRef.current && inputRef.current.focus();
-            setFieldValue(props.name, [...value, optionValue]);
+            const updatedValues = [...fieldValue, value];
+            setValue(name, updatedValues); // Cập nhật giá trị vào form ***
         }
     };
 
-    const handleRemove = (e, option) => {
+    const handleRemove = (e, value) => {
         e.stopPropagation();
-        console.log('handleRemove');
-        const newValue = value.filter((value) => value !== option);
-        setFieldValue(props.name, newValue);
-        setIsActive(isOpen || newValue.length);
+        const updatedValues = fieldValue.filter((item) => item !== value);
+        setValue(name, updatedValues);
         setInputValue('');
     };
 
     const handleBackspace = (e) => {
         if (e.key === 'Backspace' && !inputValue) {
-            setFieldValue(props.name, value.slice(0, -1));
+            const updatedValues = fieldValue.slice(0, -1);
+            setValue(name, updatedValues);
         }
     };
 
     const handleClickOutside = () => {
         setIsOpen(false);
-        setIsActive(value.length !== 0);
         setInputValue('');
-        Object.values(validators).forEach((eventValidators) => {
-            eventValidators.forEach((validator) => {
-                const error = validator(value.length);
-                error && setFieldError([props.name], error);
-            });
-        });
     };
 
     return (
         <>
             <div
-                ref={multiSelectRef}
-                className={`${className} field multi-select${isActive ? ' active' : ''}${isOpen ? ' open' : ''}${
-                    errorMessage ? ' error' : ''
-                }`}
+                className={`${className} field multi-select${isOpen ? ' open' : ''}${errors[name] ? ' error' : ''}`}
+                data-active={!!fieldValue.length || isOpen}
+                {...props}
             >
                 <div className={`field-wrapper`} onClick={toggleDropdown}>
                     <div className="selected-values">
-                        {value.map((value) => (
-                            <div key={value} className="selected-value center">
+                        {!fieldValue.length && <span className="placeholder">{placeholder}</span>}
+                        {fieldValue.map((value, index) => (
+                            <div key={index} className="selected-value center">
                                 <span>{options.find((option) => option.value === value)?.text}</span>
-                                {!props.disabled && (
-                                    <FontAwesomeIcon onClick={(e) => handleRemove(e, value)} icon={faX} />
-                                )}
+                                {isOpen && <X onClick={(e) => handleRemove(e, value)} />}
                             </div>
                         ))}
-                        {!props.disabled && (
+                        {!props.disabled && isOpen && (
                             <div className="input-wrapper">
                                 <input
                                     ref={inputRef}
@@ -89,6 +84,7 @@ function MultiSelect({
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleBackspace}
                                     disabled={props.disabled}
+                                    hidden={!isOpen}
                                 />
                             </div>
                         )}
@@ -107,22 +103,24 @@ function MultiSelect({
                 {isOpen && (
                     <div className="options-container">
                         {options.map(
-                            (option) =>
+                            (option, index) =>
                                 option.text.toLowerCase().includes(inputValue.toLowerCase()) && (
-                                    <div
-                                        key={option.value}
-                                        className="option"
-                                        onClick={() => handleSelect(option.value)}
-                                    >
+                                    <div key={index} className="option" onClick={() => handleSelect(option.value)}>
                                         <span>{option.text}</span>
                                     </div>
                                 ),
                         )}
                     </div>
                 )}
-                {errorMessage && <div className="error-msg">{errorMessage}</div>}
+                {errors[name] && <div className="error-msg">{errors[name].message}</div>}
+                {isOpen && (
+                    <div
+                        className="multi-select-overlay"
+                        onClick={handleClickOutside}
+                        onContextMenu={(e) => e.stopPropagation()}
+                    ></div>
+                )}
             </div>
-            {isOpen && <div className="multi-select-overlay" onClick={handleClickOutside}></div>}
         </>
     );
 }

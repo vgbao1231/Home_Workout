@@ -1,16 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiService from '~/services/apiService';
+import { getAllMuscles } from '~/services/exerciseService';
 
-const API_ADMIN_PREFIX = process.env.REACT_APP_API_ADMIN_PREFIX;
 // Thunk get data from API
 export const fetchMuscleData = createAsyncThunk('muscle/fetchMuscleData', async (_, { rejectWithValue }) => {
     try {
-        const response = await apiService.get(`${API_ADMIN_PREFIX}/get-all-muscles.json`);
-        const muscleData = response.data.data;
-        return muscleData;
+        const response = await getAllMuscles();
+        return response;
     } catch (error) {
-        console.error(error);
-        return rejectWithValue(error.response ? error.response.data : error);
+        return rejectWithValue(error);
     }
 });
 

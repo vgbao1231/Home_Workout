@@ -1,47 +1,59 @@
-import { useState, memo } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { cloneElement, memo } from 'react';
 import './Input.scss';
+import { useFormContext } from 'react-hook-form';
 
-function Input({
-    validators = [],
-    formatters = [],
-    className = '',
-    setFieldValue,
-    setFieldError,
-    errorMessage,
-    iconSupport,
-    ...props
-}) {
-    const [isActive, setIsActive] = useState(props.value);
+function Input({ name, id, className = '', validators = {}, formatters = {}, iconSupport, ...props }) {
+    const {
+        register,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useFormContext();
 
-    let rootEvents = {
-        onChange: (value) => {
-            setFieldValue([props.name], value);
-        },
-        onBlur: (value) => setIsActive(value !== ''),
-        onFocus: () => setIsActive(true),
-    };
+    const fieldValue = watch(name) || ''; // Watch field value in realtime
 
-    let eventNames = new Set([...Object.keys(rootEvents), ...Object.keys(validators), ...Object.keys(formatters)]);
-    let events = [...eventNames].reduce((acc, eventName) => {
-        acc[eventName] = (e) => {
-            validators[eventName] &&
-                validators[eventName].forEach((validator) => {
-                    setFieldError([props.name], '');
-                    validator(e.target.value) && setFieldError([props.name], validator(e.target.value));
-                });
-            formatters[eventName] && formatters[eventName].forEach((formatter) => formatter(e.target.value));
-            rootEvents[eventName] && rootEvents[eventName](e.target.value);
-        };
+    // Create format event listener
+    const formatEvents = Object.keys(formatters).reduce((acc, eventName) => {
+        acc[eventName] = (e) => handleFormatEvent(eventName, e);
         return acc;
     }, {});
 
-    const { icon, handleIconClick } = iconSupport || {};
+    // Handle format value by event
+    const handleFormatEvent = (eventType, e) => {
+        let currentValue = e;
+        if (e.target) {
+            // Format value if there are formatters for eventType
+            currentValue = e.target.value;
+            if (formatters && formatters[eventType]) {
+                currentValue = formatters[eventType].reduce((val, formatter) => formatter(val), e.target.value);
+            }
+            setValue(name, currentValue);
+        }
+    };
 
+    const { icon, handleIconClick } = iconSupport || {};
     return (
-        <div className={`${className} field input${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
+        <div
+            className={`${className ? className : ''} field input${errors[name] ? ' error' : ''}`}
+            data-active={!!fieldValue}
+            {...props}
+        >
             <div className="field-wrapper">
-                {props.disabled ? <span>{props.value}</span> : <input {...props} {...events} />}
+                {props.disabled ? (
+                    <span>{fieldValue}</span>
+                ) : (
+                    <input
+                        {...register(name, {
+                            validate: {
+                                ...validators,
+                            },
+                            ...formatEvents, // format by event
+                        })}
+                        placeholder=""
+                        id={id}
+                        {...props}
+                    />
+                )}
                 {props.label && (
                     <>
                         <label htmlFor={props.id}>{props.label}</label>
@@ -52,9 +64,9 @@ function Input({
                         </fieldset>
                     </>
                 )}
-                {icon && <FontAwesomeIcon icon={icon} onClick={handleIconClick} />}
+                {icon && cloneElement(icon, { onClick: handleIconClick })}
             </div>
-            {errorMessage && <div className="error-msg">{errorMessage}</div>}
+            {errors[name] && <div className="error-msg">{errors[name].message}</div>}
         </div>
     );
 }

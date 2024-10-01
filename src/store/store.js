@@ -4,7 +4,6 @@ import toastSlice from './toastSlice';
 import exerciseSlice from './exerciseSlice';
 import levelSlice from './levelSlice';
 import muscleSlice from './muscleSlice';
-import tableSlice from './tableSlice';
 
 const store = configureStore({
     reducer: {
@@ -13,7 +12,6 @@ const store = configureStore({
         exercise: exerciseSlice,
         level: levelSlice,
         muscle: muscleSlice,
-        table: tableSlice,
     },
 });
 

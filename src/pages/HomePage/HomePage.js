@@ -2,35 +2,41 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ExerciseTable } from '~/components';
-import { selectIsLoading } from '~/selectors/isLoadingSelector';
+import { isAnySliceLoading } from '~/selectors/isAnySliceLoading';
 import { logoutThunk } from '~/store/authSlice';
 import { fetchExerciseData } from '~/store/exerciseSlice';
 import { fetchLevelData } from '~/store/levelSlice';
 import { fetchMuscleData } from '~/store/muscleSlice';
 import { addToast } from '~/store/toastSlice';
+import './HomePage.scss';
 
 const HomePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const isLoading = useSelector(selectIsLoading);
+    const isLoading = useSelector(isAnySliceLoading);
 
     console.log('home');
 
     // Handle log out
     const handleLogout = async () => {
-        try {
-            const result = await dispatch(logoutThunk()).unwrap();
-            navigate('/login');
-            dispatch(addToast(result.message, 'success'));
-        } catch (error) {
-            dispatch(addToast(error, 'error'));
-        }
+        dispatch(logoutThunk()).then((result) => {
+            if (result.meta.requestStatus === 'fulfilled') {
+                navigate('/login');
+                dispatch(addToast(result.payload.message, 'success'));
+            } else {
+                dispatch(addToast(result.payload.message, 'error'));
+            }
+        });
     };
 
     useEffect(() => {
-        dispatch(fetchMuscleData());
-        dispatch(fetchLevelData());
-        dispatch(fetchExerciseData());
+        const fetchData = async () => {
+            await dispatch(fetchMuscleData()).unwrap();
+            await dispatch(fetchLevelData()).unwrap();
+            await dispatch(fetchExerciseData()).unwrap();
+        };
+
+        fetchData();
     }, [dispatch]);
 
     if (isLoading) {

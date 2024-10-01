@@ -47,7 +47,12 @@
             }
             .field {
                 .field-wrapper {
+                    font-size: 1.6rem;
                     padding: 12px;
+                    height: 42px;
+                    input {
+                        font-size: 1.6rem;
+                    }
                 }
                 fieldset {
                     border: 2px solid #aaa;

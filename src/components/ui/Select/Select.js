@@ -1,51 +1,60 @@
-import { useState, memo } from 'react';
+import { memo } from 'react';
 import './Select.scss';
+import { useFormContext } from 'react-hook-form';
 
-function Select({
-    validators = [],
-    formatters = [],
-    className = '',
-    setFieldValue,
-    setFieldError,
-    errorMessage,
-    iconSupport,
-    options,
-    ...props
-}) {
-    const [isActive, setIsActive] = useState(props.value);
+function Select({ name, className = '', validators = {}, formatters = {}, options, ...props }) {
+    const {
+        register,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useFormContext();
 
-    let rootEvents = {
-        onChange: (value) => {
-            setFieldValue([props.name], value);
-        },
-        onBlur: (value) => setIsActive(value !== ''),
-        onFocus: () => setIsActive(true),
-    };
+    const fieldValue = watch(name) || ''; // Watch field value in realtime
 
-    let eventNames = new Set([...Object.keys(rootEvents), ...Object.keys(validators), ...Object.keys(formatters)]);
-    let events = [...eventNames].reduce((acc, eventName) => {
-        acc[eventName] = (e) => {
-            validators[eventName] &&
-                validators[eventName].forEach((validator) => {
-                    setFieldError([props.name], '');
-                    validator(e.target.value) && setFieldError([props.name], validator(e.target.value));
-                });
-            formatters[eventName] && formatters[eventName].forEach((formatter) => formatter(e.target.value));
-            rootEvents[eventName] && rootEvents[eventName](e.target.value);
-        };
+    // Create format event listener
+    const formatEvents = Object.keys(formatters).reduce((acc, eventName) => {
+        acc[eventName] = (e) => handleFormatEvent(eventName, e);
         return acc;
     }, {});
 
+    // Handle format value by event
+    const handleFormatEvent = (eventType, e) => {
+        let currentValue = e;
+        if (e.target) {
+            // Format value if there are formatters for eventType
+            currentValue = e.target.value;
+            if (formatters && formatters[eventType]) {
+                currentValue = formatters[eventType].reduce((val, formatter) => formatter(val), e.target.value);
+            }
+            setValue(name, currentValue);
+        }
+    };
+
     return (
-        <div className={`${className} field select${isActive ? ' active' : ''}${errorMessage ? ' error' : ''}`}>
+        <div
+            className={`${className} field select${errors[name] ? ' error' : ''}`}
+            data-active={!!fieldValue}
+            {...props}
+        >
             <div className="field-wrapper">
                 {props.disabled ? (
-                    <span>{options.find((option) => option.value == props.value)?.text}</span>
+                    <span>{options.find((option) => String(option.value) === String(fieldValue))?.text}</span>
                 ) : (
-                    <select {...props} {...events}>
-                        <option hidden></option>
-                        {options.map((option) => (
-                            <option key={option.value} value={option.value}>
+                    <select
+                        {...register(name, {
+                            validate: {
+                                ...validators,
+                            },
+                            ...formatEvents, // format by event
+                        })}
+                        {...props}
+                    >
+                        <option value="" hidden>
+                            {props.placeholder}
+                        </option>
+                        {options.map((option, index) => (
+                            <option key={index} value={option.value}>
                                 {option.text}
                             </option>
                         ))}
@@ -62,7 +71,7 @@ function Select({
                     </>
                 )}
             </div>
-            {errorMessage && <div className="error-msg">{errorMessage}</div>}
+            {errors[name] && <div className="error-msg">{errors[name].message}</div>}
         </div>
     );
 }
