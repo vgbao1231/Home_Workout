@@ -2,7 +2,7 @@ import { faCircleCheck, faCircleExclamation, faXmark } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect } from 'react';
 import './Toast.scss';
-import { removeToast } from '~/store/toastSlice';
+import { removeToast } from '~/redux/slices/toastSlice';
 import { useDispatch } from 'react-redux';
 
 function Toast({ toast }) {
@@ -25,7 +25,7 @@ function Toast({ toast }) {
                 )}
             </div>
             <div className="toast__body">
-                <h3 className="toast__title">{toast.type === 'success' ? 'Thành công' : 'Thất bại'}</h3>
+                <h3 className="toast__title">{toast.type === 'success' ? 'Success' : 'Error'}</h3>
                 <p className="toast__message">{toast.message}</p>
             </div>
             <div className="toast__close" onClick={() => dispatch(removeToast(toast.id))}>

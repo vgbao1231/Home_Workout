@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image, Pencil, Trash2, Upload } from 'lucide-react';
 import Input from '../ui/Input/Input';
@@ -6,8 +6,19 @@ import MultiSelect from '../ui/MultiSelect/MultiSelect';
 import Select from '../ui/Select/Select';
 import Table from '../ui/Table/Table';
 import './ExerciseTable.scss';
-import { toggleSelectRow, updateRow } from '~/store/exerciseSlice';
+import { toggleSelectRow } from '~/redux/slices/exerciseSlice';
 import { isRequired } from '~/utils/validators';
+import {
+    createExerciseThunk,
+    deleteExerciseThunk,
+    fetchExerciseThunk,
+    updateExerciseThunk,
+} from '~/redux/thunks/exerciseThunk';
+import ContextMenu from '../ui/Table/ContextMenu/ContextMenu';
+import Pagination from '../ui/Table/Pagination/Pagination';
+import ShowImage from '../ui/Dialog/DialogContent/ShowImage/ShowImage';
+import Dialog from '../ui/Dialog/Dialog';
+import { addToast } from '~/redux/slices/toastSlice';
 
 function ExerciseTable() {
     console.log('exercise table');
@@ -18,23 +29,42 @@ function ExerciseTable() {
     const muscleData = useSelector((state) => state.muscle.muscleData);
     const [contextMenu, setContextMenu] = useState({});
     const [updatingRowId, setUpdatingRowId] = useState(null);
+    const [sortData, setSortData] = useState(null);
+    const [filterData, setFilterData] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
-    // Exercise columns props (or cell props in table body)
-    const muscleOptions = useMemo(() => muscleData.map((option) => ({ value: option, text: option })), [muscleData]);
-    const levelOptions = useMemo(() => levelData.map((option) => ({ value: option, text: option })), [levelData]);
+    const dataToSend = useCallback(
+        (formData) => {
+            const { muscleList, level, imageUrl, ...data } = formData; // Destructure all props
+            if (muscleList) {
+                data.muscleIds = muscleList.map((muscle) => muscleData.find((m) => m.raw === muscle)?.value);
+            }
+            if (level) {
+                data.level = levelData.find((l) => l.raw === level)?.value;
+            }
+            return data;
+        },
+        [levelData, muscleData],
+    );
 
     const exerciseColumns = useMemo(
         () => [
             // { header: '', field: <Input type="checkbox" name="exerciseId" /> },
-            { header: 'Name', field: <Input name="name" /> },
-            { header: 'Muscle List', field: <MultiSelect name="muscleList" options={muscleOptions} /> },
-            { header: 'Level', field: <Select name="level" options={levelOptions} /> },
-            { header: 'Basic Reps', field: <Input name="basicReps" /> },
+            { header: 'Name', name: 'name', field: <Input name="name" /> },
+            {
+                header: 'Muscle List',
+                name: 'muscleList',
+                field: <MultiSelect name="muscleList" options={muscleData} />,
+            },
+            { header: 'Level', name: 'levelEnum', field: <Select name="levelEnum" options={levelData} /> },
+            { header: 'Basic Reps', name: 'basicReps', field: <Input name="basicReps" type="number" /> },
         ],
-        [muscleOptions, levelOptions],
+        [muscleData, levelData],
     );
 
-    const tableRowProps = (rowData) => {
+    // Properties of table row
+    const exerciseRowProps = (rowData) => {
         const isUpdating = rowData.exerciseId === updatingRowId;
 
         //Handle click row
@@ -54,22 +84,28 @@ function ExerciseTable() {
                     {
                         text: 'Delete Exercise',
                         icon: <Trash2 />,
-                        action: () => console.log('Delete: ' + rowData.exerciseId),
+                        action: () => {
+                            window.confirm('Delete ?') && dispatch(deleteExerciseThunk(rowData.exerciseId));
+                        },
                     },
                     {
                         text: 'Show Exercise Img',
                         icon: <Image />,
-                        action: () => console.log('Show Img: ' + rowData.exerciseId),
+                        action: () =>
+                            setDialogProps({
+                                isOpen: true,
+                                title: 'Exercise Image',
+                                body: <ShowImage id={rowData.exerciseId} imageUrl={rowData.imageUrl} />,
+                            }),
                     },
                 ],
             });
         };
 
         // Handle update row data
-        const handleSubmit = (formData) => {
+        const handleUpdate = (formData) => {
             if (formData) {
-                console.log('row submit (call api)');
-                dispatch(updateRow(formData));
+                dispatch(updateExerciseThunk(dataToSend(formData)));
             }
             setUpdatingRowId();
         };
@@ -81,53 +117,106 @@ function ExerciseTable() {
             isUpdating,
             onClick: handleClick,
             onContextMenu: handleContextMenu,
-            onSubmit: handleSubmit,
+            onSubmit: handleUpdate,
             confirm: true, // Ask confirm before submit
         };
     };
 
     // Properties to create add row form
-    const addRowProps = useMemo(() => {
+    const addExerciseRowProps = useMemo(() => {
         return {
-            onSubmit: (addRowData) => {
-                const { img, ...rowData } = addRowData;
-                const formData = new FormData();
-                if (img && img.length > 0) {
-                    const file = img[0]; // Lấy file đầu tiên từ FileList
-                    formData.append('img', file); // Append file
-                    formData.append('fileName', file.name); // Append tên file
-                    formData.append('fileSize', file.size); // Append kích thước file
-                }
-                console.log(rowData);
+            onSubmit: (formData) => {
+                dispatch(createExerciseThunk(dataToSend(formData)));
             },
             fields: [
                 { field: <Input placeholder="Name" name="name" validators={{ isRequired }} /> },
-                { field: <MultiSelect placeholder="Muscle List" name="muscleList" options={muscleOptions} /> },
-                { field: <Select placeholder="Select Level" name="level" options={levelOptions} /> },
+                {
+                    field: (
+                        <MultiSelect
+                            placeholder="Muscle List"
+                            name="muscleList"
+                            options={muscleData}
+                            validators={{ isRequired }}
+                        />
+                    ),
+                },
+                { field: <Select placeholder="Select Level" name="level" options={levelData} /> },
                 { field: <Input placeholder="Basic Reps" name="basicReps" /> },
                 {
                     field: (
                         <label htmlFor="exercise-img" style={{ display: 'flex' }}>
                             <Upload className="upload-icon" />
-                            <Input id="exercise-img" name="img" type="file" />
+                            <Input id="exercise-img" name="img" type="file" validators={{ isRequired }} />
                         </label>
                     ),
                 },
             ],
         };
-    }, [muscleOptions, levelOptions]);
-    return (
+    }, [muscleData, levelData, dispatch, dataToSend]);
+
+    //Handle filter data
+    const handleFilter = useCallback(
+        (filterData) => {
+            filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
+
+            setFilterData(dataToSend(filterData));
+        },
+        [dataToSend],
+    );
+
+    //Handle sort data
+    const handleSort = useCallback((sortData) => setSortData(sortData), []);
+
+    //Handle close dialog
+    const handleCloseDialog = () => {
+        setDialogProps({ isOpen: false, title: '', content: null }); // Reset content when closing
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { sortedField, sortedMode } = sortData || {};
+
+                const objToGetData = {
+                    page: currentPage,
+                    filterFields: filterData,
+                    sortedField: sortedField,
+                    sortedMode: sortedMode,
+                };
+                console.log(objToGetData);
+
+                await dispatch(fetchExerciseThunk(objToGetData)).unwrap();
+            } catch (error) {
+                dispatch(addToast(error, 'error'));
+            }
+        };
+
+        fetchData();
+    }, [dispatch, sortData, filterData, currentPage]);
+
+    return exerciseState.loading ? (
+        <div>Loading Exercise Data...</div>
+    ) : (
         <>
             <Table
                 className="exercise-table"
                 title="Exercise"
                 columns={exerciseColumns}
                 state={exerciseState}
-                contextMenu={contextMenu}
-                setContextMenu={setContextMenu}
-                tableRowProps={tableRowProps}
-                addRowProps={addRowProps}
+                rowProps={exerciseRowProps}
+                addRowProps={addExerciseRowProps}
+                onFilter={handleFilter}
+                onSort={handleSort}
+                filterData={filterData}
+                sortData={sortData}
             />
+            <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />
+            <Pagination
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={exerciseState.totalPages}
+            />
+            <Dialog onClose={handleCloseDialog} {...dialogProps} />
         </>
     );
 }

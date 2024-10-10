@@ -1,58 +1,78 @@
 import { cloneElement, memo } from 'react';
 import './Input.scss';
-import { useFormContext } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 
-function Input({ name, id, className = '', validators = {}, formatters = {}, iconSupport, ...props }) {
+function Input({ name, className = '', validators = {}, formatters = {}, iconSupport, defaultValue = '', ...rest }) {
+    const { getValues, control } = useFormContext();
     const {
-        register,
-        setValue,
-        watch,
-        formState: { errors },
-    } = useFormContext();
+        field: { value, ...field },
+        fieldState: { error = {} },
+    } = useController({
+        name,
+        control,
+        rules: { validate: validators },
+        defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
+    });
 
-    const fieldValue = watch(name) || ''; // Watch field value in realtime
+    console.log(error.message ? 'Render: error' : 'Render: input');
 
-    // Create format event listener
-    const formatEvents = Object.keys(formatters).reduce((acc, eventName) => {
-        acc[eventName] = (e) => handleFormatEvent(eventName, e);
-        return acc;
-    }, {});
+    // Filter out props and events
+    const { events, props } = Object.keys(rest).reduce(
+        (acc, key) => {
+            if (typeof rest[key] === 'function' && key.startsWith('on')) {
+                acc.events[key] = rest[key];
+            } else {
+                acc.props[key] = rest[key];
+            }
+            return acc;
+        },
+        { events: {}, props: {} },
+    );
+
+    // Include 'onChange', 'onBlur' from field (RHF)
+    const eventNames = [...new Set([...Object.keys(formatters), ...Object.keys(events), 'onChange', 'onBlur'])];
+    const eventHandlers = Object.fromEntries(
+        eventNames.map((eventName) => [eventName, (e) => handleEvent(eventName, e)]),
+    );
 
     // Handle format value by event
-    const handleFormatEvent = (eventType, e) => {
-        let currentValue = e;
-        if (e.target) {
-            // Format value if there are formatters for eventType
-            currentValue = e.target.value;
-            if (formatters && formatters[eventType]) {
-                currentValue = formatters[eventType].reduce((val, formatter) => formatter(val), e.target.value);
+    const handleEvent = (eventName, e) => {
+        // Check if it is an input type file
+        if (props.type === 'file') {
+            field.onChange(e.target.files);
+        } else {
+            if (formatters[eventName]) {
+                const currentValue = formatters[eventName].reduce((acc, formatter) => formatter(acc), e.target.value);
+                field.onChange(currentValue);
+            } else if (field[eventName]) {
+                field[eventName](e.target.value);
             }
-            setValue(name, currentValue);
+        }
+        if (events[eventName]) {
+            events[eventName](e);
         }
     };
 
     const { icon, handleIconClick } = iconSupport || {};
     return (
         <div
-            className={`${className ? className : ''} field input${errors[name] ? ' error' : ''}`}
-            data-active={!!fieldValue}
-            {...props}
+            className={`${className ? className : ''} field input${error.message ? ' error' : ''}`}
+            data-active={!!value}
         >
             <div className="field-wrapper">
                 {props.disabled ? (
-                    <span>{fieldValue}</span>
-                ) : (
+                    <span>{value}</span>
+                ) : props.type !== 'file' ? (
+                    // Add value if type is not file
                     <input
-                        {...register(name, {
-                            validate: {
-                                ...validators,
-                            },
-                            ...formatEvents, // format by event
-                        })}
-                        placeholder=""
-                        id={id}
+                        value={value}
                         {...props}
+                        {...field}
+                        {...eventHandlers}
+                        checked={props.type === 'radio' && props.value === value}
                     />
+                ) : (
+                    <input {...props} {...field} {...eventHandlers} />
                 )}
                 {props.label && (
                     <>
@@ -66,7 +86,7 @@ function Input({ name, id, className = '', validators = {}, formatters = {}, ico
                 )}
                 {icon && cloneElement(icon, { onClick: handleIconClick })}
             </div>
-            {errors[name] && <div className="error-msg">{errors[name].message}</div>}
+            {error.message && <div className="error-msg">{error.message}</div>}
         </div>
     );
 }

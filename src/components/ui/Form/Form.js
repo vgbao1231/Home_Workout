@@ -1,29 +1,33 @@
-import { forwardRef, memo } from 'react';
+import { forwardRef, memo, useCallback } from 'react';
 import './Form.scss';
 import { FormProvider, useForm } from 'react-hook-form';
 
 function Form({ children, className = '', defaultValues = {}, onSubmit, confirm, ...props }, ref) {
-    // console.log('form');
+    console.log('form');
     const methods = useForm({
         defaultValues, // Default values for all fields
+        mode: 'all', // Validate on change,blur and submit
     });
 
-    const handleSubmit = (data) => {
-        const isChanged = JSON.stringify(data) !== JSON.stringify(defaultValues);
-
-        if (!confirm) {
-            onSubmit(data);
-            return;
-        }
-        if (isChanged) {
-            if (window.confirm('Bạn có chắc chắn muốn submit không?')) {
+    const handleSubmit = useCallback(
+        (data) => {
+            const isChanged = JSON.stringify(data) !== JSON.stringify(defaultValues);
+            // If don't need confirmation then just submit it
+            if (!confirm) {
                 onSubmit(data);
-            } else {
-                methods.reset(defaultValues);
+                return;
             }
-        }
-        onSubmit();
-    };
+            // If need confirmation, check if there are any changes. If yes, submit data else reset the data
+            if (isChanged) {
+                if (window.confirm('Bạn có chắc chắn muốn submit không?')) {
+                    onSubmit(data);
+                } else {
+                    methods.reset(defaultValues);
+                }
+            }
+        },
+        [confirm, defaultValues, methods, onSubmit],
+    );
 
     return (
         <FormProvider {...methods}>

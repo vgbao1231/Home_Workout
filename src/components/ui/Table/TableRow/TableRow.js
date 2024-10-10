@@ -1,5 +1,5 @@
 import { Send } from 'lucide-react';
-import { cloneElement, memo, useRef } from 'react';
+import { cloneElement, memo, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
 function TableRow({ columns, rowData, isSelected, isUpdating, ...props }) {
@@ -7,13 +7,27 @@ function TableRow({ columns, rowData, isSelected, isUpdating, ...props }) {
 
     const tableRowRef = useRef();
 
+    useEffect(() => {
+        if (isUpdating) {
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter' || e.key === 'Escape') {
+                    tableRowRef.current.requestSubmit();
+                }
+            };
+            window.addEventListener('keydown', handleKeyDown);
+
+            // Cleanup when component unmount or isAddingRow is false
+            return () => window.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [isUpdating]);
+
     return (
         <>
             <Form
                 ref={isUpdating ? tableRowRef : null}
                 className={`table-row${isUpdating ? ' active' : ''}`}
-                {...props}
                 defaultValues={rowData}
+                {...props}
             >
                 <div className="table-cell">
                     {isUpdating ? (

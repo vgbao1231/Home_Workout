@@ -2,17 +2,23 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ExerciseTable } from '~/components';
-import { isAnySliceLoading } from '~/selectors/isAnySliceLoading';
-import { logoutThunk } from '~/store/authSlice';
-import { fetchExerciseData } from '~/store/exerciseSlice';
-import { fetchLevelData } from '~/store/levelSlice';
-import { fetchMuscleData } from '~/store/muscleSlice';
-import { addToast } from '~/store/toastSlice';
+import { addToast } from '~/redux/slices/toastSlice';
 import './HomePage.scss';
+import { logoutThunk } from '~/redux/thunks/authThunk';
+import { fetchLevelThunk } from '~/redux/thunks/levelThunk';
+import { fetchMuscleThunk } from '~/redux/thunks/muscleThunk';
+import { createSelector } from '@reduxjs/toolkit';
 
 const HomePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const isAnySliceLoading = createSelector(
+        (state) => state.level.loading,
+        (state) => state.muscle.loading,
+        (levelLoading, muscleLoading) => {
+            return levelLoading || muscleLoading;
+        },
+    );
     const isLoading = useSelector(isAnySliceLoading);
 
     console.log('home');
@@ -31,9 +37,12 @@ const HomePage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await dispatch(fetchMuscleData()).unwrap();
-            await dispatch(fetchLevelData()).unwrap();
-            await dispatch(fetchExerciseData()).unwrap();
+            try {
+                await dispatch(fetchMuscleThunk()).unwrap();
+                await dispatch(fetchLevelThunk()).unwrap();
+            } catch (error) {
+                dispatch(addToast(error, 'error'));
+            }
         };
 
         fetchData();

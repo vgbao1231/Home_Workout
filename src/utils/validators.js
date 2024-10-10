@@ -1,5 +1,11 @@
-export const isRequired = (value) =>
-    (Array.isArray(value) ? value.length : value) ? undefined : 'Vui lòng không bỏ trống';
+export const isRequired = (value) => {
+    if (typeof value === 'boolean') return undefined;
+    if ((Array.isArray(value) || value instanceof FileList) && value.length > 0) return undefined;
+    if (typeof value === 'string' && value.trim().length > 0) return undefined;
+    if (value instanceof Date && !isNaN(value.getTime())) return undefined;
+    if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) return undefined;
+    return 'Vui lòng không bỏ trống';
+};
 
 export const isAlphabetic = (value) => (!/\d/.test(value) ? undefined : 'Vui lòng chỉ nhập chữ cái');
 

@@ -1,24 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { loginThunk, logoutThunk } from '../thunks/authThunk';
 import Cookies from 'js-cookie';
-import { login, logout } from '~/services/authService';
-
-// Create thunk to handle async
-export const loginThunk = createAsyncThunk('auth/login', async (formData, { rejectWithValue }) => {
-    try {
-        const response = await login(formData.username, formData.password);
-        return response;
-    } catch (error) {
-        return rejectWithValue(error);
-    }
-});
-
-export const logoutThunk = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
-    try {
-        return await logout();
-    } catch (error) {
-        return rejectWithValue(error);
-    }
-});
 
 const authSlice = createSlice({
     name: 'auth',
@@ -29,6 +11,7 @@ const authSlice = createSlice({
     },
     reducers: {},
     extraReducers: (builder) => {
+        // Login
         builder
             .addCase(loginThunk.pending, (state) => {
                 state.loading = true;
@@ -36,19 +19,19 @@ const authSlice = createSlice({
             .addCase(loginThunk.fulfilled, (state, action) => {
                 state.isAuthenticated = true;
                 state.loading = false;
-                state.message = action.payload.message;
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
-            })
+            });
+        // Logout
+        builder
             .addCase(logoutThunk.pending, (state) => {
                 state.loading = true;
             })
             .addCase(logoutThunk.fulfilled, (state, action) => {
                 state.isAuthenticated = false;
                 state.loading = false;
-                state.message = action.payload.message;
             })
             .addCase(logoutThunk.rejected, (state, action) => {
                 state.isAuthenticated = false;

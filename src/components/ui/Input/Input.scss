@@ -1,17 +1,22 @@
 .input {
     input {
         padding: 0 4px;
-        width: 100%;
         background: none;
         border: none;
         outline: none;
-        flex-grow: 1;
+        &:not([type='radio']) {
+            width: 100%;
+        }
         &::placeholder {
             transition: opacity 0.2s ease;
         }
     }
     input[type='date'] {
+        cursor: pointer;
         color: transparent;
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
     }
     input[type='date']:not(:focus)::-webkit-calendar-picker-indicator {
         filter: invert(50%);
@@ -32,6 +37,16 @@
         }
         input[type='date'] {
             color: black;
+        }
+    }
+    &:has(input[type='radio']) {
+        label {
+            position: unset;
+            transform: none;
+            margin-left: 8px;
+        }
+        fieldset {
+            display: none;
         }
     }
 }

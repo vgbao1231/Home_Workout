@@ -1,24 +1,21 @@
 import './Table.scss';
-import { selectAllRows } from '~/store/exerciseSlice';
+import { selectAllRows } from '~/redux/slices/exerciseSlice';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import ContextMenu from './ContextMenu/ContextMenu';
 import TableRow from './TableRow/TableRow';
-import Pagination from './Pagination/Pagination';
 import { useDispatch } from 'react-redux';
 import { ArrowDownUp, ListFilter, Plus, Send, X } from 'lucide-react';
 import Form from '../Form/Form';
 import Select from '../Select/Select';
 
-function Table({ className, columns, title, state, contextMenu, setContextMenu, tableRowProps, addRowProps }) {
+function Table({ className, columns, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
     console.log('table');
 
     const dispatch = useDispatch();
-    const { data, selectedRows, primaryKey, totalPages } = state;
+    const { data, selectedRows, primaryKey } = state;
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isAddingRow, setIsAddingRow] = useState(false);
     const addRowRef = useRef();
-    const [currentPage, setCurrentPage] = useState(1);
 
     // Handle select all rows
     const handleSelectAll = useCallback(
@@ -28,34 +25,21 @@ function Table({ className, columns, title, state, contextMenu, setContextMenu, 
         [dispatch],
     );
 
-    //Handle open filter box when click
-    const handleFilter = useCallback((formData) => {
-        const filterData = Object.fromEntries(Object.entries(formData).filter(([_, value]) => value));
-        console.log(filterData);
-    }, []);
-
-    //Handle open sort box when click
-    const handleSort = useCallback((formData) => {
-        console.log(formData);
-    }, []);
-
     useEffect(() => {
         if (addRowProps && isAddingRow) {
             const handleKeyDown = (e) => {
                 if (e.key === 'Escape') {
-                    setIsAddingRow(false); // Thoát chế độ chỉnh sửa
-                    console.log('esc');
+                    setIsAddingRow(false); // Turn off adding mode
                 }
             };
-
             window.addEventListener('keydown', handleKeyDown);
 
-            // Cleanup khi component unmount hoặc khi isAddingRow trở về false
+            // Cleanup when component unmount or isAddingRow is false
             return () => {
                 window.removeEventListener('keydown', handleKeyDown);
             };
         }
-    }, [addRowProps, isAddingRow]); // Lắng nghe thay đổi của addRowProps
+    }, [addRowProps, isAddingRow]);
 
     return (
         <div className={`table-wrapper ${className}`}>
@@ -64,7 +48,11 @@ function Table({ className, columns, title, state, contextMenu, setContextMenu, 
                 <div className="table-tool center">
                     <div className="tool-button">
                         <ListFilter className="tool-icon" onClick={() => setIsFilterOpen(!isFilterOpen)} />
-                        <Form className={`filter-box${isFilterOpen ? ' open' : ''}`} onSubmit={handleFilter}>
+                        <Form
+                            className={`filter-box${isFilterOpen ? ' open' : ''}`}
+                            onSubmit={onFilter}
+                            defaultValues={filterData}
+                        >
                             <div className="filter-header">
                                 <span>Filter</span>
                                 <X onClick={() => setIsFilterOpen(!isFilterOpen)} />
@@ -88,7 +76,11 @@ function Table({ className, columns, title, state, contextMenu, setContextMenu, 
                     </div>
                     <div className="tool-button">
                         <ArrowDownUp className="tool-icon" onClick={() => setIsSortOpen(!isSortOpen)} />
-                        <Form className={`sort-box${isSortOpen ? ' open' : ''}`} onSubmit={handleSort}>
+                        <Form
+                            className={`sort-box${isSortOpen ? ' open' : ''}`}
+                            onSubmit={onSort}
+                            defaultValues={sortData}
+                        >
                             <div className="sort-header">
                                 <span>Sort</span>
                                 <X onClick={() => setIsSortOpen(!isSortOpen)} />
@@ -96,16 +88,16 @@ function Table({ className, columns, title, state, contextMenu, setContextMenu, 
                             <div className="sort-body">
                                 <div className="sort-criteria">
                                     <Select
-                                        name="sortField"
+                                        name="sortedField"
                                         placeholder="Field"
-                                        options={columns.map((option) => ({ value: option.name, text: option.header }))}
+                                        options={columns.map((column) => ({ raw: column.name, text: column.header }))}
                                     />
                                     <Select
                                         name="sortedMode"
                                         placeholder="Mode"
                                         options={[
-                                            { value: 1, text: 'Ascending' },
-                                            { value: -1, text: 'Descending' },
+                                            { raw: 1, text: 'Ascending' },
+                                            { raw: -1, text: 'Descending' },
                                         ]}
                                     />
                                 </div>
@@ -138,7 +130,7 @@ function Table({ className, columns, title, state, contextMenu, setContextMenu, 
 
             <div className="table-body">
                 {data.map((rowData, index) => {
-                    return <TableRow key={index} {...tableRowProps(rowData)} />;
+                    return <TableRow key={index} {...rowProps(rowData)} />;
                 })}
                 {addRowProps && isAddingRow ? (
                     <Form
@@ -166,10 +158,6 @@ function Table({ className, columns, title, state, contextMenu, setContextMenu, 
                         <div className="table-cell">Add row</div>
                     </div>
                 )}
-            </div>
-            <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />
-            <div className="table-pagination">
-                <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
             </div>
         </div>
     );

@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Input } from '~/components';
 import { useDispatch } from 'react-redux';
-import { loginThunk } from '~/store/authSlice';
-import { addToast } from '~/store/toastSlice';
+import { addToast } from '~/redux/slices/toastSlice';
 import './LoginPage.scss';
-import { formatters } from '~/utils/formatters';
-import { isRequired } from '~/utils/validators';
+import { isEmail, isRequired } from '~/utils/validators';
 import axios from 'axios';
+import { loginThunk } from '~/redux/thunks/authThunk';
+import { trimWords } from '~/utils/formatters';
 
 function LoginPage() {
     const dispatch = useDispatch();
@@ -34,19 +34,24 @@ function LoginPage() {
                 <div className={'login-title'}>Login</div>
                 <Form
                     onSubmit={handleLogin}
+                    // defaultValues={{
+                    //     email: 'root@gmail.com',
+                    //     password: 'rootroot',
+                    // }}
                     defaultValues={{
-                        username: 'root',
-                        password: 'rootroot',
+                        email: 'user@gmail.com',
+                        password: 'useruser',
                     }}
                 >
                     <Input
-                        name="username"
-                        label="Username"
+                        name="email"
+                        label="Email"
                         validators={{
                             isRequired,
+                            isEmail,
                         }}
                         formatters={{
-                            onChange: [formatters.trimWords],
+                            onChange: [trimWords],
                         }}
                     />
                     <Input

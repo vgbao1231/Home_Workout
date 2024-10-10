@@ -5,8 +5,7 @@ import { createSelector } from '@reduxjs/toolkit';
 export const isAnySliceLoading = createSelector(
     (state) => state.level.loading,
     (state) => state.muscle.loading,
-    (state) => state.exercise.loading,
-    (levelLoading, muscleLoading, exerciseLoading) => {
-        return levelLoading || muscleLoading || exerciseLoading;
+    (levelLoading, muscleLoading) => {
+        return levelLoading || muscleLoading;
     },
 );
