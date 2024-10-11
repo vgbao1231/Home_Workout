@@ -21,19 +21,19 @@ import Dialog from '../ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
 
 function ExerciseTable() {
-    console.log('exercise table');
+    // console.log('exercise table');
 
     const dispatch = useDispatch();
     const exerciseState = useSelector((state) => state.exercise);
-    const levelData = useSelector((state) => state.level.levelData);
-    const muscleData = useSelector((state) => state.muscle.muscleData);
+    const levelData = useSelector((state) => state.enum.data.levels);
+    const muscleData = useSelector((state) => state.enum.data.muscles);
     const [contextMenu, setContextMenu] = useState({});
     const [updatingRowId, setUpdatingRowId] = useState(null);
     const [sortData, setSortData] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
-
+    
     const dataToSend = useCallback(
         (formData) => {
             const { muscleList, level, imageUrl, ...data } = formData; // Destructure all props
@@ -48,20 +48,19 @@ function ExerciseTable() {
         [levelData, muscleData],
     );
 
-    const exerciseColumns = useMemo(
-        () => [
-            // { header: '', field: <Input type="checkbox" name="exerciseId" /> },
-            { header: 'Name', name: 'name', field: <Input name="name" /> },
-            {
-                header: 'Muscle List',
-                name: 'muscleList',
-                field: <MultiSelect name="muscleList" options={muscleData} />,
-            },
-            { header: 'Level', name: 'levelEnum', field: <Select name="levelEnum" options={levelData} /> },
-            { header: 'Basic Reps', name: 'basicReps', field: <Input name="basicReps" type="number" /> },
-        ],
-        [muscleData, levelData],
-    );
+    const exerciseColumns = useMemo(() => [
+        // { header: '', field: <Input type="checkbox" name="exerciseId" /> },
+        { header: 'Name', name: 'name', field: <Input name="name" /> },
+        {
+            header: 'Muscle List',
+            name: 'muscleList',
+            field: <MultiSelect name="muscleList" options={muscleData.map(muscle => (
+                { text: muscle["raw"], value: muscle["id"] }
+            ))} />,
+        },
+        { header: 'Level', name: 'levelEnum', field: <Select name="levelEnum" options={levelData} /> },
+        { header: 'Basic Reps', name: 'basicReps', field: <Input name="basicReps" type="number" /> },
+    ], [muscleData, levelData]);
 
     // Properties of table row
     const exerciseRowProps = (rowData) => {
@@ -155,14 +154,11 @@ function ExerciseTable() {
     }, [muscleData, levelData, dispatch, dataToSend]);
 
     //Handle filter data
-    const handleFilter = useCallback(
-        (filterData) => {
-            filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
+    const handleFilter = useCallback((filterData) => {
+        filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
 
-            setFilterData(dataToSend(filterData));
-        },
-        [dataToSend],
-    );
+        setFilterData(dataToSend(filterData));
+    }, [dataToSend]);
 
     //Handle sort data
     const handleSort = useCallback((sortData) => setSortData(sortData), []);

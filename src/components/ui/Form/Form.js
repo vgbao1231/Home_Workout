@@ -3,7 +3,7 @@ import './Form.scss';
 import { FormProvider, useForm } from 'react-hook-form';
 
 function Form({ children, className = '', defaultValues = {}, onSubmit, confirm, ...props }, ref) {
-    console.log('form');
+    // console.log('form');
     const methods = useForm({
         defaultValues, // Default values for all fields
         mode: 'all', // Validate on change,blur and submit

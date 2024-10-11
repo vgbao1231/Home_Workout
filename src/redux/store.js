@@ -2,16 +2,17 @@ import { configureStore } from '@reduxjs/toolkit';
 import authSlice from './slices/authSlice';
 import toastSlice from './slices/toastSlice';
 import exerciseSlice from './slices/exerciseSlice';
-import levelSlice from './slices/levelSlice';
-import muscleSlice from './slices/muscleSlice';
+import userInfoSlice from './slices/userInfoSlice';
+import enumSlice from './slices/enumSlice';
+
 
 const store = configureStore({
     reducer: {
         auth: authSlice,
         toast: toastSlice,
         exercise: exerciseSlice,
-        level: levelSlice,
-        muscle: muscleSlice,
+        userInfo: userInfoSlice,
+        enum: enumSlice
     },
 });
 

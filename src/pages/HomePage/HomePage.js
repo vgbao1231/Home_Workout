@@ -5,21 +5,13 @@ import { ExerciseTable } from '~/components';
 import { addToast } from '~/redux/slices/toastSlice';
 import './HomePage.scss';
 import { logoutThunk } from '~/redux/thunks/authThunk';
-import { fetchLevelThunk } from '~/redux/thunks/levelThunk';
-import { fetchMuscleThunk } from '~/redux/thunks/muscleThunk';
+import { EnumAdminThunk, EnumUserThunk } from '~/redux/thunks/enumThunk';
 import { createSelector } from '@reduxjs/toolkit';
 
 const HomePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const isAnySliceLoading = createSelector(
-        (state) => state.level.loading,
-        (state) => state.muscle.loading,
-        (levelLoading, muscleLoading) => {
-            return levelLoading || muscleLoading;
-        },
-    );
-    const isLoading = useSelector(isAnySliceLoading);
+    const isLoading = useSelector((state) => state.enum.loading);
 
     console.log('home');
 
@@ -36,16 +28,14 @@ const HomePage = () => {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
+        (async function fetchEnums() {
             try {
-                await dispatch(fetchMuscleThunk()).unwrap();
-                await dispatch(fetchLevelThunk()).unwrap();
+                await dispatch(EnumAdminThunk.getAllLevelsEnumThunk()).unwrap();
+                await dispatch(EnumAdminThunk.getAllMusclesEnumThunk()).unwrap();
             } catch (error) {
                 dispatch(addToast(error, 'error'));
             }
-        };
-
-        fetchData();
+        })();
     }, [dispatch]);
 
     if (isLoading) {
@@ -57,6 +47,7 @@ const HomePage = () => {
             <h1>Homepage </h1>
             <button onClick={handleLogout}>Log Out</button>
             <ExerciseTable />
+
         </div>
     );
 };
