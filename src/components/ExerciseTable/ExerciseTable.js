@@ -55,7 +55,7 @@ function ExerciseTable() {
             header: 'Muscle List',
             name: 'muscleList',
             field: <MultiSelect name="muscleList" options={muscleData.map(muscle => (
-                { text: muscle["raw"], value: muscle["id"] }
+                { text: muscle["name"], value: muscle["id"] }
             ))} />,
         },
         { header: 'Level', name: 'levelEnum', field: <Select name="levelEnum" options={levelData} /> },
