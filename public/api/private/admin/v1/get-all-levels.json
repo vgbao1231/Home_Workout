@@ -2,10 +2,6 @@
     "applicationCode": 0,
     "message": "Create new Session successfully",
     "httpStatusCode": 200,
-    "data": [
-        { "level": 1, "name": "Beginner" },
-        { "level": 2, "name": "Immediate" },
-        { "level": 3, "name": "Advance" }
-    ],
+    "data": ["Beginner", "Intermediate", "Advance"],
     "responseTime": [2024, 8, 28, 8, 29, 54, 885256300]
 }

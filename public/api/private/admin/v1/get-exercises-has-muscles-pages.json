@@ -1,0 +1,21 @@
+{
+    "applicationCode": 0,
+    "message": "Get All Exercise Successfully",
+    "httpStatusCode": 200,
+    "data": {
+        "data": [
+            {
+                "exerciseId": 1,
+                "name": "Push-up",
+                "muscleList": ["Chest", "Biceps"],
+                "level": "Beginner",
+                "basicReps": "15"
+            },
+            { "exerciseId": 2, "name": "Squat", "muscleList": ["Leg"], "level": "Intermediate", "basicReps": "20" },
+            { "exerciseId": 3, "name": "Pull-up", "muscleList": ["Shoulders"], "level": "Beginner", "basicReps": "10" },
+            { "exerciseId": 4, "name": "Plank", "muscleList": ["Abs"], "level": "Advance", "basicReps": "30" }
+        ],
+        "totalPages": 12
+    },
+    "responseTime": [2024, 8, 28, 8, 29, 54, 885256300]
+}

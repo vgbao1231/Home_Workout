@@ -1,27 +1,12 @@
-export const formatters = {
-    capitalizeWords: (event) => {
-        return {
-            event: event,
-            check: (str) =>
-                str
-                    .toLowerCase()
-                    .split(' ')
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' '),
-        };
-    },
-    trimWords: (event) => {
-        return {
-            event: event,
-            check: (str) => str.trim(),
-        };
-    },
-    formatCurrency: (event) => {
-        return {
-            event: event,
-            check: (value) => new Intl.NumberFormat('vi-VN').format(value),
-        };
-    },
+export const capitalizeWords = (str) =>
+    str
+        .toLowerCase()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 
-    // More...
-};
+export const trimWords = (str) => str.trim();
+
+export const formatCurrency = (value) => new Intl.NumberFormat('vi-VN').format(value);
+
+// Xuất thêm các hàm khác nếu cần

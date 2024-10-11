@@ -1,65 +1,128 @@
-// const data = [
-//     { id: 1, name: 'Push-up', muscle: ['Chest'], level: 'Beginner', basicReps: '15' },
-//     { id: 2, name: 'Squat', muscle: ['Legs'], level: 'Intermediate', basicReps: '20' },
-//     { id: 3, name: 'Pull-up', muscle: ['Back'], level: 'Advanced', basicReps: '10' },
-//     { id: 4, name: 'Plank', muscle: ['Core'], level: 'Beginner', basicReps: '30' },
+// import ShowAllSelected from '~/components/ui/Dialog/DialogContent/ShowAllSelected';
+// import './TestPage.scss'; // Giữ lại để đảm bảo styles được áp dụng
+// import { Dialog, Form, Input, MultiSelect, Select } from '~/components';
+// import { useState } from 'react';
+// import ShowImage from '~/components/ui/Dialog/DialogContent/ShowImage/ShowImage';
+// import { isAlphabetic, isEmail, isRequired } from '~/utils/validators';
+// import { capitalizeWords, formatCurrency, trimWords } from '~/utils/formatters';
+// import { useMultistepForm } from '~/hooks/useMultiStepForm';
+// import { Upload } from 'lucide-react';
+// import axios from 'axios';
+// import Cookies from 'js-cookie';
+// import springService, { fastApiService } from '~/services/apiService';
+// const options = [
+//     { raw: '1', value: '1', text: 'Male' },
+//     { raw: '0', value: '0', text: 'Female' },
 // ];
 
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { Input, MultiSelect, Select, Form } from '~/components';
-import { validators } from '~/utils/validators';
+// function TestPage() {
+// const [step, setStep] = useState(0);
+// const {} = useMultistepForm([]);
+// const handleNext = () => {
+//     setStep((prev) => prev + 1);
+// };
+// const handleBack = () => {
+//     setStep((prev) => prev - 1);
+// };
 
-function TestPage() {
-    const [showPassword, setShowPassword] = useState(false);
+// const handleSubmit = (formData) => {
+//     console.log(formData);
+// };
 
-    const handleSubmit = (formData) => {
-        console.log(formData);
-    };
+// return (
+//     <Form
+//         onSubmit={(data) => {
+//             console.log(data);
+//             const file = document.querySelector('input');
 
-    const options = [
-        { value: '1', text: 'Option 1' },
-        { value: '2', text: 'Option 2' },
-        { value: '3', text: 'Option 3' },
-        { value: '4', text: 'Option 4' },
-    ];
+//             const formData = new FormData();
+//             if (file) {
+//                 // const file = data.img; // Get first file in FileList
+//                 formData.append('image', file.files[0]); // Append file
+//                 formData.append('gender', data.gender); // Append file
+//                 console.log(formData);
+//             }
 
-    return (
-        <div className="home">
-            <Form onSubmit={handleSubmit}>
-                <Input
-                    name="username"
-                    label="Username"
-                    value="gura1231@gmail.com"
-                    type="text"
-                    validators={[validators.isRequired('onChange'), validators.isEmail('onChange')]}
-                />
-                <Input
-                    name="password"
-                    label="Password"
-                    // value="123123"
-                    type={showPassword ? 'text' : 'password'}
-                    iconSupport={{
-                        icon: showPassword ? faEyeSlash : faEye,
-                        handleIconClick: () => setShowPassword(!showPassword),
-                    }}
-                    validators={[validators.isRequired('onBlur')]}
-                />
-                <Select name="select" label="Select" validators={[validators.isRequired('onBlur')]} options={options} />
-                <MultiSelect
-                    name="multi-select"
-                    label="Multiple Select"
-                    validators={[validators.isRequired('onBlur')]}
-                    options={options}
-                />
-                <div className="forgot-password">
-                    <a href="/forgot-password">Forgot Password?</a>
-                </div>
-                {null}
-                <button type="submit">Submit</button>
-            </Form>
-        </div>
-    );
-}
+//             fastApiService.post('/api/private/user/v1/cal-body-fat-detection', formData, {
+//                 headers: {
+//                     'Content-Type': 'multipart/form-data',
+//                 },
+//             });
+//         }}
+//     >
+//         <Input id="image-upload" name="image" type="file" validators={{ isRequired }} />
+//         <Input name="gender" label="Gender" validators={{ isRequired }} />
+//         {/* <Select id="gender" name="gender" label="Gender" options={options} /> */}
+//         <button>Upload</button>
+//     </Form>
+// );
 
-export default TestPage;
+// return (
+//     <Form
+//         onSubmit={handleSubmit}
+//         defaultValues={{
+//             multi: ['0', '1'],
+//             select: '0',
+//             email: 'vgb@gmail.com',
+//         }}
+//         confirm
+//     >
+//         <Input
+//             name="email"
+//             label="Email"
+//             validators={{ isRequired, isAlphabetic }}
+//             formatters={{
+//                 onChange: [capitalizeWords],
+//                 onBlur: [trimWords],
+//             }}
+//             onChange={() => console.log('change')}
+//             onFocus={() => console.log('focus')}
+//         />
+//         <Select name="select" label="Select" options={options} validators={{ isRequired }} />
+//         <MultiSelect name="multi" label="Multi-Select" options={options} validators={{ isRequired }} />
+//         <button>Next</button>
+//     </Form>
+// );
+
+// return (
+//     <div>
+//         {/* <button onClick={() => setDialogProps({ isOpen: true, title: 'Exercise Image', body: <ShowImage /> })}>
+//         Open Add Dialog
+//     </button>
+//     <button onClick={() => setDialogProps({ isOpen: true, title: 'Update Item', body: <ShowAllSelected /> })}>
+//         Open Update Dialog
+//     </button> */}
+
+//         {/* <Dialog onClose={handleClose} {...dialogProps} /> */}
+//         <Form onSubmit={handleSubmit}>
+//             {step === 0 && (
+//                 <Input
+//                     name="username"
+//                     label="Username"
+//                     validators={{ isRequired }}
+//                     formatters={{
+//                         onChange: [capitalizeWords],
+//                         onBlur: [trimWords],
+//                     }}
+//                 />
+//             )}
+//             {step === 1 && <Select name="select" label="Select" options={options} validators={{ isRequired }} />}
+//             {step === 2 && (
+//                 <MultiSelect
+//                     name="multi-select"
+//                     label="Multi-Select"
+//                     options={options}
+//                     validators={{ isRequired }}
+//                 />
+//             )}
+
+//             <button type="button" onClick={handleBack}>
+//                 Back
+//             </button>
+//             <button>Next</button>
+//         </Form>
+//     </div>
+// );
+// }
+
+// export default TestPage;

@@ -1,0 +1,23 @@
+.otp-field {
+    font-size: 60px !important;
+    width: 68px !important;
+    height: 80px !important;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 10px;
+    background-color: transparent;
+    color: #333;
+    border: 4px solid #ccc;
+    outline: none;
+    margin: 0 4px;
+}
+
+.otp-field::-webkit-inner-spin-button,
+.otp-field::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.otp-field::placeholder {
+    color: #ccc;
+}

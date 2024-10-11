@@ -1,0 +1,70 @@
+.field {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    .field-wrapper {
+        padding: 4px;
+        position: relative;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        label {
+            position: absolute;
+            left: 4%;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+        svg {
+            cursor: pointer;
+            color: #aaa;
+        }
+        fieldset {
+            position: absolute;
+            top: -8px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            pointer-events: none;
+            transition: border-color 0.2s ease;
+        }
+        legend {
+            font-size: 1.2rem;
+            margin-left: 4%;
+            visibility: hidden;
+            max-width: 0;
+            transition: max-width 0.2s ease;
+            span {
+                white-space: nowrap;
+            }
+        }
+    }
+    &[data-active='true'],
+    &:focus-within {
+        svg {
+            color: black;
+        }
+        legend {
+            max-width: none;
+            padding-left: 2px;
+        }
+    }
+    &.error {
+        fieldset {
+            border-color: red !important;
+        }
+        label {
+            color: red !important;
+        }
+        .error-msg {
+            font-size: 12px;
+            color: red;
+            margin: 4px 0 0 4px;
+        }
+    }
+}
