@@ -36,38 +36,40 @@ function ExerciseTable() {
 
     const exerciseColumns = useMemo(() => [
         // { header: '', field: <Input type="checkbox" name="exerciseId" /> },
-        { header: 'Name', name: 'name', field: <Input name="name" /> },
+        { header: 'Name', name: 'name', buildField: rowData => <Input name="name" /> },
         {
             header: 'Muscle List',
             name: 'muscleList',
-            field: <MultiSelect name="muscleList" options={muscleData.map(muscle => (
+            buildField: rowData => <MultiSelect name="muscleList" options={muscleData.map(muscle => (
                 { text: muscle["name"], value: muscle["id"] }
             ))} />,
         },
-        { header: 'Level', name: 'levelEnum', field: <Select name="levelEnum" options={levelData.map(dataObj => ({
-            value: dataObj["level"], text: dataObj["name"]
-        }))} /> },
-        { header: 'Basic Reps', name: 'basicReps', field: <Input name="basicReps" type="number" /> },
+        {
+            header: 'Level', name: 'levelEnum', buildField: rowData => <Select name="levelEnum" options={levelData.map(dataObj => ({
+                value: dataObj["level"], text: dataObj["name"]
+            }))} />
+        },
+        { header: 'Basic Reps', name: 'basicReps', buildField: rowData => <Input name="basicReps" type="number" /> },
     ], [muscleData, levelData]);
 
     // Properties of table row
-    const exerciseRowProps = (rowData) => {
-        const isUpdating = rowData.exerciseId === updatingRowId;
-
+    const exerciseRowProps = useMemo(() => {
         //Handle click row
-        const handleClick = () => {
-            !isUpdating && dispatch(toggleSelectRow(rowData.exerciseId));
+        const handleClick = (_, rowData) => {
+            (rowData.exerciseId !== updatingRowId) && dispatch(toggleSelectRow(rowData.exerciseId));
         };
 
         //Handle open menu when right click
-        const handleContextMenu = (e) => {
+        const handleContextMenu = (e, rowData) => {
             e.preventDefault();
             setContextMenu({
                 isShown: true,
                 x: e.pageX,
                 y: e.pageY,
                 menuItems: [
-                    { text: 'Update Exercise', icon: <Pencil />, action: () => setUpdatingRowId(rowData.exerciseId) },
+                    {
+                        text: 'Update Exercise', icon: <Pencil />, action: () => setUpdatingRowId(rowData.exerciseId)
+                    },
                     {
                         text: 'Delete Exercise',
                         icon: <Trash2 />,
@@ -97,16 +99,15 @@ function ExerciseTable() {
         };
 
         return {
-            rowData,
+            tableState: exerciseState,
             columns: exerciseColumns,
-            isSelected: exerciseState.selectedRows[rowData.exerciseId],
-            isUpdating,
-            onClick: handleClick,
-            onContextMenu: handleContextMenu,
+            updatingRowId,
+            handleClick,
+            handleContextMenu,
             onSubmit: handleUpdate,
             confirm: true, // Ask confirm before submit
         };
-    };
+    }, [exerciseState, updatingRowId]);
 
     // Properties to create add row form
     const addExerciseRowProps = useMemo(() => {
@@ -181,7 +182,6 @@ function ExerciseTable() {
             <Table
                 className="exercise-table"
                 title="Exercise"
-                columns={exerciseColumns}
                 state={exerciseState}
                 rowProps={exerciseRowProps}
                 addRowProps={addExerciseRowProps}

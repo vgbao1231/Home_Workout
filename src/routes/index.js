@@ -16,6 +16,6 @@ const privateRoutes = [
     { path: '/', component: HomePage, layout: SidebarLayout },
     // { path: '/test', component: TestPage }, // Test
     { path: '/homepage', component: HomePage }, // Test
-    { path: '/admin/manage-user-info-page', component: ManageUserInfoPage },
+    { path: '/admin/manage-user-info', component: ManageUserInfoPage },
 ];
 export { publicRoutes, privateRoutes };

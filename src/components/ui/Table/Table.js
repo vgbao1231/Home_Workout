@@ -7,7 +7,7 @@ import { ArrowDownUp, ListFilter, Plus, Send, X } from 'lucide-react';
 import Form from '../Form/Form';
 import Select from '../Select/Select';
 
-function Table({ className, columns, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
+function Table({ className, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
     console.log('table');
 
     const dispatch = useDispatch();
@@ -58,10 +58,10 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
                                 <X onClick={() => setIsFilterOpen(!isFilterOpen)} />
                             </div>
                             <div className="filter-body">
-                                {columns.map((column, index) => (
+                                {rowProps.columns.map((column, index) => (
                                     <div key={index} className="filter-criteria">
                                         <span>{column.header}</span>
-                                        {column.field}
+                                        {column.buildField(null)}
                                     </div>
                                 ))}
                             </div>
@@ -90,7 +90,7 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
                                     <Select
                                         name="sortedField"
                                         placeholder="Field"
-                                        options={columns.map((column) => ({ raw: column.name, text: column.header }))}
+                                        options={rowProps.columns.map((column) => ({ raw: column.name, text: column.header }))}
                                     />
                                     <Select
                                         name="sortedMode"
@@ -120,7 +120,7 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
                             onChange={handleSelectAll}
                         />
                     </div>
-                    {columns.map((column, index) => (
+                    {rowProps.columns.map((column, index) => (
                         <div key={index} className="table-cell">
                             {column.header}
                         </div>
@@ -130,7 +130,7 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
 
             <div className="table-body">
                 {data.map((rowData, index) => {
-                    return <TableRow key={index} {...rowProps(rowData)} />;
+                    return <TableRow key={index} { ...rowProps } rowData={rowData} />;
                 })}
                 {addRowProps && isAddingRow ? (
                     <Form

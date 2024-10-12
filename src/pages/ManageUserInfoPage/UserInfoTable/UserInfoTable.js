@@ -1,49 +1,34 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Book } from 'lucide-react';
-import Input from '../ui/Input/Input';
-import Select from '../ui/Select/Select';
-import Table from '../ui/Table/Table';
-import './ExerciseTable.scss';
-import { toggleSelectRow } from '~/redux/slices/exerciseSlice';
-import { isEmail, isRequired } from '~/utils/validators';
-import { UserInfoAdminThunk, UserInfoUserThunk } from '~/redux/thunks/userInfoThunk';
-import ContextMenu from '../ui/Table/ContextMenu/ContextMenu';
-import Pagination from '../ui/Table/Pagination/Pagination';
-import ShowImage from '../ui/Dialog/DialogContent/ShowImage/ShowImage';
+import { UserInfoAdminThunk } from '~/redux/thunks/userInfoThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import SubscriptionsDialog from './SubscriptionsDialog/SubscriptionsDialog';
+import { Dialog, Input, Select, Table } from '~/components';
+import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
+import Pagination from '~/components/ui/Table/Pagination/Pagination';
 
-function UserInfoTable() {
-    console.log('exercise table');
+export default function UserInfoTable() {
+    console.log('user info table');
 
     const dispatch = useDispatch();
     const userInfoState = useSelector((state) => state.userInfo);
-    const genderData = useSelector((state) => state.enum.data.genders)
     const [contextMenu, setContextMenu] = useState({});
     const [sortData, setSortData] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
-    const userInfoColumns = useMemo(() => [
-        { header: 'First Name', name: 'firstName', field: <Input name="firstName" /> },
-        { header: 'Last Name', name: 'lastName', field: <Input name="lastName" /> },
-        { header: 'Date of Birth', name: 'dob', field: <Input type="date" name="dob" /> },
-        {
-            header: 'Gender',
-            name: 'gender',
-            field: <Select name="gender" options={genderData.map(dataObj => ({
-                value: dataObj["id"], text: dataObj["raw"]
-            }))} />,
-        },
-        { header: 'Email', name: 'dob', field: <Input name="email" validators={[isEmail]} /> },
-        { header: 'Basic Reps', name: 'basicReps', field: <Input name="basicReps" type="number" /> },
-    ], [muscleData, levelData]);
-
+    const handleSwitchActiveStatus = useCallback(async (e, rowData) => {
+        e.stopPropagation();
+        await dispatch(UserInfoAdminThunk.updateUserStatusThunk({
+            userInfoId: rowData["userInfoId"],
+            isActive: !rowData["isActive"]
+        })).unwrap();
+    }, []);
 
     // Properties of table row
-    const exerciseRowProps = useCallback((rowData) => {
+    const userInfoRowProps = useCallback((rowData) => {
         //Handle open menu when right click
         const handleContextMenu = (e) => {
             e.preventDefault();
@@ -68,7 +53,20 @@ function UserInfoTable() {
 
         return {
             rowData,
-            columns: userInfoColumns,
+            columns: [
+                { header: 'User Info Id', name: 'userInfoId', field: <Input name="userInfoId" type="number" hidden /> },
+                { header: 'First Name', name: 'firstName' },
+                { header: 'Last Name', name: 'lastName' },
+                { header: 'Date of Birth', name: 'dob' },
+                { header: 'Gender', name: 'gender' },
+                { header: 'Email', name: 'dob' },
+                { header: 'Coins', name: 'coins' },
+                { header: 'Created Time', name: 'createdTime' },
+                {
+                    header: 'Status', name: 'isActive',
+                    field: <button name="isActive" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
+                },
+            ],
             onContextMenu: handleContextMenu,
         };
     }, []);
@@ -100,7 +98,7 @@ function UserInfoTable() {
                 };
                 console.log(objToGetData);
 
-                await dispatch(fetchExerciseThunk(objToGetData)).unwrap();
+                await dispatch(UserInfoAdminThunk.getAllUserInfoThunk(objToGetData)).unwrap();
             } catch (error) {
                 dispatch(addToast(error, 'error'));
             }
@@ -114,9 +112,8 @@ function UserInfoTable() {
             <Table
                 className="user-info-table"
                 title="User Information"
-                columns={userInfoColumns}
                 state={userInfoState}
-                rowProps={exerciseRowProps}
+                rowProps={userInfoRowProps}
                 onFilter={handleFilter}
                 onSort={handleSort}
                 filterData={filterData}
@@ -132,5 +129,3 @@ function UserInfoTable() {
         </>
     );
 }
-
-export default UserInfoTable;

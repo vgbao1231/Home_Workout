@@ -1,3 +1,4 @@
+import AxiosHelpers from '~/utils/axiosHelpers';
 import { springService } from './apiService';
 
 const API_ADMIN_PREFIX = process.env.REACT_APP_API_ADMIN_PREFIX;
@@ -6,28 +7,7 @@ export const getAllExercises = async (page, filterFields, sortedField, sortedMod
     try {
         const response = await springService.get(`${API_ADMIN_PREFIX}/v1/get-exercises-has-muscles-pages`, {
             params: { page, filterFields, sortedField, sortedMode },
-            paramsSerializer: (params) => {
-                const result = [];
-                for (const [key, value] of Object.entries(params)) {
-                    if (value) {
-                        if (typeof value === 'object') {
-                            for (const [k, v] of Object.entries(value)) {
-                                if (Array.isArray(v)) {
-                                    console.log(v.join(','));
-
-                                    result.push(`${encodeURIComponent(key)}[${k}]=[${v.join(',')}]`);
-                                } else {
-                                    result.push(`${encodeURIComponent(key)}[${k}]=${encodeURIComponent(v)}`);
-                                }
-                            }
-                        } else {
-                            result.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-                        }
-                    }
-                }
-
-                return result.join('&');
-            },
+            paramsSerializer: AxiosHelpers.paramsSerializerForGet,
         });
         return response.data;
     } catch (error) {
