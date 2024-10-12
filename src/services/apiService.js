@@ -32,7 +32,7 @@ const refreshTokenHandler = async (error) => {
     const { response } = error;
     const originalRequest = error.config;
 
-    if (response && response.status === 403 && response.data.applicationCode === 11003) {
+    if (response && response.status === 403 && response.data.body.applicationCode === 11003) {
         if (!originalRequest._retry) {
             originalRequest._retry = true;
             try {

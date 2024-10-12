@@ -1,4 +1,4 @@
-import { useState, memo, useCallback, useEffect } from 'react';
+import { useState, memo, useCallback, useEffect, useMemo } from 'react';
 import './MultiSelect.scss';
 import { useController, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
@@ -15,9 +15,8 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         const upperCaseTexts = typeof options[0]["text"] == "string"
             ? options.map(option => option["text"].toUpperCase())
             : options.map(option => option["text"]);
-        return options.reduce((acc, { text, value }, index) => tempInitialValue.includes(upperCaseTexts[index])
-            ? [...acc, { [value]: text }]
-            : acc
+        return options.reduce((acc, { text, value }, index) =>
+            tempInitialValue.includes(upperCaseTexts[index]) ? [...acc, value] : acc
         ,[]);
     }, []);
 
@@ -32,6 +31,12 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
     });
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    //--Built Options: {value:text, ...} instead of [{value:text}, ...]    
+    const builtOptions = useMemo(() => options.reduce((acc, obj) => {
+        const [ text, value ] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
+        return { ...acc, [value]: text };
+    }, {}), [options]);
+
     // console.log(error.message ? 'Render: error' : 'Render: multi');
 
     // Filter out props that are events with the prefix 'on'
@@ -53,19 +58,18 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         }
     };
 
-    const handleSelect = ({ value, text }) => {
-        //--field.value = [{value: text},...]
-        if (!field.value.find(obj => obj[value] === text)) {
+    const handleSelect = (newValue) => {
+        if (!field.value.find(value => value === newValue)) {
             setInputValue('');
-            field.value.push({ [value]: text });
+            field.value.push(newValue);
             field.onChange(field.value);
             events.onChange && events.onChange(field.value);
         }
     };
 
-    const handleRemove = (e, valueAsKey) => {
+    const handleRemove = (e, rmvValue) => {
         e.stopPropagation();
-        const updatedValues = field.value.filter(obj => !(valueAsKey in obj));
+        const updatedValues = field.value.filter(value => rmvValue !== value);
         field.onChange(updatedValues);
         setInputValue('');
         events.onChange && events.onChange(updatedValues);
@@ -86,7 +90,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         validators && trigger(name);
         events.onBlur && events.onBlur(getValues(name));
     };
-    console.log(field.value)
+    
     return (
         <>
             <div
@@ -98,13 +102,12 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                 <div className={`field-wrapper`} onClick={toggleDropdown}>
                     <div className="selected-values">
                         {!field.value.length && <span className="placeholder">{placeholder}</span>}
-                        {field.value.map((valueObj, index) => {
-                            const [ valueAsKey, textAsObjValue ] = Object.entries(valueObj)[0]; //--valueObj = {text: value}
-                            return <div key={index} className="selected-value center">
-                                <span>{textAsObjValue}</span>
-                                {isOpen && <X onClick={(e) => handleRemove(e, valueAsKey)} />}
-                            </div>;
-                        })}
+                        {field.value.map((value, index) => (
+                            <div key={index} className="selected-value center">
+                                <span>{builtOptions[value]}</span>
+                                {isOpen && <X onClick={(e) => handleRemove(e, value)} />}
+                            </div>
+                        ))}
                         {!props.disabled && isOpen && (
                             <div className="input-wrapper">
                                 <input
@@ -133,7 +136,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                     <div className="options-container">
                         {options.map(({ text, value }, index) =>
                             text.toLowerCase().includes(inputValue.toLowerCase()) && (
-                                <div key={index} className="option" onClick={() => handleSelect({ value, text })}>
+                                <div key={index} className="option" onClick={() => handleSelect(value)}>
                                     <span>{text}</span>
                                 </div>
                             ),
