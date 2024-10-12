@@ -21,7 +21,6 @@ export default function ManageUserInfoPage() {
     if (isLoading) {
         return <div>Loading data...</div>;
     }
-    console.log("CALLED");
 
     return (
         <div className="manage-user-info-page">

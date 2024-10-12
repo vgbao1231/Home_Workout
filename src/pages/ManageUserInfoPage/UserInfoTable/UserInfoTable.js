@@ -7,6 +7,7 @@ import SubscriptionsDialog from './SubscriptionsDialog/SubscriptionsDialog';
 import { Dialog, Input, Select, Table } from '~/components';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
+import './UserInfoTable.scss';
 
 export default function UserInfoTable() {
     console.log('user info table');
@@ -20,16 +21,16 @@ export default function UserInfoTable() {
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
     const userInfoHeaders = useMemo(() => [
-        { header: 'First Name', name: "firstName", buildField: rowData => <Input name="firstName"/> },
-        { header: 'Last Name', name: "lastName", buildField: rowData => <Input name="lastName"/> },
-        { header: 'Date of Birth', name: "dob", buildField: rowData => <Input type="date" name="dob"/> },
-        { header: 'Gender', name: "gender", buildField: rowData => <Input name="gender"/> },
-        { header: 'Email', name: "email", buildField: rowData => <Input name="email"/> },
-        { header: 'Coins', name: "coins", buildField: rowData => <Input name="coins"/> },
-        { header: 'Created Time', name: "createdTime", buildField: rowData => <Input name="createdTime"/> },
+        { header: 'First Name', name: "firstName", buildField: rowData => <Input name="firstName" /> },
+        { header: 'Last Name', name: "lastName", buildField: rowData => <Input name="lastName" /> },
+        { header: 'Date of Birth', name: "dob", buildField: rowData => <Input type="date" name="dob" /> },
+        { header: 'Gender', name: "gender", buildField: rowData => <Input name="gender" /> },
+        { header: 'Email', name: "email", buildField: rowData => <Input name="email" /> },
+        { header: 'Coins', name: "coins", buildField: rowData => <Input name="coins" /> },
+        { header: 'Created Time', name: "createdTime", buildField: rowData => <Input name="createdTime" /> },
         {
-            header: 'Status', name: 'isActive',
-            buildField: rowData => <Select name="levelEnum" options={[{value: 1, text: "True"}, {value: 0, text: "False"}]} />
+            header: 'Status', name: 'active',
+            buildField: rowData => <Select name="levelEnum" options={[{ value: 1, text: "True" }, { value: 0, text: "False" }]} />
         }
     ], []);
 
@@ -37,7 +38,7 @@ export default function UserInfoTable() {
         e.stopPropagation();
         await dispatch(UserInfoAdminThunk.updateUserStatusThunk({
             userInfoId: rowData["userInfoId"],
-            isActive: !rowData["isActive"]
+            active: !rowData["active"]
         })).unwrap();
     }, []);
 
@@ -66,18 +67,21 @@ export default function UserInfoTable() {
         };
 
         return {
-            handleContextMenu,
+            tableState: userInfoState,
+            eventRegistered: rowData => ({
+                onContextMenu: (e) =>   (e, rowData)
+            }),
             columns: [
                 { header: 'First Name', name: 'firstName' },
                 { header: 'Last Name', name: 'lastName' },
                 { header: 'Date of Birth', name: 'dob' },
                 { header: 'Gender', name: 'gender' },
-                { header: 'Email', name: 'dob' },
+                { header: 'Email', name: 'email' },
                 { header: 'Coins', name: 'coins' },
                 { header: 'Created Time', name: 'createdTime' },
                 {
-                    header: 'Status', name: 'isActive',
-                    buildField: rowData => <button name="isActive" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
+                    header: 'Status', name: 'active',
+                    buildField: rowData => <button name="active" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
                 }
             ],
         };
@@ -97,23 +101,25 @@ export default function UserInfoTable() {
     //Handle sort data
     const handleSort = useCallback((sortData) => setSortData(sortData), []);
 
-    console.log("CALLED")
-    useEffect(async () => {
-        try {
-            const { sortedField, sortedMode } = sortData || {};
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const { sortedField, sortedMode } = sortData || {};
 
-            const objToGetData = {
-                page: currentPage,
-                filterFields: filterData,
-                sortedField: sortedField,
-                sortedMode: sortedMode,
-            };
-            console.log(objToGetData);
+                const objToGetData = {
+                    page: currentPage,
+                    filterFields: filterData,
+                    sortedField: sortedField,
+                    sortedMode: sortedMode,
+                };
+                console.log(objToGetData);
 
-            await dispatch(UserInfoAdminThunk.getAllUserInfoThunk(objToGetData)).unwrap();
-        } catch (error) {
-            dispatch(addToast(error, 'error'));
+                await dispatch(UserInfoAdminThunk.getAllUserInfoThunk(objToGetData)).unwrap();
+            } catch (error) {
+                dispatch(addToast(error, 'error'));
+            }
         }
+        fetchData();
     }, [dispatch, sortData, filterData, currentPage]);
 
     return userInfoState.loading ? (
@@ -130,6 +136,7 @@ export default function UserInfoTable() {
                 onSort={handleSort}
                 filterData={filterData}
                 sortData={sortData}
+                addRowProps={false}
             />
             <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />
             <Pagination
