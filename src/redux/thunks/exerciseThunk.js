@@ -1,11 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import {
-    createExercise,
-    deleteExercise,
-    getAllExercises,
-    updateExercise,
-    uploadExerciseImage,
-} from '~/services/exerciseService';
+import { getAllExercises } from '~/services/adminService';
+import { createExercise, deleteExercise, updateExercise, uploadExerciseImage } from '~/services/exerciseService';
 
 export const fetchExerciseThunk = createAsyncThunk(
     'exercise/fetchExercise',

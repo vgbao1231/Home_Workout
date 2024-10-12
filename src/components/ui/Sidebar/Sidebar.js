@@ -18,7 +18,7 @@ function Sidebar({ children }) {
             <div className="item-container">
                 <ul>{Children.map(children, (child) => cloneElement(child, { isExpanded }))}</ul>
             </div>
-            <div className="profile-container">
+            <div className="profile-container center">
                 <div className="avatar center">A</div>
                 <div className={`info${isExpanded ? ' expand' : ''}`}>
                     <p className="name">Bảo Võ</p>

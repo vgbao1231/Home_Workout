@@ -1,7 +1,6 @@
 import SidebarLayout from '~/layout/SidebarLayout/SidebarLayout';
 import HomePage from '~/pages/HomePage/HomePage';
 import LoginPage from '~/pages/LoginPage/LoginPage';
-import TestPage from '~/pages/TestPage/TestPage';
 
 // Public routes
 const publicRoutes = [
@@ -13,7 +12,7 @@ const publicRoutes = [
 // Private routes
 const privateRoutes = [
     { path: '/', component: HomePage, layout: SidebarLayout },
-    { path: '/test', component: TestPage }, // Test
+    { path: '/test', component: HomePage }, // Test
     { path: '/homepage', component: HomePage }, // Test
 ];
 export { publicRoutes, privateRoutes };

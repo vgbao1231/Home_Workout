@@ -17,6 +17,8 @@
 
 .current-image {
     width: 100%;
+    max-width: 50vw;
+    max-height: 50vh;
     object-fit: contain;
     transition: opacity 0.3s;
     display: block;
@@ -40,4 +42,11 @@
 
 .image-container:hover .upload-label {
     opacity: 1;
+}
+.upload-button {
+    display: flex;
+    background-color: transparent;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: 10px auto;
 }

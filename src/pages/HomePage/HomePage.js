@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ExerciseTable } from '~/components';
+import { ExerciseTable, SessionTable } from '~/components';
 import { addToast } from '~/redux/slices/toastSlice';
 import './HomePage.scss';
 import { logoutThunk } from '~/redux/thunks/authThunk';
@@ -57,6 +57,7 @@ const HomePage = () => {
             <h1>Homepage </h1>
             <button onClick={handleLogout}>Log Out</button>
             <ExerciseTable />
+            <SessionTable />
         </div>
     );
 };

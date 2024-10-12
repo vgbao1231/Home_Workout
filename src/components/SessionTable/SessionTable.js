@@ -1,30 +1,31 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Image, Pencil, Trash2, Upload } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import Input from '../ui/Input/Input';
 import MultiSelect from '../ui/MultiSelect/MultiSelect';
 import Select from '../ui/Select/Select';
 import Table from '../ui/Table/Table';
-import './ExerciseTable.scss';
-import { toggleSelectRow } from '~/redux/slices/exerciseSlice';
+import './SessionTable.scss';
+import { toggleSelectRow } from '~/redux/slices/sessionSlice';
 import { isRequired } from '~/utils/validators';
 import {
-    createExerciseThunk,
-    deleteExerciseThunk,
-    fetchExerciseThunk,
-    updateExerciseThunk,
-} from '~/redux/thunks/exerciseThunk';
+    createSessionThunk,
+    deleteSessionThunk,
+    fetchSessionThunk,
+    updateSessionThunk,
+} from '~/redux/thunks/sessionThunk';
 import ContextMenu from '../ui/Table/ContextMenu/ContextMenu';
 import Pagination from '../ui/Table/Pagination/Pagination';
-import ShowImage from '../ui/Dialog/DialogContent/ShowImage/ShowImage';
 import Dialog from '../ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
+import ShowSelectedExercises from '../ui/Dialog/DialogContent/ShowSelectedExercises/ShowSelectedExercises';
 
-function ExerciseTable() {
-    console.log('exercise table');
+function SessionTable() {
+    console.log('session table');
 
     const dispatch = useDispatch();
-    const exerciseState = useSelector((state) => state.exercise);
+    const selectedExercise = useSelector((state) => state.exercise.selectedRows);
+    const sessionState = useSelector((state) => state.session);
     const levelData = useSelector((state) => state.level.levelData);
     const muscleData = useSelector((state) => state.muscle.muscleData);
     const [contextMenu, setContextMenu] = useState({});
@@ -37,35 +38,35 @@ function ExerciseTable() {
 
     const dataToSend = useCallback(
         (formData) => {
-            const { muscleList, levelEnum, imageUrl, ...data } = formData; // Destructure all props
+            const { muscleList, level, imageUrl, ...data } = formData; // Destructure all props
             if (muscleList) {
                 data.muscleIds = muscleList.map((muscle) => muscleData.find((m) => m.raw === muscle)?.value);
             }
-            if (levelEnum) {
-                data.levelEnum = levelData.find((l) => l.raw === levelEnum)?.value;
+            if (level) {
+                data.level = levelData.find((l) => l.raw === level)?.value;
             }
             return data;
         },
         [levelData, muscleData],
     );
 
-    const exerciseColumns = useMemo(
+    const sessionColumns = useMemo(
         () => [
             { header: 'Name', field: <Input name="name" /> },
             { header: 'Muscle List', field: <MultiSelect name="muscleList" options={muscleData} /> },
             { header: 'Level', field: <Select name="levelEnum" options={levelData} /> },
-            { header: 'Basic Reps', field: <Input name="basicReps" type="number" /> },
+            { header: 'Description', field: <Input name="description" type="number" /> },
         ],
         [muscleData, levelData],
     );
 
     // Properties of table row
-    const exerciseRowProps = (rowData) => {
-        const isUpdating = rowData.exerciseId === updatingRowId;
+    const sessionRowProps = (rowData) => {
+        const isUpdating = rowData.sessionId === updatingRowId;
 
         //Handle click row
         const handleClick = () => {
-            !isUpdating && dispatch(toggleSelectRow(rowData.exerciseId));
+            !isUpdating && dispatch(toggleSelectRow(rowData.sessionId));
         };
 
         //Handle open menu when right click
@@ -76,23 +77,13 @@ function ExerciseTable() {
                 x: e.pageX,
                 y: e.pageY,
                 menuItems: [
-                    { text: 'Update Exercise', icon: <Pencil />, action: () => setUpdatingRowId(rowData.exerciseId) },
+                    { text: 'Update Session', icon: <Pencil />, action: () => setUpdatingRowId(rowData.sessionId) },
                     {
-                        text: 'Delete Exercise',
+                        text: 'Delete Session',
                         icon: <Trash2 />,
                         action: () => {
-                            window.confirm('Delete ?') && dispatch(deleteExerciseThunk(rowData.exerciseId));
+                            window.confirm('Delete ?') && dispatch(deleteSessionThunk(rowData.sessionId));
                         },
-                    },
-                    {
-                        text: 'Show Exercise Img',
-                        icon: <Image />,
-                        action: () =>
-                            setDialogProps({
-                                isOpen: true,
-                                title: 'Exercise Image',
-                                body: <ShowImage id={rowData.exerciseId} imageUrl={rowData.imageUrl} />,
-                            }),
                     },
                 ],
             });
@@ -101,15 +92,15 @@ function ExerciseTable() {
         // Handle update row data
         const handleUpdate = (formData) => {
             if (formData) {
-                dispatch(updateExerciseThunk(dataToSend(formData)));
+                dispatch(updateSessionThunk(dataToSend(formData)));
             }
             setUpdatingRowId();
         };
 
         return {
             rowData,
-            columns: exerciseColumns,
-            isSelected: exerciseState.selectedRows[rowData.exerciseId],
+            columns: sessionColumns,
+            isSelected: sessionState.selectedRows[rowData.sessionId],
             isUpdating,
             onClick: handleClick,
             onContextMenu: handleContextMenu,
@@ -118,25 +109,23 @@ function ExerciseTable() {
         };
     };
 
-    useEffect(() => {
-        if (isAddingRow) {
-            const handleKeyDown = (e) => {
-                if (e.key === 'Escape') setIsAddingRow(false); // Turn off adding mode
-            };
-            window.addEventListener('keydown', handleKeyDown);
-            // Cleanup when component unmount or isAddingRow is false
-            return () => window.removeEventListener('keydown', handleKeyDown);
-        }
-    }, [isAddingRow]);
-
     // Properties to create add row form
-    const addExerciseRowProps = useMemo(() => {
+    const addSessionRowProps = useMemo(() => {
         return {
             isAddingRow,
             setIsAddingRow,
             onSubmit: (formData) => {
-                dispatch(createExerciseThunk(dataToSend(formData)));
-                setIsAddingRow(false);
+                // If no row selected
+                if (Object.values(selectedExercise).every((v) => !v)) {
+                    alert('Please select exercises for this session');
+                } else {
+                    setDialogProps({
+                        isOpen: true,
+                        title: 'Selected Exercise',
+                        body: <ShowSelectedExercises />,
+                    });
+                    // dispatch(createSessionThunk(dataToSend(formData)));
+                }
             },
             fields: [
                 { field: <Input placeholder="Name" name="name" validators={{ isRequired }} /> },
@@ -151,23 +140,16 @@ function ExerciseTable() {
                     ),
                 },
                 { field: <Select placeholder="Select Level" name="level" options={levelData} /> },
-                { field: <Input placeholder="Basic Reps" name="basicReps" /> },
-                {
-                    field: (
-                        <label htmlFor="exercise-img" style={{ display: 'flex' }}>
-                            <Upload className="upload-icon" />
-                            <Input id="exercise-img" name="img" type="file" validators={{ isRequired }} />
-                        </label>
-                    ),
-                },
+                { field: <Input placeholder="Description" name="description" /> },
             ],
         };
-    }, [muscleData, levelData, dispatch, dataToSend, isAddingRow]);
+    }, [muscleData, levelData, isAddingRow, selectedExercise, dataToSend, dispatch]);
 
     //Handle filter data
     const handleFilter = useCallback(
         (filterData) => {
             filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
+
             setFilterData(dataToSend(filterData));
         },
         [dataToSend],
@@ -186,7 +168,7 @@ function ExerciseTable() {
             try {
                 const { sortedField, sortedMode } = sortData || {};
                 await dispatch(
-                    fetchExerciseThunk({
+                    fetchSessionThunk({
                         page: currentPage,
                         filterFields: filterData,
                         sortedField: sortedField,
@@ -201,18 +183,18 @@ function ExerciseTable() {
         fetchData();
     }, [dispatch, sortData, filterData, currentPage]);
 
-    return exerciseState.loading ? (
-        <div>Loading Exercise Data...</div>
+    return sessionState.loading ? (
+        <div>Loading Session Data...</div>
     ) : (
-        <div className="exercise-table">
+        <div className="session-table">
             <Table
-                title="Exercise"
-                columns={exerciseColumns}
-                data={exerciseState.data}
-                selectedRows={exerciseState.selectedRows}
-                primaryKey={exerciseState.primaryKey}
-                rowProps={exerciseRowProps}
-                addRowProps={addExerciseRowProps}
+                title="Session"
+                columns={sessionColumns}
+                data={sessionState.data}
+                selectedRows={sessionState.selectedRows}
+                primaryKey={sessionState.primaryKey}
+                rowProps={sessionRowProps}
+                addRowProps={addSessionRowProps}
                 onFilter={handleFilter}
                 onSort={handleSort}
                 filterData={filterData}
@@ -222,11 +204,11 @@ function ExerciseTable() {
             <Pagination
                 setCurrentPage={setCurrentPage}
                 currentPage={currentPage}
-                totalPages={exerciseState.totalPages}
+                totalPages={sessionState.totalPages}
             />
             <Dialog onClose={handleCloseDialog} {...dialogProps} />
         </div>
     );
 }
 
-export default ExerciseTable;
+export default SessionTable;

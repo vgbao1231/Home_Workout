@@ -6,9 +6,10 @@ import Input from '~/components/ui/Input/Input';
 import { uploadExerciseImage } from '~/services/exerciseService';
 import { useDispatch } from 'react-redux';
 import { addToast } from '~/redux/slices/toastSlice';
+import noImage from '~/assets/no_image.jpg';
+
 function ShowImage({ id, imageUrl }) {
-    const [image, setImage] = useState(imageUrl);
-    console.log(image);
+    const [image, setImage] = useState(imageUrl || noImage);
 
     const dispatch = useDispatch();
 
@@ -47,7 +48,7 @@ function ShowImage({ id, imageUrl }) {
                     onChange={handleImageUpload}
                     hidden
                 />
-                <button>Upload</button>
+                <button className="upload-button">Upload</button>
             </Form>
         </>
     );

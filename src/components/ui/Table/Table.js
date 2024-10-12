@@ -1,20 +1,28 @@
 import './Table.scss';
 import { selectAllRows } from '~/redux/slices/exerciseSlice';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import TableRow from './TableRow/TableRow';
 import { useDispatch } from 'react-redux';
 import { ArrowDownUp, ListFilter, Plus, Send, X } from 'lucide-react';
 import Form from '../Form/Form';
 import Select from '../Select/Select';
 
-function Table({ className, columns, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
-    console.log('table');
-
+function Table({
+    columns,
+    title,
+    data,
+    selectedRows,
+    primaryKey,
+    rowProps,
+    addRowProps,
+    onFilter,
+    onSort,
+    filterData,
+    sortData,
+}) {
     const dispatch = useDispatch();
-    const { data, selectedRows, primaryKey } = state;
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
-    const [isAddingRow, setIsAddingRow] = useState(false);
     const addRowRef = useRef();
 
     // Handle select all rows
@@ -25,24 +33,8 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
         [dispatch],
     );
 
-    useEffect(() => {
-        if (addRowProps && isAddingRow) {
-            const handleKeyDown = (e) => {
-                if (e.key === 'Escape') {
-                    setIsAddingRow(false); // Turn off adding mode
-                }
-            };
-            window.addEventListener('keydown', handleKeyDown);
-
-            // Cleanup when component unmount or isAddingRow is false
-            return () => {
-                window.removeEventListener('keydown', handleKeyDown);
-            };
-        }
-    }, [addRowProps, isAddingRow]);
-
     return (
-        <div className={`table-wrapper ${className}`}>
+        <div className={`table-wrapper`}>
             <div className="table-feature">
                 <div className="table-title">{title}</div>
                 <div className="table-tool center">
@@ -90,7 +82,10 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
                                     <Select
                                         name="sortedField"
                                         placeholder="Field"
-                                        options={columns.map((column) => ({ raw: column.name, text: column.header }))}
+                                        options={columns.map((column) => ({
+                                            raw: column.field.props.name,
+                                            text: column.header,
+                                        }))}
                                     />
                                     <Select
                                         name="sortedMode"
@@ -132,13 +127,12 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
                 {data.map((rowData, index) => {
                     return <TableRow key={index} {...rowProps(rowData)} />;
                 })}
-                {addRowProps && isAddingRow ? (
+                {addRowProps && addRowProps.isAddingRow ? (
                     <Form
                         ref={addRowRef}
                         className="table-row add-row"
                         onSubmit={(formData) => {
                             addRowProps.onSubmit(formData);
-                            setIsAddingRow(false);
                         }}
                     >
                         <div className="table-cell">
@@ -151,7 +145,13 @@ function Table({ className, columns, title, state, rowProps, addRowProps, onFilt
                         ))}
                     </Form>
                 ) : (
-                    <div className="table-row add-row" onClick={() => setIsAddingRow(true)}>
+                    <div
+                        className="table-row add-row"
+                        onClick={() => {
+                            addRowProps.setIsAddingRow(true);
+                            console.log('click');
+                        }}
+                    >
                         <div className="table-cell">
                             <Plus />
                         </div>

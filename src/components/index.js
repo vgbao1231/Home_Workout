@@ -4,4 +4,5 @@ export { default as Select } from './ui/Select/Select';
 export { default as MultiSelect } from './ui/MultiSelect/MultiSelect';
 export { default as Table } from './ui/Table/Table';
 export { default as ExerciseTable } from './ExerciseTable/ExerciseTable';
+export { default as SessionTable } from './SessionTable/SessionTable';
 export { default as Dialog } from './ui/Dialog/Dialog';
