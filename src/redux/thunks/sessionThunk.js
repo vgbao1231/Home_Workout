@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getAllSessions } from '~/services/adminService';
-import { createSession, deleteSession, updateSession, uploadSessionImage } from '~/services/sessionService';
+import { createSession, deleteSession, getAllSessions, updateSession, uploadSessionImage } from '~/services/sessionService';
 
 export const fetchSessionThunk = createAsyncThunk(
     'session/fetchSession',

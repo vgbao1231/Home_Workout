@@ -123,7 +123,9 @@ function ExerciseTable() {
     // Properties to create add row form
     const addExerciseRowProps = useMemo(() => {
         return {
-            onSubmit: (formData) => dispatch(createExerciseThunk(formData)),
+            onSubmit: (formData) => {
+                dispatch(createExerciseThunk(formData));
+            },
             fields: [
                 { field: <Input placeholder="Name" name="name" validators={{ isRequired }} /> },
                 {
@@ -153,6 +155,7 @@ function ExerciseTable() {
     //Handle filter data
     const handleFilter = useCallback((filterData) => {
         filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
+
         setFilterData(filterData);
     }, []);
 

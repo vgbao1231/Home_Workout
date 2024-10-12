@@ -26,8 +26,8 @@ function SessionTable() {
     const dispatch = useDispatch();
     const selectedExercise = useSelector((state) => state.exercise.selectedRows);
     const sessionState = useSelector((state) => state.session);
-    const levelData = useSelector((state) => state.level.levelData);
-    const muscleData = useSelector((state) => state.muscle.muscleData);
+    const levelData = useSelector((state) => state.enum.levels);
+    const muscleData = useSelector((state) => state.enum.muscles);
     const [contextMenu, setContextMenu] = useState({});
     const [updatingRowId, setUpdatingRowId] = useState(null);
     const [isAddingRow, setIsAddingRow] = useState(false);
@@ -36,25 +36,16 @@ function SessionTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
-    const dataToSend = useCallback(
-        (formData) => {
-            const { muscleList, level, imageUrl, ...data } = formData; // Destructure all props
-            if (muscleList) {
-                data.muscleIds = muscleList.map((muscle) => muscleData.find((m) => m.raw === muscle)?.value);
-            }
-            if (level) {
-                data.level = levelData.find((l) => l.raw === level)?.value;
-            }
-            return data;
-        },
-        [levelData, muscleData],
-    );
 
     const sessionColumns = useMemo(
         () => [
             { header: 'Name', field: <Input name="name" /> },
-            { header: 'Muscle List', field: <MultiSelect name="muscleList" options={muscleData} /> },
-            { header: 'Level', field: <Select name="levelEnum" options={levelData} /> },
+            { header: 'Muscle List', field: <MultiSelect name="muscleList" options={muscleData.map(dataObj => ({
+                value: dataObj["id"], text: dataObj["name"]
+            }))} /> },
+            { header: 'Level', field: <Select name="levelEnum" options={levelData.map(dataObj => ({
+                value: dataObj["level"], text: dataObj["name"]
+            }))} /> },
             { header: 'Description', field: <Input name="description" type="number" /> },
         ],
         [muscleData, levelData],
@@ -92,7 +83,7 @@ function SessionTable() {
         // Handle update row data
         const handleUpdate = (formData) => {
             if (formData) {
-                dispatch(updateSessionThunk(dataToSend(formData)));
+                dispatch(updateSessionThunk(formData));
             }
             setUpdatingRowId();
         };
@@ -143,16 +134,16 @@ function SessionTable() {
                 { field: <Input placeholder="Description" name="description" /> },
             ],
         };
-    }, [muscleData, levelData, isAddingRow, selectedExercise, dataToSend, dispatch]);
+    }, [muscleData, levelData, isAddingRow, selectedExercise, dispatch]);
 
     //Handle filter data
     const handleFilter = useCallback(
         (filterData) => {
             filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
 
-            setFilterData(dataToSend(filterData));
+            setFilterData(filterData);
         },
-        [dataToSend],
+        [],
     );
 
     //Handle sort data
