@@ -4,7 +4,7 @@ import { Book } from 'lucide-react';
 import { UserInfoAdminThunk } from '~/redux/thunks/userInfoThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import SubscriptionsDialog from './SubscriptionsDialog/SubscriptionsDialog';
-import { Dialog, Table } from '~/components';
+import { Dialog, Input, Select, Table } from '~/components';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
 
@@ -19,17 +19,17 @@ export default function UserInfoTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
-    const userInfoColumns = useMemo(() => [
-        { header: 'First Name', name: 'firstName' },
-        { header: 'Last Name', name: 'lastName' },
-        { header: 'Date of Birth', name: 'dob' },
-        { header: 'Gender', name: 'gender' },
-        { header: 'Email', name: 'dob' },
-        { header: 'Coins', name: 'coins' },
-        { header: 'Created Time', name: 'createdTime' },
+    const userInfoHeaders = useMemo(() => [
+        { header: 'First Name', name: "firstName", buildField: rowData => <Input name="firstName"/> },
+        { header: 'Last Name', name: "lastName", buildField: rowData => <Input name="lastName"/> },
+        { header: 'Date of Birth', name: "dob", buildField: rowData => <Input type="date" name="dob"/> },
+        { header: 'Gender', name: "gender", buildField: rowData => <Input name="gender"/> },
+        { header: 'Email', name: "email", buildField: rowData => <Input name="email"/> },
+        { header: 'Coins', name: "coins", buildField: rowData => <Input name="coins"/> },
+        { header: 'Created Time', name: "createdTime", buildField: rowData => <Input name="createdTime"/> },
         {
             header: 'Status', name: 'isActive',
-            buildField: rowData => <button name="isActive" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
+            buildField: rowData => <Select name="levelEnum" options={[{value: 1, text: "True"}, {value: 0, text: "False"}]} />
         }
     ], []);
 
@@ -67,7 +67,19 @@ export default function UserInfoTable() {
 
         return {
             handleContextMenu,
-            columns: userInfoColumns,
+            columns: [
+                { header: 'First Name', name: 'firstName' },
+                { header: 'Last Name', name: 'lastName' },
+                { header: 'Date of Birth', name: 'dob' },
+                { header: 'Gender', name: 'gender' },
+                { header: 'Email', name: 'dob' },
+                { header: 'Coins', name: 'coins' },
+                { header: 'Created Time', name: 'createdTime' },
+                {
+                    header: 'Status', name: 'isActive',
+                    buildField: rowData => <button name="isActive" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
+                }
+            ],
         };
     }, []);
 
@@ -112,6 +124,7 @@ export default function UserInfoTable() {
                 className="user-info-table"
                 title="User Information"
                 state={userInfoState}
+                headers={userInfoHeaders}
                 rowProps={userInfoRowProps}
                 onFilter={handleFilter}
                 onSort={handleSort}
