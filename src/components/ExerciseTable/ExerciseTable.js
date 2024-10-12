@@ -102,8 +102,10 @@ function ExerciseTable() {
             tableState: exerciseState,
             columns: exerciseColumns,
             updatingRowId,
-            handleClick,
-            handleContextMenu,
+            eventRegistered: rowData => ({
+                onClick: (e) => handleClick(e, rowData),
+                onContextMenu: (e) => handleContextMenu(e, rowData),
+            }),
             onSubmit: handleUpdate,
             confirm: true, // Ask confirm before submit
         };

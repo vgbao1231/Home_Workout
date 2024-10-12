@@ -1,8 +1,8 @@
 import { Send } from 'lucide-react';
-import { cloneElement, memo, useEffect, useMemo, useRef } from 'react';
+import { cloneElement, memo, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
-function TableRow({ tableState, columns, rowData, updatingRowId, handleClick, handleContextMenu, ...props }) {
+function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered, ...props }) {
     // console.log('row render: ' + rowData.exerciseId);
     const tableRowRef = useRef();
     const rowId = rowData[tableState.primaryKey];
@@ -26,8 +26,7 @@ function TableRow({ tableState, columns, rowData, updatingRowId, handleClick, ha
             <Form
                 ref={updatingRowId === rowId ? tableRowRef : null}
                 className={`table-row${updatingRowId === rowId ? ' active' : ''}`}
-                onClick={(e) => handleClick ? handleClick(e, rowData) : () => {}}
-                onContextMenu={(e) => handleContextMenu ? handleContextMenu(e, rowData) : () => {}}
+                {...eventRegistered(rowData)}
                 {...props}
             >
                 <div className="table-cell">

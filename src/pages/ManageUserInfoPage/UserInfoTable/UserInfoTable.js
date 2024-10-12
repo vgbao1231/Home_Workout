@@ -4,7 +4,7 @@ import { Book } from 'lucide-react';
 import { UserInfoAdminThunk } from '~/redux/thunks/userInfoThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import SubscriptionsDialog from './SubscriptionsDialog/SubscriptionsDialog';
-import { Dialog, Input, Select, Table } from '~/components';
+import { Dialog, Table } from '~/components';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
 
@@ -19,6 +19,20 @@ export default function UserInfoTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
+    const userInfoColumns = useMemo(() => [
+        { header: 'First Name', name: 'firstName' },
+        { header: 'Last Name', name: 'lastName' },
+        { header: 'Date of Birth', name: 'dob' },
+        { header: 'Gender', name: 'gender' },
+        { header: 'Email', name: 'dob' },
+        { header: 'Coins', name: 'coins' },
+        { header: 'Created Time', name: 'createdTime' },
+        {
+            header: 'Status', name: 'isActive',
+            buildField: rowData => <button name="isActive" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
+        }
+    ], []);
+
     const handleSwitchActiveStatus = useCallback(async (e, rowData) => {
         e.stopPropagation();
         await dispatch(UserInfoAdminThunk.updateUserStatusThunk({
@@ -28,9 +42,9 @@ export default function UserInfoTable() {
     }, []);
 
     // Properties of table row
-    const userInfoRowProps = useCallback((rowData) => {
+    const userInfoRowProps = useMemo(() => {
         //Handle open menu when right click
-        const handleContextMenu = (e) => {
+        const handleContextMenu = (e, rowData) => {
             e.preventDefault();
             setContextMenu({
                 isShown: true,
@@ -52,22 +66,8 @@ export default function UserInfoTable() {
         };
 
         return {
-            rowData,
-            columns: [
-                { header: 'User Info Id', name: 'userInfoId', field: <Input name="userInfoId" type="number" hidden /> },
-                { header: 'First Name', name: 'firstName' },
-                { header: 'Last Name', name: 'lastName' },
-                { header: 'Date of Birth', name: 'dob' },
-                { header: 'Gender', name: 'gender' },
-                { header: 'Email', name: 'dob' },
-                { header: 'Coins', name: 'coins' },
-                { header: 'Created Time', name: 'createdTime' },
-                {
-                    header: 'Status', name: 'isActive',
-                    field: <button name="isActive" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
-                },
-            ],
-            onContextMenu: handleContextMenu,
+            handleContextMenu,
+            columns: userInfoColumns,
         };
     }, []);
 
@@ -85,24 +85,23 @@ export default function UserInfoTable() {
     //Handle sort data
     const handleSort = useCallback((sortData) => setSortData(sortData), []);
 
-    useEffect(() => {
-        (async function fetchData() {
-            try {
-                const { sortedField, sortedMode } = sortData || {};
+    console.log("CALLED")
+    useEffect(async () => {
+        try {
+            const { sortedField, sortedMode } = sortData || {};
 
-                const objToGetData = {
-                    page: currentPage,
-                    filterFields: filterData,
-                    sortedField: sortedField,
-                    sortedMode: sortedMode,
-                };
-                console.log(objToGetData);
+            const objToGetData = {
+                page: currentPage,
+                filterFields: filterData,
+                sortedField: sortedField,
+                sortedMode: sortedMode,
+            };
+            console.log(objToGetData);
 
-                await dispatch(UserInfoAdminThunk.getAllUserInfoThunk(objToGetData)).unwrap();
-            } catch (error) {
-                dispatch(addToast(error, 'error'));
-            }
-        })();
+            await dispatch(UserInfoAdminThunk.getAllUserInfoThunk(objToGetData)).unwrap();
+        } catch (error) {
+            dispatch(addToast(error, 'error'));
+        }
     }, [dispatch, sortData, filterData, currentPage]);
 
     return userInfoState.loading ? (
