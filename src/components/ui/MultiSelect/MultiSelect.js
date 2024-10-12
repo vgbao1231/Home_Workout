@@ -1,10 +1,25 @@
-import { useState, memo } from 'react';
+import { useState, memo, useCallback, useEffect, useMemo } from 'react';
 import './MultiSelect.scss';
 import { useController, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
 
 function MultiSelect({ name, validators, className = '', options, placeholder, defaultValue = [], ...rest }) {
     const { getValues, trigger, control } = useFormContext();
+    const setupDefaultValuesWithObjectFormat = useCallback((defaultValue, options) => {
+        if (!defaultValue || defaultValue.length == 0)  return defaultValue;
+        
+        //--Create UpperCased Variables
+        const tempInitialValue = typeof defaultValue[0] == "string"
+            ? defaultValue.map(value => value.toUpperCase())
+            : defaultValue;
+        const upperCaseTexts = typeof options[0]["text"] == "string"
+            ? options.map(option => option["text"].toUpperCase())
+            : options.map(option => option["text"]);
+        return options.reduce((acc, { text, value }, index) =>
+            tempInitialValue.includes(upperCaseTexts[index]) ? [...acc, value] : acc
+        ,[]);
+    }, []);
+
     const {
         field,
         fieldState: { error = {} },
@@ -12,12 +27,17 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         name,
         control,
         rules: { validate: validators },
-        defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
+        defaultValue: setupDefaultValuesWithObjectFormat(defaultValue, options), // Get default value from Form, if not, get from props
     });
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    //--Built Options: {value:text, ...} instead of [{value:text}, ...]    
+    const builtOptions = useMemo(() => options.reduce((acc, obj) => {
+        const [ text, value ] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
+        return { ...acc, [value]: text };
+    }, {}), [options]);
 
-    console.log(error.message ? 'Render: error' : 'Render: multi');
+    // console.log(error.message ? 'Render: error' : 'Render: multi');
 
     // Filter out props that are events with the prefix 'on'
     const { events, props } = Object.keys(rest).reduce(
@@ -38,30 +58,31 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         }
     };
 
-    const handleSelect = (value) => {
-        if (!field.value.includes(value)) {
+    const handleSelect = (newValue) => {
+        if (!field.value.find(value => value === newValue)) {
             setInputValue('');
-            const updatedValues = [...field.value, value];
-            field.onChange(updatedValues);
-            events.onChange && events.onChange(updatedValues);
+            field.value.push(newValue);
+            field.onChange(field.value);
+            events.onChange && events.onChange(field.value);
         }
     };
 
-    const handleRemove = (e, value) => {
+    const handleRemove = (e, rmvValue) => {
         e.stopPropagation();
-        const updatedValues = field.value.filter((item) => item !== value);
+        const updatedValues = field.value.filter(value => rmvValue !== value);
         field.onChange(updatedValues);
         setInputValue('');
         events.onChange && events.onChange(updatedValues);
     };
 
-    const handleBackspace = (e) => {
+
+    const handlePopElementByBackspace = (e) => {
         if (e.key === 'Backspace' && !inputValue) {
             const updatedValues = field.value.slice(0, -1);
             field.onChange(updatedValues);
             events.onChange && events.onChange(updatedValues);
         }
-    };
+    }
 
     const handleClickOutside = () => {
         setIsOpen(false);
@@ -69,7 +90,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         validators && trigger(name);
         events.onBlur && events.onBlur(getValues(name));
     };
-
+    
     return (
         <>
             <div
@@ -83,7 +104,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                         {!field.value.length && <span className="placeholder">{placeholder}</span>}
                         {field.value.map((value, index) => (
                             <div key={index} className="selected-value center">
-                                <span>{options.find((option) => option.raw === value)?.text}</span>
+                                <span>{builtOptions[value]}</span>
                                 {isOpen && <X onClick={(e) => handleRemove(e, value)} />}
                             </div>
                         ))}
@@ -92,7 +113,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                                 <input
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
-                                    onKeyDown={handleBackspace}
+                                    onKeyDown={handlePopElementByBackspace}
                                     disabled={props.disabled}
                                     hidden={!isOpen}
                                     autoFocus={isOpen}
@@ -113,13 +134,12 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                 </div>
                 {isOpen && (
                     <div className="options-container">
-                        {options.map(
-                            (option, index) =>
-                                option.text.toLowerCase().includes(inputValue.toLowerCase()) && (
-                                    <div key={index} className="option" onClick={() => handleSelect(option.raw)}>
-                                        <span>{option.text}</span>
-                                    </div>
-                                ),
+                        {options.map(({ text, value }, index) =>
+                            text.toLowerCase().includes(inputValue.toLowerCase()) && (
+                                <div key={index} className="option" onClick={() => handleSelect(value)}>
+                                    <span>{text}</span>
+                                </div>
+                            ),
                         )}
                     </div>
                 )}

@@ -21,12 +21,12 @@ import Dialog from '../ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
 
 function ExerciseTable() {
-    console.log('exercise table');
+    // console.log('exercise table');
 
     const dispatch = useDispatch();
     const exerciseState = useSelector((state) => state.exercise);
-    const levelData = useSelector((state) => state.level.levelData);
-    const muscleData = useSelector((state) => state.muscle.muscleData);
+    const levelData = useSelector((state) => state.enum.data.levels);
+    const muscleData = useSelector((state) => state.enum.data.muscles);
     const [contextMenu, setContextMenu] = useState({});
     const [updatingRowId, setUpdatingRowId] = useState(null);
     const [isAddingRow, setIsAddingRow] = useState(false);
@@ -34,7 +34,7 @@ function ExerciseTable() {
     const [filterData, setFilterData] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
-
+    
     const dataToSend = useCallback(
         (formData) => {
             const { muscleList, levelEnum, imageUrl, ...data } = formData; // Destructure all props

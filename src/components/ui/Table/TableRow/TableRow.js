@@ -3,7 +3,7 @@ import { cloneElement, memo, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
 function TableRow({ columns, rowData, isSelected, isUpdating, ...props }) {
-    console.log('row render: ' + rowData.exerciseId);
+    // console.log('row render: ' + rowData.exerciseId);
 
     const tableRowRef = useRef();
 
@@ -26,7 +26,6 @@ function TableRow({ columns, rowData, isSelected, isUpdating, ...props }) {
             <Form
                 ref={isUpdating ? tableRowRef : null}
                 className={`table-row${isUpdating ? ' active' : ''}`}
-                defaultValues={rowData}
                 {...props}
             >
                 <div className="table-cell">
@@ -40,6 +39,7 @@ function TableRow({ columns, rowData, isSelected, isUpdating, ...props }) {
                     <div className="table-cell" key={index}>
                         {cloneElement(column.field, {
                             disabled: !isUpdating,
+                            defaultValue: rowData[column.name]
                         })}
                     </div>
                 ))}

@@ -14,7 +14,7 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
         defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
     });
 
-    console.log(error.message ? 'Render: error' : 'Render: select');
+    // console.log(error.message ? 'Render: error' : 'Render: select');
 
     // Filter out props that are events with the prefix 'on'
     const { events, props } = Object.keys(rest).reduce(

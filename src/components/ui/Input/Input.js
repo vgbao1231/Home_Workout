@@ -14,7 +14,7 @@ function Input({ name, className = '', validators = {}, formatters = {}, iconSup
         defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
     });
 
-    console.log(error.message ? 'Render: error' : 'Render: input');
+    // console.log(error.message ? 'Render: error' : 'Render: input');
 
     // Filter out props and events
     const { events, props } = Object.keys(rest).reduce(
