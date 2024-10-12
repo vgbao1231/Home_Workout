@@ -1,9 +1,23 @@
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import './Select.scss';
 import { useController, useFormContext } from 'react-hook-form';
 
 function Select({ name, className = '', validators = {}, formatters = {}, options, defaultValue = '', ...rest }) {
     const { getValues, control } = useFormContext();
+    const setupDefaultValuesWithObjectFormat = useCallback((defaultValue, options) => {
+        if (!defaultValue)  return defaultValue;
+
+        //--Create UpperCased Variables
+        const upperCaseDefVal = typeof defaultValue == "string" ? defaultValue.toUpperCase() : defaultValue;
+        const upperCaseEngine = typeof options[0]["text"] == "string"
+            ? str => str.toUpperCase()
+            : str => str;
+        for (let { text, value } of options)
+            if (upperCaseDefVal.includes(upperCaseEngine(text)))
+                return value;
+        throw Error("Invalid Select Value or Texts");
+    }, []);
+
     const {
         field,
         fieldState: { error = {} },
@@ -11,9 +25,9 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
         name,
         control,
         rules: { validate: validators },
-        defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
+        defaultValue: setupDefaultValuesWithObjectFormat(defaultValue, options), // Get default value from Form, if not, get from props
     });
-
+    
     // console.log(error.message ? 'Render: error' : 'Render: select');
 
     // Filter out props that are events with the prefix 'on'
@@ -31,7 +45,10 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
 
     const eventNames = [...new Set([...Object.keys(formatters), ...Object.keys(events)])];
     const eventHandlers = Object.fromEntries(
-        eventNames.map((eventName) => [eventName, (e) => handleEvent(eventName, e)]),
+        eventNames.map((eventName) => [
+            eventName, 
+            (e) => handleEvent(eventName, e)
+        ]),
     );
 
     // Handle format value by event
@@ -52,14 +69,12 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
         >
             <div className="field-wrapper">
                 {props.disabled ? (
-                    <span>{options.find((option) => option.raw === field.value)?.text}</span>
+                    <span>{options.find((option) => option.value === field.value)?.text}</span>
                 ) : (
                     <select {...field} {...eventHandlers} {...props}>
-                        <option value="" hidden>
-                            {props.placeholder}
-                        </option>
+                        <option value="" hidden> {props.placeholder} </option>
                         {options.map((option, index) => (
-                            <option key={index} value={option.raw}>
+                            <option key={index} value={option.value}>
                                 {option.text}
                             </option>
                         ))}

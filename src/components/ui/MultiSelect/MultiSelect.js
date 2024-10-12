@@ -6,18 +6,18 @@ import { X } from 'lucide-react';
 function MultiSelect({ name, validators, className = '', options, placeholder, defaultValue = [], ...rest }) {
     const { getValues, trigger, control } = useFormContext();
     const setupDefaultValuesWithObjectFormat = useCallback((defaultValue, options) => {
-        if (!defaultValue || defaultValue.length == 0)  return defaultValue;
-        
+        if (!defaultValue || defaultValue.length == 0) return defaultValue;
+
         //--Create UpperCased Variables
         const tempInitialValue = typeof defaultValue[0] == "string"
             ? defaultValue.map(value => value.toUpperCase())
             : defaultValue;
-        const upperCaseTexts = typeof options[0]["text"] == "string"
-            ? options.map(option => option["text"].toUpperCase())
-            : options.map(option => option["text"]);
+        const upperCaseEngine = typeof options[0]["text"] == "string"
+            ? str => str.toUpperCase()
+            : str => str;
         return options.reduce((acc, { text, value }, index) =>
-            tempInitialValue.includes(upperCaseTexts[index]) ? [...acc, value] : acc
-        ,[]);
+            tempInitialValue.includes(upperCaseEngine(text)) ? [...acc, value] : acc
+        , []);
     }, []);
 
     const {
@@ -33,7 +33,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
     const [inputValue, setInputValue] = useState('');
     //--Built Options: {value:text, ...} instead of [{value:text}, ...]    
     const builtOptions = useMemo(() => options.reduce((acc, obj) => {
-        const [ text, value ] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
+        const [text, value] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
         return { ...acc, [value]: text };
     }, {}), [options]);
 
@@ -90,7 +90,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
         validators && trigger(name);
         events.onBlur && events.onBlur(getValues(name));
     };
-    
+
     return (
         <>
             <div

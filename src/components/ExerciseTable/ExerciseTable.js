@@ -34,30 +34,22 @@ function ExerciseTable() {
     const [filterData, setFilterData] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
-    
-    const dataToSend = useCallback(
-        (formData) => {
-            const { muscleList, levelEnum, imageUrl, ...data } = formData; // Destructure all props
-            if (muscleList) {
-                data.muscleIds = muscleList.map((muscle) => muscleData.find((m) => m.raw === muscle)?.value);
-            }
-            if (levelEnum) {
-                data.levelEnum = levelData.find((l) => l.raw === levelEnum)?.value;
-            }
-            return data;
-        },
-        [levelData, muscleData],
-    );
 
-    const exerciseColumns = useMemo(
-        () => [
-            { header: 'Name', field: <Input name="name" /> },
-            { header: 'Muscle List', field: <MultiSelect name="muscleList" options={muscleData} /> },
-            { header: 'Level', field: <Select name="levelEnum" options={levelData} /> },
-            { header: 'Basic Reps', field: <Input name="basicReps" type="number" /> },
-        ],
-        [muscleData, levelData],
-    );
+    const exerciseColumns = useMemo(() => [
+        // { header: '', field: <Input type="checkbox" name="exerciseId" /> },
+        { header: 'Name', name: 'name', field: <Input name="name" /> },
+        {
+            header: 'Muscle List',
+            name: 'muscleList',
+            field: <MultiSelect name="muscleList" options={muscleData.map(muscle => (
+                { text: muscle["name"], value: muscle["id"] }
+            ))} />,
+        },
+        { header: 'Level', name: 'levelEnum', field: <Select name="levelEnum" options={levelData.map(dataObj => ({
+            value: dataObj["level"], text: dataObj["name"]
+        }))} /> },
+        { header: 'Basic Reps', name: 'basicReps', field: <Input name="basicReps" type="number" /> },
+    ], [muscleData, levelData]);
 
     // Properties of table row
     const exerciseRowProps = (rowData) => {
@@ -100,9 +92,8 @@ function ExerciseTable() {
 
         // Handle update row data
         const handleUpdate = (formData) => {
-            if (formData) {
-                dispatch(updateExerciseThunk(dataToSend(formData)));
-            }
+            if (formData)
+                dispatch(updateExerciseThunk(formData));
             setUpdatingRowId();
         };
 
@@ -132,12 +123,7 @@ function ExerciseTable() {
     // Properties to create add row form
     const addExerciseRowProps = useMemo(() => {
         return {
-            isAddingRow,
-            setIsAddingRow,
-            onSubmit: (formData) => {
-                dispatch(createExerciseThunk(dataToSend(formData)));
-                setIsAddingRow(false);
-            },
+            onSubmit: (formData) => dispatch(createExerciseThunk(formData)),
             fields: [
                 { field: <Input placeholder="Name" name="name" validators={{ isRequired }} /> },
                 {
@@ -162,16 +148,13 @@ function ExerciseTable() {
                 },
             ],
         };
-    }, [muscleData, levelData, dispatch, dataToSend, isAddingRow]);
+    }, [muscleData, levelData, dispatch]);
 
     //Handle filter data
-    const handleFilter = useCallback(
-        (filterData) => {
-            filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
-            setFilterData(dataToSend(filterData));
-        },
-        [dataToSend],
-    );
+    const handleFilter = useCallback((filterData) => {
+        filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
+        setFilterData(filterData);
+    }, []);
 
     //Handle sort data
     const handleSort = useCallback((sortData) => setSortData(sortData), []);
