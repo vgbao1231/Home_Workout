@@ -1,10 +1,8 @@
 :root {
     --gender-tag-color: rgb(230, 230, 255);
     --gender-tag-border-color: rgb(0, 0, 255);
-    --active-tag-color: rgb(230, 255, 230);
-    --active-tag-border-color: rgb(0, 255, 0);
-    --inactive-tag-color: rgb(255, 230, 230);
-    --inactive-tag-border-color: rgb(255, 0, 0);
+    --active-tag-bg-color: rgb(10, 213, 145);
+    --inactive-tag-bg-color: rgb(255, 0, 0);
 }
 
 .user-info-table {
@@ -48,6 +46,7 @@
                     padding: 0;
                     justify-content: center;
                     button {
+                        font-weight: 500;
                         position: relative;
                         cursor: pointer;
                         font-size: 12px;
@@ -56,42 +55,42 @@
                         padding: 3px 0;
                         width: 75px;
                         transition: background-color ease 0.3s;
-                    }
-                    button[plain="true"] {
-                        background-color: var(--ative-tag-color);
-                        color: var(--active-tag-border-color);
-                        border: 1px solid var(--active-tag-border-color);
-                    }
-                    button[plain="false"] {
-                        background-color: var(--inative-tag-color);
-                        color: var(--inactive-tag-border-color);
-                        border: 1px solid var(--inactive-tag-border-color);
-                    }
-                    button:hover {
-                        &::after{
-                            font-size: 10px;
-                            content: "Change this status";
-                            display: block;
-                            position: absolute;
-                            background-color: white;
-                            color: black;
-                            border: 1px solid black;
-                            width: 90px;
-                            line-height: 15px;
-                            left: -100px;
-                            top: 0;
-                            border-radius: 4px;
+                        &:hover {
+                            &::after{
+                                font-size: 10px;
+                                content: "Switch to this";
+                                display: block;
+                                position: absolute;
+                                background-color: white;
+                                color: black;
+                                border: 1px solid black;
+                                width: 70px;
+                                line-height: 15px;
+                                left: -80px;
+                                top: 0;
+                                border-radius: 4px;
+                            }
                         }
                     }
-                    button[plain="true"]:hover {
-                        background-color: var(--active-tag-border-color);
+                    button[plain="true"] {
+                        background-color: var(--active-tag-bg-color);
                         color: white;
-                        border-radius: 12px;
+                        border: 1px solid var(--active-tag-bg-color);
+                        &:hover {
+                            background-color: var(--inactive-tag-bg-color);
+                            border: 1px solid var(--inactive-tag-bg-color);
+                            border-radius: 12px;
+                        }
                     }
-                    button[plain="false"]:hover {
-                        background-color: var(--inactive-tag-border-color);
+                    button[plain="false"] {
+                        background-color: var(--inactive-tag-bg-color);
                         color: white;
-                        border-radius: 12px;
+                        border: 1px solid var(--inactive-tag-bg-color);
+                        &:hover {
+                            background-color: var(--active-tag-bg-color);
+                            border: 1px solid var(--active-tag-bg-color);
+                            border-radius: 12px;
+                        }
                     }
                 }
             }
