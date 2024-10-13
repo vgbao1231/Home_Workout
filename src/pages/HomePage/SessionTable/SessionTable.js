@@ -18,57 +18,59 @@ import ContextMenu from '../../../components/ui/Table/ContextMenu/ContextMenu';
 import Pagination from '../../../components/ui/Table/Pagination/Pagination';
 import Dialog from '../../../components/ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
-import ShowSelectedExercises from '../../../components/ui/Dialog/DialogContent/ShowSelectedExercises/ShowSelectedExercises';
+import ShowSelectedExercises from './ShowSelectedExercises/ShowSelectedExercises';
 
 function SessionTable() {
-    console.log('session table');
 
     const dispatch = useDispatch();
     const selectedExercise = useSelector((state) => state.exercise.selectedRows);
+    console.log(selectedExercise);
+
     const sessionState = useSelector((state) => state.session);
-    const levelData = useSelector((state) => state.enum.levels);
-    const muscleData = useSelector((state) => state.enum.muscles);
+    const levelData = useSelector((state) => state.enum.data.levels);
+    const muscleData = useSelector((state) => state.enum.data.muscles);
     const [contextMenu, setContextMenu] = useState({});
     const [updatingRowId, setUpdatingRowId] = useState(null);
-    const [isAddingRow, setIsAddingRow] = useState(false);
     const [sortData, setSortData] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
-
-    const sessionColumns = useMemo(
-        () => [
-            { header: 'Name', field: <Input name="name" /> },
-            { header: 'Muscle List', field: <MultiSelect name="muscleList" options={muscleData.map(dataObj => ({
-                value: dataObj["id"], text: dataObj["name"]
-            }))} /> },
-            { header: 'Level', field: <Select name="levelEnum" options={levelData.map(dataObj => ({
+    const sessionHeaders = useMemo(() => [
+        { header: 'Name', name: 'name', buildField: rowData => <Input name="name" /> },
+        {
+            header: 'Muscle List',
+            name: 'muscleList',
+            buildField: rowData => <MultiSelect name="muscleList" options={muscleData.map(muscle => (
+                { text: muscle["name"], value: muscle["id"] }
+            ))} />,
+        },
+        {
+            header: 'Level', name: 'levelEnum', buildField: rowData => <Select name="levelEnum" options={levelData.map(dataObj => ({
                 value: dataObj["level"], text: dataObj["name"]
-            }))} /> },
-            { header: 'Description', field: <Input name="description" type="number" /> },
-        ],
-        [muscleData, levelData],
-    );
+            }))} />
+        },
+        { header: 'Description', name: 'description', buildField: rowData => <Input name="description" type="number" /> },
+    ], [muscleData, levelData]);
 
     // Properties of table row
-    const sessionRowProps = (rowData) => {
-        const isUpdating = rowData.sessionId === updatingRowId;
-
+    const sessionRowProps = useMemo(() => {
         //Handle click row
-        const handleClick = () => {
-            !isUpdating && dispatch(toggleSelectRow(rowData.sessionId));
+        const handleClick = (_, rowData) => {
+            (rowData.sessionId !== updatingRowId) && dispatch(toggleSelectRow(rowData.sessionId));
         };
 
         //Handle open menu when right click
-        const handleContextMenu = (e) => {
+        const handleContextMenu = (e, rowData) => {
             e.preventDefault();
             setContextMenu({
                 isShown: true,
                 x: e.pageX,
                 y: e.pageY,
                 menuItems: [
-                    { text: 'Update Session', icon: <Pencil />, action: () => setUpdatingRowId(rowData.sessionId) },
+                    {
+                        text: 'Update Session', icon: <Pencil />, action: () => setUpdatingRowId(rowData.sessionId)
+                    },
                     {
                         text: 'Delete Session',
                         icon: <Trash2 />,
@@ -82,31 +84,46 @@ function SessionTable() {
 
         // Handle update row data
         const handleUpdate = (formData) => {
-            if (formData) {
+            if (formData)
                 dispatch(updateSessionThunk(formData));
-            }
             setUpdatingRowId();
         };
 
         return {
-            rowData,
-            columns: sessionColumns,
-            isSelected: sessionState.selectedRows[rowData.sessionId],
-            isUpdating,
-            onClick: handleClick,
-            onContextMenu: handleContextMenu,
+            tableState: sessionState,
+            columns: [
+                { header: 'Name', name: 'name', buildField: rowData => <Input name="name" /> },
+                {
+                    header: 'Muscle List',
+                    name: 'muscleList',
+                    buildField: rowData => <MultiSelect name="muscleList" options={muscleData.map(muscle => (
+                        { text: muscle["name"], value: muscle["id"] }
+                    ))} />,
+                },
+                {
+                    header: 'Level', name: 'levelEnum', buildField: rowData => <Select name="levelEnum" options={levelData.map(dataObj => ({
+                        value: dataObj["level"], text: dataObj["name"]
+                    }))} />
+                },
+                { header: 'Description', name: 'description', buildField: rowData => <Input name="description" type="number" /> },
+            ],
+            updatingRowId,
+            eventRegistered: rowData => ({
+                onClick: (e) => handleClick(e, rowData),
+                onContextMenu: (e) => handleContextMenu(e, rowData),
+            }),
             onSubmit: handleUpdate,
             confirm: true, // Ask confirm before submit
         };
-    };
+    }, [dispatch, levelData, muscleData, sessionState, updatingRowId]);
 
     // Properties to create add row form
     const addSessionRowProps = useMemo(() => {
         return {
-            isAddingRow,
-            setIsAddingRow,
             onSubmit: (formData) => {
                 // If no row selected
+                console.log(selectedExercise);
+
                 if (Object.values(selectedExercise).every((v) => !v)) {
                     alert('Please select exercises for this session');
                 } else {
@@ -115,7 +132,7 @@ function SessionTable() {
                         title: 'Selected Exercise',
                         body: <ShowSelectedExercises />,
                     });
-                    // dispatch(createSessionThunk(dataToSend(formData)));
+                    // dispatch(createSessionThunk(formData));
                 }
             },
             fields: [
@@ -124,27 +141,29 @@ function SessionTable() {
                     field: (
                         <MultiSelect
                             placeholder="Muscle List"
-                            name="muscleList"
-                            options={muscleData}
+                            name="muscleIds"
+                            options={muscleData.map(muscle => (
+                                { text: muscle["name"], value: muscle["id"] }
+                            ))}
                             validators={{ isRequired }}
                         />
                     ),
                 },
-                { field: <Select placeholder="Select Level" name="level" options={levelData} /> },
+                {
+                    field: <Select placeholder="Select Level" name="level" options={levelData.map(dataObj => ({
+                        value: dataObj["level"], text: dataObj["name"]
+                    }))} />
+                },
                 { field: <Input placeholder="Description" name="description" /> },
             ],
         };
-    }, [muscleData, levelData, isAddingRow, selectedExercise, dispatch]);
+    }, [muscleData, levelData, selectedExercise]);
 
     //Handle filter data
-    const handleFilter = useCallback(
-        (filterData) => {
-            filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
-
-            setFilterData(filterData);
-        },
-        [],
-    );
+    const handleFilter = useCallback((filterData) => {
+        filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
+        setFilterData(filterData);
+    }, []);
 
     //Handle sort data
     const handleSort = useCallback((sortData) => setSortData(sortData), []);
@@ -158,14 +177,15 @@ function SessionTable() {
         const fetchData = async () => {
             try {
                 const { sortedField, sortedMode } = sortData || {};
-                await dispatch(
-                    fetchSessionThunk({
-                        page: currentPage,
-                        filterFields: filterData,
-                        sortedField: sortedField,
-                        sortedMode: sortedMode,
-                    }),
-                ).unwrap();
+
+                const objToGetData = {
+                    page: currentPage,
+                    filterFields: filterData,
+                    sortedField: sortedField,
+                    sortedMode: sortedMode,
+                };
+
+                await dispatch(fetchSessionThunk(objToGetData)).unwrap();
             } catch (error) {
                 dispatch(addToast(error, 'error'));
             }
@@ -177,13 +197,12 @@ function SessionTable() {
     return sessionState.loading ? (
         <div>Loading Session Data...</div>
     ) : (
-        <div className="session-table">
+        <>
             <Table
+                className="session-table"
                 title="Session"
-                columns={sessionColumns}
-                data={sessionState.data}
-                selectedRows={sessionState.selectedRows}
-                primaryKey={sessionState.primaryKey}
+                headers={sessionHeaders}
+                state={sessionState}
                 rowProps={sessionRowProps}
                 addRowProps={addSessionRowProps}
                 onFilter={handleFilter}
@@ -198,7 +217,7 @@ function SessionTable() {
                 totalPages={sessionState.totalPages}
             />
             <Dialog onClose={handleCloseDialog} {...dialogProps} />
-        </div>
+        </>
     );
 }
 

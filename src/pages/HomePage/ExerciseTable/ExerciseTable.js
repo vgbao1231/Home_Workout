@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image, Pencil, Trash2, Upload } from 'lucide-react';
-import Input from '../../../components/ui/Input/Input';
-import MultiSelect from '../../../components/ui/MultiSelect/MultiSelect';
-import Select from '../../../components/ui/Select/Select';
-import Table from '../../../components/ui/Table/Table';
 import './ExerciseTable.scss';
 import { toggleSelectRow } from '~/redux/slices/exerciseSlice';
 import { isRequired } from '~/utils/validators';
@@ -14,11 +10,11 @@ import {
     fetchExerciseThunk,
     updateExerciseThunk,
 } from '~/redux/thunks/exerciseThunk';
-import ContextMenu from '../../../components/ui/Table/ContextMenu/ContextMenu';
-import Pagination from '../../../components/ui/Table/Pagination/Pagination';
-import ShowImage from '../../../components/ui/Dialog/DialogContent/ShowImage/ShowImage';
-import Dialog from '../../../components/ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
+import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
+import { Dialog, Input, MultiSelect, Select, Table } from '~/components';
+import ShowImage from '~/components/ui/Dialog/DialogContent/ShowImage/ShowImage';
+import Pagination from '~/components/ui/Table/Pagination/Pagination';
 
 function ExerciseTable() {
     // console.log('exercise table');
@@ -123,7 +119,7 @@ function ExerciseTable() {
             onSubmit: handleUpdate,
             confirm: true, // Ask confirm before submit
         };
-    }, [exerciseState, updatingRowId]);
+    }, [exerciseState, updatingRowId, dispatch, levelData, muscleData]);
 
     // Properties to create add row form
     const addExerciseRowProps = useMemo(() => {
@@ -135,13 +131,19 @@ function ExerciseTable() {
                     field: (
                         <MultiSelect
                             placeholder="Muscle List"
-                            name="muscleList"
-                            options={muscleData}
+                            name="muscleIds"
+                            options={muscleData.map(muscle => (
+                                { text: muscle["name"], value: muscle["id"] }
+                            ))}
                             validators={{ isRequired }}
                         />
                     ),
                 },
-                { field: <Select placeholder="Select Level" name="level" options={levelData} /> },
+                {
+                    field: <Select placeholder="Select Level" name="level" options={levelData.map(dataObj => ({
+                        value: dataObj["level"], text: dataObj["name"]
+                    }))} />
+                },
                 { field: <Input placeholder="Basic Reps" name="basicReps" /> },
                 {
                     field: (
@@ -180,7 +182,6 @@ function ExerciseTable() {
                     sortedField: sortedField,
                     sortedMode: sortedMode,
                 };
-                console.log(objToGetData);
 
                 await dispatch(fetchExerciseThunk(objToGetData)).unwrap();
             } catch (error) {

@@ -5,8 +5,7 @@ import { ExerciseTable, SessionTable } from '~/components';
 import { addToast } from '~/redux/slices/toastSlice';
 import './HomePage.scss';
 import { logoutThunk } from '~/redux/thunks/authThunk';
-import { EnumAdminThunk, EnumUserThunk } from '~/redux/thunks/enumThunk';
-import { createSelector } from '@reduxjs/toolkit';
+import { EnumAdminThunk } from '~/redux/thunks/enumThunk';
 
 const HomePage = () => {
     const dispatch = useDispatch();
@@ -47,7 +46,7 @@ const HomePage = () => {
             <h1>Homepage </h1>
             <button onClick={handleLogout}>Log Out</button>
             <ExerciseTable />
-            {/* <SessionTable /> */}
+            <SessionTable />
         </div>
     );
 };

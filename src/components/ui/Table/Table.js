@@ -130,7 +130,7 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
 
             <div className="table-body">
                 {data.map((rowData, index) => {
-                    return <TableRow key={index} { ...rowProps } rowData={rowData} />;
+                    return <TableRow key={index} {...rowProps} rowData={rowData} />;
                 })}
                 {addRowProps && (isAddingRow ? (
                     <Form

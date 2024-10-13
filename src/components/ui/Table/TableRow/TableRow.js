@@ -2,7 +2,7 @@ import { Send } from 'lucide-react';
 import { cloneElement, memo, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
-function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered = ()=>{}, ...props }) {
+function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered = () => { }, ...props }) {
     // console.log('row render: ' + rowData.exerciseId);
     const tableRowRef = useRef();
     const rowId = rowData[tableState.primaryKey];
@@ -20,7 +20,6 @@ function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered
             return () => window.removeEventListener('keydown', handleKeyDown);
         }
     }, [updatingRowId]);
-    console.log(updatingRowId === rowId, updatingRowId, rowId)
     return (
         <>
             <Form
@@ -41,7 +40,7 @@ function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered
                         {column.buildField
                             ? cloneElement(
                                 column.buildField(rowData),
-                                { disabled: updatingRowId !== rowId, defaultValue: rowData[column.name]}
+                                { disabled: updatingRowId !== rowId, defaultValue: rowData[column.name] }
                             ) : <span>{rowData[column.name]}</span>
                         }
                     </div>
@@ -59,8 +58,8 @@ export default memo(TableRow, (prevProps, nextProps) => {
     const primaryKey = prevProps.tableState.primaryKey;
     return (
         JSON.stringify(prevProps.rowData) === JSON.stringify(nextProps.rowData)
-        && prevProps.tableState.selectedRows[prevProps.rowData[primaryKey]] === 
-            nextProps.tableState.selectedRows[nextProps.rowData[primaryKey]]
+        && prevProps.tableState.selectedRows[prevProps.rowData[primaryKey]] ===
+        nextProps.tableState.selectedRows[nextProps.rowData[primaryKey]]
         && prevProps.updatingRowId === nextProps.updatingRowId
     );
 });
