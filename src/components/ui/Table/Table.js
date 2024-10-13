@@ -132,7 +132,7 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
                 {data.map((rowData, index) => {
                     return <TableRow key={index} { ...rowProps } rowData={rowData} />;
                 })}
-                {addRowProps && isAddingRow ? (
+                {addRowProps && (isAddingRow ? (
                     <Form
                         ref={addRowRef}
                         className="table-row add-row"
@@ -157,7 +157,7 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
                         </div>
                         <div className="table-cell">Add row</div>
                     </div>
-                )}
+                ))}
             </div>
         </div>
     );

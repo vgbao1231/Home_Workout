@@ -19,7 +19,11 @@ const userInfoSlice = createSlice({
             })
             .addCase(UserInfoAdminThunk.getAllUserInfoThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data = action.payload.data.data;
+                state.data = action.payload.data.data.map(objData => ({
+                    ...objData,
+                    dob: new Date(...objData.dob).toISOString().slice(0, 10),
+                    createdTime: new Date(...objData.createdTime).toISOString(),
+                }));
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })

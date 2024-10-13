@@ -2,7 +2,7 @@ import { Send } from 'lucide-react';
 import { cloneElement, memo, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
-function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered, ...props }) {
+function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered = ()=>{}, ...props }) {
     // console.log('row render: ' + rowData.exerciseId);
     const tableRowRef = useRef();
     const rowId = rowData[tableState.primaryKey];
