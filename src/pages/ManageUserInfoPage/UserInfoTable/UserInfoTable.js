@@ -34,16 +34,16 @@ export default function UserInfoTable() {
         }
     ], []);
 
-    const handleSwitchActiveStatus = useCallback(async (e, rowData) => {
-        e.stopPropagation();
-        await dispatch(UserInfoAdminThunk.updateUserStatusThunk({
-            userInfoId: rowData["userInfoId"],
-            active: !rowData["active"]
-        })).unwrap();
-    }, []);
-
     // Properties of table row
     const userInfoRowProps = useMemo(() => {
+        const handleSwitchActiveStatus = async (e, rowData) => {
+            e.stopPropagation();
+            await dispatch(UserInfoAdminThunk.updateUserStatusThunk({
+                userInfoId: rowData["userInfoId"],
+                active: !rowData["active"]
+            })).unwrap();
+        };
+
         //Handle open menu when right click
         const handleContextMenu = (e, rowData) => {
             e.preventDefault();
@@ -69,8 +69,9 @@ export default function UserInfoTable() {
         return {
             tableState: userInfoState,
             eventRegistered: rowData => ({
-                onContextMenu: (e) =>   (e, rowData)
+                onContextMenu: (e) => handleContextMenu(e, rowData)
             }),
+            canSelectingRow: false,
             columns: [
                 { header: 'First Name', name: 'firstName' },
                 { header: 'Last Name', name: 'lastName' },
@@ -81,7 +82,10 @@ export default function UserInfoTable() {
                 { header: 'Created Time', name: 'createdTime' },
                 {
                     header: 'Status', name: 'active',
-                    buildField: rowData => <button name="active" onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}></button>
+                    replacedContent: rowData => <button name="active" plain={`${rowData['active']}`}
+                        onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}>
+                        {rowData['active'] ? "Activating" : "Inactivated"}
+                    </button>
                 }
             ],
         };
@@ -113,7 +117,6 @@ export default function UserInfoTable() {
                     sortedMode: sortedMode,
                 };
                 console.log(objToGetData);
-
                 await dispatch(UserInfoAdminThunk.getAllUserInfoThunk(objToGetData)).unwrap();
             } catch (error) {
                 dispatch(addToast(error, 'error'));
@@ -123,7 +126,7 @@ export default function UserInfoTable() {
     }, [dispatch, sortData, filterData, currentPage]);
 
     return userInfoState.loading ? (
-        <div>Loading Exercise Data...</div>
+        <div className="table-wrapper user-info-table">Loading Data...</div>
     ) : (
         <>
             <Table

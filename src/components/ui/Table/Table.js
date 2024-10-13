@@ -113,13 +113,13 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
             </div>
             <div className="table-header">
                 <div className="table-row">
-                    <div className="table-cell">
+                    {rowProps.canSelectingRow && <div className="table-cell">
                         <input
                             type="checkbox"
                             checked={data.every((rowData) => selectedRows[rowData[primaryKey]])}
                             onChange={handleSelectAll}
                         />
-                    </div>
+                    </div>}
                     {rowProps.columns.map((column, index) => (
                         <div key={index} className="table-cell">
                             {column.header}

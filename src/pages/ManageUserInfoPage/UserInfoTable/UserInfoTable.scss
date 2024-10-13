@@ -1,3 +1,12 @@
+:root {
+    --gender-tag-color: rgb(230, 230, 255);
+    --gender-tag-border-color: rgb(0, 0, 255);
+    --active-tag-color: rgb(230, 255, 230);
+    --active-tag-border-color: rgb(0, 255, 0);
+    --inactive-tag-color: rgb(255, 230, 230);
+    --inactive-tag-border-color: rgb(255, 0, 0);
+}
+
 .user-info-table {
     font-size: 13px;
 
@@ -5,31 +14,111 @@
     .table-body {
         .table-row {
             .table-cell {
-                min-height: 40px;
+                min-height: 30px;
                 padding-left: 10px;
-                &:nth-of-type(1) {
-                    justify-content: center;
-                    padding: 0;
-                    width: 3%;
-                }
-                &:nth-of-type(2),
-                &:nth-of-type(4) {
-                    width: 9%;
-                }
+                &:nth-of-type(1),
                 &:nth-of-type(3) {
+                    width: 11%;
+                }
+                &:nth-of-type(2) {
                     width: 14%;
                 }
-                &:nth-of-type(5),
-                &:nth-of-type(7) {
+                &:nth-of-type(4) {
                     width: 8%;
+                    span {
+                        font-size: 10px;
+                        background-color: var(--gender-tag-color);
+                        color: var(--gender-tag-border-color);
+                        border: 1px solid var(--gender-tag-border-color);
+                        border-radius: 12px;
+                        padding: 0 4px;
+                    }
+                }
+                &:nth-of-type(5) {
+                    width: 26%;
                 }
                 &:nth-of-type(6) {
-                    width: 25%;
+                    width: 8%;
+                }
+                &:nth-of-type(7) {
+                    width: 17%;
                 }
                 &:nth-of-type(8) {
-                    width: 16%;
+                    width: 8%;
+                    padding: 0;
+                    justify-content: center;
+                    button {
+                        position: relative;
+                        cursor: pointer;
+                        font-size: 12px;
+                        display: block;
+                        border-radius: 4px;
+                        padding: 3px 0;
+                        width: 75px;
+                        transition: background-color ease 0.3s;
+                    }
+                    button[plain="true"] {
+                        background-color: var(--ative-tag-color);
+                        color: var(--active-tag-border-color);
+                        border: 1px solid var(--active-tag-border-color);
+                    }
+                    button[plain="false"] {
+                        background-color: var(--inative-tag-color);
+                        color: var(--inactive-tag-border-color);
+                        border: 1px solid var(--inactive-tag-border-color);
+                    }
+                    button:hover {
+                        &::after{
+                            font-size: 10px;
+                            content: "Change this status";
+                            display: block;
+                            position: absolute;
+                            background-color: white;
+                            color: black;
+                            border: 1px solid black;
+                            width: 90px;
+                            line-height: 15px;
+                            left: -100px;
+                            top: 0;
+                            border-radius: 4px;
+                        }
+                    }
+                    button[plain="true"]:hover {
+                        background-color: var(--active-tag-border-color);
+                        color: white;
+                        border-radius: 12px;
+                    }
+                    button[plain="false"]:hover {
+                        background-color: var(--inactive-tag-border-color);
+                        color: white;
+                        border-radius: 12px;
+                    }
                 }
             }
+        }
+    }
+    .table-body {
+        margin-right: -4.5px;
+        overflow-y: scroll;
+        height: 65vh;
+        /* Scrollbar styling for WebKit browsers */
+        &::-webkit-scrollbar {
+            width: 5px; /* Width of the scrollbar */
+            height: 10px; /* Height of the scrollbar for horizontal scrolling */
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background-color: #888; /* Color of the scrollbar thumb */
+            border-radius: 5px; /* Rounded corners for the thumb */
+        }
+        
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: #555; /* Color of the thumb when hovered */
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1; /* Background color of the scrollbar track */
+            border-radius: 5px;
         }
     }
 }
