@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Pencil, Trash2 } from 'lucide-react';
-import Input from '../ui/Input/Input';
-import MultiSelect from '../ui/MultiSelect/MultiSelect';
-import Select from '../ui/Select/Select';
-import Table from '../ui/Table/Table';
+import Input from '../../../components/ui/Input/Input';
+import MultiSelect from '../../../components/ui/MultiSelect/MultiSelect';
+import Select from '../../../components/ui/Select/Select';
+import Table from '../../../components/ui/Table/Table';
 import './SessionTable.scss';
 import { toggleSelectRow } from '~/redux/slices/sessionSlice';
 import { isRequired } from '~/utils/validators';
@@ -14,11 +14,11 @@ import {
     fetchSessionThunk,
     updateSessionThunk,
 } from '~/redux/thunks/sessionThunk';
-import ContextMenu from '../ui/Table/ContextMenu/ContextMenu';
-import Pagination from '../ui/Table/Pagination/Pagination';
-import Dialog from '../ui/Dialog/Dialog';
+import ContextMenu from '../../../components/ui/Table/ContextMenu/ContextMenu';
+import Pagination from '../../../components/ui/Table/Pagination/Pagination';
+import Dialog from '../../../components/ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
-import ShowSelectedExercises from '../ui/Dialog/DialogContent/ShowSelectedExercises/ShowSelectedExercises';
+import ShowSelectedExercises from '../../../components/ui/Dialog/DialogContent/ShowSelectedExercises/ShowSelectedExercises';
 
 function SessionTable() {
     console.log('session table');

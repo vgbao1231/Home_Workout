@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image, Pencil, Trash2, Upload } from 'lucide-react';
-import Input from '../ui/Input/Input';
-import MultiSelect from '../ui/MultiSelect/MultiSelect';
-import Select from '../ui/Select/Select';
-import Table from '../ui/Table/Table';
+import Input from '../../../components/ui/Input/Input';
+import MultiSelect from '../../../components/ui/MultiSelect/MultiSelect';
+import Select from '../../../components/ui/Select/Select';
+import Table from '../../../components/ui/Table/Table';
 import './ExerciseTable.scss';
 import { toggleSelectRow } from '~/redux/slices/exerciseSlice';
 import { isRequired } from '~/utils/validators';
@@ -14,10 +14,10 @@ import {
     fetchExerciseThunk,
     updateExerciseThunk,
 } from '~/redux/thunks/exerciseThunk';
-import ContextMenu from '../ui/Table/ContextMenu/ContextMenu';
-import Pagination from '../ui/Table/Pagination/Pagination';
-import ShowImage from '../ui/Dialog/DialogContent/ShowImage/ShowImage';
-import Dialog from '../ui/Dialog/Dialog';
+import ContextMenu from '../../../components/ui/Table/ContextMenu/ContextMenu';
+import Pagination from '../../../components/ui/Table/Pagination/Pagination';
+import ShowImage from '../../../components/ui/Dialog/DialogContent/ShowImage/ShowImage';
+import Dialog from '../../../components/ui/Dialog/Dialog';
 import { addToast } from '~/redux/slices/toastSlice';
 
 function ExerciseTable() {
@@ -29,14 +29,12 @@ function ExerciseTable() {
     const muscleData = useSelector((state) => state.enum.data.muscles);
     const [contextMenu, setContextMenu] = useState({});
     const [updatingRowId, setUpdatingRowId] = useState(null);
-    const [isAddingRow, setIsAddingRow] = useState(false);
     const [sortData, setSortData] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
-    const exerciseColumns = useMemo(() => [
-        // { header: '', field: <Input type="checkbox" name="exerciseId" /> },
+    const exerciseHeaders = useMemo(() => [
         { header: 'Name', name: 'name', buildField: rowData => <Input name="name" /> },
         {
             header: 'Muscle List',
@@ -101,7 +99,22 @@ function ExerciseTable() {
 
         return {
             tableState: exerciseState,
-            columns: exerciseColumns,
+            columns: [
+                { header: 'Name', name: 'name', buildField: rowData => <Input name="name" /> },
+                {
+                    header: 'Muscle List',
+                    name: 'muscleList',
+                    buildField: rowData => <MultiSelect name="muscleList" options={muscleData.map(muscle => (
+                        { text: muscle["name"], value: muscle["id"] }
+                    ))} />,
+                },
+                {
+                    header: 'Level', name: 'levelEnum', buildField: rowData => <Select name="levelEnum" options={levelData.map(dataObj => ({
+                        value: dataObj["level"], text: dataObj["name"]
+                    }))} />
+                },
+                { header: 'Basic Reps', name: 'basicReps', buildField: rowData => <Input name="basicReps" type="number" /> },
+            ],
             updatingRowId,
             eventRegistered: rowData => ({
                 onClick: (e) => handleClick(e, rowData),
@@ -115,9 +128,7 @@ function ExerciseTable() {
     // Properties to create add row form
     const addExerciseRowProps = useMemo(() => {
         return {
-            onSubmit: (formData) => {
-                dispatch(createExerciseThunk(formData));
-            },
+            onSubmit: (formData) => dispatch(createExerciseThunk(formData)),
             fields: [
                 { field: <Input placeholder="Name" name="name" validators={{ isRequired }} /> },
                 {
@@ -147,7 +158,6 @@ function ExerciseTable() {
     //Handle filter data
     const handleFilter = useCallback((filterData) => {
         filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
-
         setFilterData(filterData);
     }, []);
 
@@ -163,14 +173,16 @@ function ExerciseTable() {
         const fetchData = async () => {
             try {
                 const { sortedField, sortedMode } = sortData || {};
-                await dispatch(
-                    fetchExerciseThunk({
-                        page: currentPage,
-                        filterFields: filterData,
-                        sortedField: sortedField,
-                        sortedMode: sortedMode,
-                    }),
-                ).unwrap();
+
+                const objToGetData = {
+                    page: currentPage,
+                    filterFields: filterData,
+                    sortedField: sortedField,
+                    sortedMode: sortedMode,
+                };
+                console.log(objToGetData);
+
+                await dispatch(fetchExerciseThunk(objToGetData)).unwrap();
             } catch (error) {
                 dispatch(addToast(error, 'error'));
             }
@@ -182,9 +194,11 @@ function ExerciseTable() {
     return exerciseState.loading ? (
         <div>Loading Exercise Data...</div>
     ) : (
-        <div className="exercise-table">
+        <>
             <Table
+                className="exercise-table"
                 title="Exercise"
+                headers={exerciseHeaders}
                 state={exerciseState}
                 rowProps={exerciseRowProps}
                 addRowProps={addExerciseRowProps}
@@ -200,7 +214,7 @@ function ExerciseTable() {
                 totalPages={exerciseState.totalPages}
             />
             <Dialog onClose={handleCloseDialog} {...dialogProps} />
-        </div>
+        </>
     );
 }
 
