@@ -5,6 +5,7 @@ import exerciseSlice from './slices/exerciseSlice';
 import sessionSlice from './slices/sessionSlice';
 import userInfoSlice from './slices/userInfoSlice';
 import enumSlice from './slices/enumSlice';
+import subscriptionSlice from './slices/subscriptionSlice';
 
 
 const store = configureStore({
@@ -14,7 +15,8 @@ const store = configureStore({
         exercise: exerciseSlice,
         session: sessionSlice,
         userInfo: userInfoSlice,
-        enum: enumSlice
+        enum: enumSlice,
+        subscription: subscriptionSlice,
     },
 });
 
