@@ -11,12 +11,20 @@ const exerciseSlice = createSlice({
     initialState: {
         primaryKey: 'exerciseId',
         selectedRows: {},
+        filterData: [],
+        sortData: [],
         data: [],
         totalPages: 1,
         loading: true, // Default is true so that when there is no data, loading will appear
         message: '',
     },
     reducers: {
+        setFilterData(state, action) {
+            state.filterData = Object.fromEntries(Object.entries(action.payload).filter(([_, value]) => value.length > 0));
+        },
+        setSortData(state, action) {
+            state.sortData = action.payload;
+        },
         toggleSelectRow: (state, action) => {
             const rowId = action.payload;
             state.selectedRows[rowId] = !state.selectedRows[rowId];
@@ -24,9 +32,9 @@ const exerciseSlice = createSlice({
         selectAllRows: (state, action) => {
             state.selectedRows = action.payload
                 ? state.data.reduce((acc, row) => {
-                      acc[row.exerciseId] = true;
-                      return acc;
-                  }, {})
+                    acc[row.exerciseId] = true;
+                    return acc;
+                }, {})
                 : {};
         },
     },
@@ -90,5 +98,6 @@ const exerciseSlice = createSlice({
     },
 });
 
-export const { toggleSelectRow, selectAllRows } = exerciseSlice.actions;
+export const { toggleSelectRow, selectAllRows, setFilterData, setSortData } = exerciseSlice.actions;
+export const { ...exerciseActions } = exerciseSlice.actions;
 export default exerciseSlice.reducer;

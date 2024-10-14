@@ -17,7 +17,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
             : str => str;
         return options.reduce((acc, { text, value }, index) =>
             tempInitialValue.includes(upperCaseEngine(text)) ? [...acc, value] : acc
-        , []);
+            , []);
     }, []);
 
     const {
@@ -33,7 +33,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
     const [inputValue, setInputValue] = useState('');
     //--Built Options: {value:text, ...} instead of [{value:text}, ...]    
     const builtOptions = useMemo(() => options.reduce((acc, obj) => {
-        const [text, value] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
+        const [value, text] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
         return { ...acc, [value]: text };
     }, {}), [options]);
 
