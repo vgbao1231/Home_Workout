@@ -29,7 +29,7 @@ export default function SubscriptionsDialog({ userInfoId }) {
             FormatterDict.FilterField("efficientDays", <Input type="number" name="efficientDays" />),
             FormatterDict.FilterField("scheduleName", <Input name="scheduleName" />),
             FormatterDict.FilterField("scheduleCoins", <Input type="number" name="scheduleCoins" />),
-            FormatterDict.FilterField("fromCompletedTime", <Input type="datetime-local" name="fromCompletedTime" />),
+            Formatte    rDict.FilterField("fromCompletedTime", <Input type="datetime-local" name="fromCompletedTime" />),
             FormatterDict.FilterField("toCompletedTime", <Input type="datetime-local" name="toCompletedTime" />),
         ],
         sortingFields = [
