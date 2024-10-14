@@ -8,23 +8,25 @@ import Form from '../Form/Form';
 import Select from '../Select/Select';
 
 export const FormatterDict = {
-    TableStates(
-        mainState = null,
-        page = null,
-        toastEngine = () => { },
+    TableStates(mainState = null, page = null, toastEngine = () => { },
         reduxPair = {
             moreParams: {},
-            GET_thunk: () => { }
-        },
-        sortingPair = { state: null, setSortData() { } },
-        filterPair = { state: null, setFilterData() { } },
+            GET_thunk() { },
+            UPDATE_thunk() { },
+            POST_thunk() { },
+            DELETE_thunk() { }
+        }
     ) {
         return { reduxPair, mainState, page, sortingPair, filterPair, toastEngine };
     },
     TableModes(canSelectingRow = false, canUpdatingRow = false, hasAddingForm = false, contextMenu = false) {
         return { canSelectingRow, canUpdatingRow, hasAddingForm, contextMenu };
     },
-    TableComponent(columnsInfo = [], filterFields = [], sortingFields = [], addingFormFields = []) {
+    TableComponent(columnsInfo = [], filterFields = [], sortingFields = [],
+        addingFormFields = {
+            handleSubmit() { },
+            inputCompos: []
+        }) {
         return { columnsInfo, filterFields, sortingFields, addingFormFields };
     },
     ColumnInfo(
@@ -45,16 +47,18 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
 
     const dispatch = useDispatch();
     const { data, selectedRows, primaryKey } = tableStates.mainState;
+    const [filterData, setFilterData] = useState(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [sortData, setSortData] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isAddingRow, setIsAddingRow] = useState(false);
     const addRowRef = useRef();
 
     const handleFilter = useCallback((filterData) => {
         filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
-        tableStates.filterPair.setFilterData(filterData);
+        setFilterData(filterData);
     }, []);
-    const handleSort = useCallback((sortData) => tableStates.sortingPair.setSortData(sortData), [])
+    const handleSort = useCallback((sortData) => setSortData(sortData), [])
     const handleSelectAll = useCallback((e) => {
         dispatch(selectAllRows(e.target.checked));
     }, [dispatch]);
@@ -62,10 +66,10 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
     useEffect(() => {
         async function fetchData() {
             try {
-                const { sortedField, sortedMode } = tableStates.sortingPair.sortData || {};
+                const { sortedField, sortedMode } = sortData || {};
                 const objToGetData = {
                     page: currentPage,
-                    filterFields: tableStates.filterPair.filterData,
+                    filterFields: filterData,
                     sortedField: sortedField,
                     sortedMode: sortedMode,
                     ...tableStates.reduxPair.moreParams
@@ -76,10 +80,10 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
             }
         };
         fetchData();
-    }, [dispatch, tableStates.sortingPair.sortData, tableStates.filterPair.filterData, tableStates.page]);
+    }, [dispatch, sortData, filterData, tableStates.page]);
 
     useEffect(() => {
-        if (tableModes.addingFormFields && isAddingRow) {
+        if (tableModes.hasAddingForm && isAddingRow) {
             const handleKeyDown = (e) => {
                 if (e.key === 'Escape')
                     setIsAddingRow(false); // Turn off adding mode
@@ -103,7 +107,7 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
                         <Form
                             className={`filter-box${isFilterOpen ? ' open' : ''}`}
                             onSubmit={handleFilter}
-                            defaultValues={tableStates.filterPair.filterData}
+                            defaultValues={filterData}
                         >
                             <div className="filter-header">
                                 <span>Filter</span>
@@ -131,7 +135,7 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
                         <Form
                             className={`sort-box${isSortOpen ? ' open' : ''}`}
                             onSubmit={handleSort}
-                            defaultValues={tableStates.sortingPair.sortData}
+                            defaultValues={sortData}
                         >
                             <div className="sort-header">
                                 <span>Sort</span>
@@ -182,7 +186,6 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
                     ))}
                 </div>
             </div>
-
             <div className="table-body">
                 {data.map((rowData, index) => {
                     return <TableRow key={index} {...rowProps} rowData={rowData} />;    //--Fixing--------------------------------------
@@ -192,18 +195,20 @@ export function Table2({ className, title, tableComponents, tableStates, tableMo
                         ref={addRowRef}
                         className="table-row add-row"
                         onSubmit={(formData) => {
-                            addRowProps.onSubmit(formData);
+                            tableStates.reduxPair.POST_thunk(formData);
                             setIsAddingRow(false);
                         }}
                     >
                         <div className="table-cell">
                             <Send className="send-icon" onClick={() => addRowRef.current.requestSubmit()} />
                         </div>
-                        {addRowProps.fields.map((addField, index) => (  //--Fixing--------------------------------------
-                            <div className="table-cell" key={index}>
-                                {addField.field}
-                            </div>
-                        ))}
+                        {tableModes.hasAddingForm &&
+                            tableComponents.addingFormFields.map((fieldInfo, index) => (
+                                <div className="table-cell" key={index}>
+                                    {fieldInfo.inputCompo}
+                                </div>
+                            )
+                        )}
                     </Form>
                 ) : (
                     <div className="table-row add-row" onClick={() => setIsAddingRow(true)}>
