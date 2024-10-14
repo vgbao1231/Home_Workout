@@ -39,6 +39,7 @@ export const FormatterDict = {
     },
     FilterField: (name = "name", inputCompo = (<></>)) => ({ name, inputCompo }),
     SortingField: (name = "name", sortingLabel = "Name") => ({ name, sortingLabel }),
+    AddingField: (name = "name", inputCompo = (<></>)) => ({ name, inputCompo }),
 }
 
 // export function Table2({ className, headers, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
