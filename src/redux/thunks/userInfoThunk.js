@@ -16,11 +16,8 @@ export class UserInfoAdminThunk {
     static updateUserStatusThunk = createAsyncThunk('userInfo/admin/updateUserStatus',
         async (formData, { dispatch, rejectWithValue }) => {
             try {
-                // const { img, ...form } = formData;
-                // const { imagePublicId, ...createResponse } = await createExercise(form);
-                // const uploadResponse = await uploadExerciseImage(img, createResponse.data.exerciseId);
-                // dispatch(fetchExerciseThunk());
-                // return { ...createResponse, ...uploadResponse };
+                const response = await UserInfoAdminService.updateUserStatus(formData);
+                return response;
             } catch (error) {
                 return rejectWithValue(error);
             }

@@ -10,8 +10,6 @@ import Pagination from '~/components/ui/Table/Pagination/Pagination';
 import './UserInfoTable.scss';
 
 export default function UserInfoTable() {
-    console.log('user info table');
-
     const dispatch = useDispatch();
     const userInfoState = useSelector((state) => state.userInfo);
     const [contextMenu, setContextMenu] = useState({});
@@ -36,13 +34,23 @@ export default function UserInfoTable() {
 
     // Properties of table row
     const userInfoRowProps = useMemo(() => {
-        const handleSwitchActiveStatus = async (e, rowData) => {
-            e.stopPropagation();
-            await dispatch(UserInfoAdminThunk.updateUserStatusThunk({
-                userInfoId: rowData["userInfoId"],
-                active: !rowData["active"]
-            })).unwrap();
-        };
+        const statusButtonReplacedContent = (rowData) => <button name="active" plain={`${rowData['active']}`}
+            onMouseEnter={(e) => {
+                if (e.target.innerText.trim() == "Activating")  e.target.innerText = "Inactivate";
+                else if (e.target.innerText.trim() == "Inactivated") e.target.innerText = "Activate";
+            }}
+            onMouseLeave={(e) => {
+                if (e.target.innerText.trim() == "Activate")    e.target.innerText = "Inactivated";
+                else if (e.target.innerText.trim() == "Inactivate")  e.target.innerText = "Activating";
+            }}
+            onClick={async (e) => {
+                e.stopPropagation();
+                await dispatch(
+                    UserInfoAdminThunk.updateUserStatusThunk({ userId: rowData.userId, newStatus: !rowData.active })
+                ).unwrap();
+            }}>
+            {rowData['active'] ? "Activating" : "Inactivated"}
+        </button>
 
         //Handle open menu when right click
         const handleContextMenu = (e, rowData) => {
@@ -59,7 +67,7 @@ export default function UserInfoTable() {
                             setDialogProps({
                                 isOpen: true,
                                 title: 'Subscriptions',
-                                body: <SubscriptionsDialog userInfoId={rowData.userInfoId} />,
+                                body: <SubscriptionsDialog userInfoId={rowData["userInfoId"]} />,
                             }),
                     },
                 ],
@@ -80,13 +88,7 @@ export default function UserInfoTable() {
                 { header: 'Email', name: 'email' },
                 { header: 'Coins', name: 'coins' },
                 { header: 'Created Time', name: 'createdTime' },
-                {
-                    header: 'Status', name: 'active',
-                    replacedContent: rowData => <button name="active" plain={`${rowData['active']}`}
-                        onClick={async (e) => await handleSwitchActiveStatus(e, rowData)}>
-                        {rowData['active'] ? "Activating" : "Inactivated"}
-                    </button>
-                }
+                { header: 'Status', name: 'active', replacedContent: statusButtonReplacedContent }
             ],
         };
     }, []);

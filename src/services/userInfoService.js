@@ -18,7 +18,6 @@ export class UserInfoAdminService {
     };
     static async updateUserStatus(formData) {
         try {
-            console.log(formData);
             const response = await springService.put(`${API_ADMIN_PREFIX}/v1/update-user-status`, formData);
             return response.data;
         } catch (error) {
