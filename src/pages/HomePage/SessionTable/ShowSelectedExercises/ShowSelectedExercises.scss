@@ -1,7 +1,5 @@
 .dialog {
     .dialog-body {
-        max-height: 80vh;
-        overflow-y: scroll;
         font-size: 1.3rem !important;
     }
     .table-row {
@@ -9,14 +7,13 @@
             min-height: 40px;
             padding: 0 4px;
             &:nth-of-type(1) {
-                justify-content: center;
-                width: 4%;
+                width: 14%;
             }
             &:nth-of-type(2) {
                 width: 14%;
             }
             &:nth-of-type(3) {
-                width: 14%;
+                width: 8%;
             }
             &:nth-of-type(4) {
                 width: 8%;
@@ -25,18 +22,15 @@
                 width: 8%;
             }
             &:nth-of-type(6) {
-                width: 8%;
-            }
-            &:nth-of-type(7) {
                 width: 10%;
             }
-            &:nth-of-type(8) {
+            &:nth-of-type(7) {
                 width: 8%;
             }
-            &:nth-of-type(9) {
+            &:nth-of-type(8) {
                 width: 12%;
             }
-            &:nth-of-type(10) {
+            &:nth-of-type(9) {
                 width: 14%;
             }
         }

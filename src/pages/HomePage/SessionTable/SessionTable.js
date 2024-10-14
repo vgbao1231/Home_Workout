@@ -21,11 +21,9 @@ import { addToast } from '~/redux/slices/toastSlice';
 import ShowSelectedExercises from './ShowSelectedExercises/ShowSelectedExercises';
 
 function SessionTable() {
-
     const dispatch = useDispatch();
     const selectedExercise = useSelector((state) => state.exercise.selectedRows);
-    console.log(selectedExercise);
-
+    const [isAddingRow, setIsAddingRow] = useState(false);
     const sessionState = useSelector((state) => state.session);
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
@@ -120,23 +118,21 @@ function SessionTable() {
     // Properties to create add row form
     const addSessionRowProps = useMemo(() => {
         return {
+            isAddingRow,
+            setIsAddingRow,
             onSubmit: (formData) => {
-                // If no row selected
-                console.log(selectedExercise);
-
+                // If no selected exercise 
                 if (Object.values(selectedExercise).every((v) => !v)) {
                     alert('Please select exercises for this session');
                 } else {
                     setDialogProps({
                         isOpen: true,
-                        title: 'Selected Exercise',
-                        body: <ShowSelectedExercises />,
+                        body: <ShowSelectedExercises sessionData={formData} />,
                     });
-                    // dispatch(createSessionThunk(formData));
                 }
             },
             fields: [
-                { field: <Input placeholder="Name" name="name" validators={{ isRequired }} /> },
+                { field: <Input placeholder="Name" name="name" /> },
                 {
                     field: (
                         <MultiSelect
@@ -145,7 +141,6 @@ function SessionTable() {
                             options={muscleData.map(muscle => (
                                 { text: muscle["name"], value: muscle["id"] }
                             ))}
-                            validators={{ isRequired }}
                         />
                     ),
                 },
@@ -157,7 +152,7 @@ function SessionTable() {
                 { field: <Input placeholder="Description" name="description" /> },
             ],
         };
-    }, [muscleData, levelData, selectedExercise]);
+    }, [muscleData, levelData, selectedExercise, isAddingRow, setIsAddingRow]);
 
     //Handle filter data
     const handleFilter = useCallback((filterData) => {
@@ -172,6 +167,22 @@ function SessionTable() {
     const handleCloseDialog = () => {
         setDialogProps({ isOpen: false, title: '', content: null }); // Reset content when closing
     };
+
+    useEffect(() => {
+        if (isAddingRow) {
+            const handleKeyDown = (e) => {
+                if (e.key === 'Escape') {
+                    setIsAddingRow(false); // Turn off adding mode
+                }
+            };
+            window.addEventListener('keydown', handleKeyDown);
+
+            // Cleanup when component unmount or isAddingRow is false
+            return () => {
+                window.removeEventListener('keydown', handleKeyDown);
+            };
+        }
+    }, [isAddingRow]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -197,12 +208,13 @@ function SessionTable() {
     return sessionState.loading ? (
         <div>Loading Session Data...</div>
     ) : (
-        <>
+        <div className="session-table">
             <Table
-                className="session-table"
                 title="Session"
                 headers={sessionHeaders}
-                state={sessionState}
+                data={sessionState.data}
+                selectedRows={sessionState.selectedRows}
+                primaryKey={sessionState.primaryKey}
                 rowProps={sessionRowProps}
                 addRowProps={addSessionRowProps}
                 onFilter={handleFilter}
@@ -217,7 +229,7 @@ function SessionTable() {
                 totalPages={sessionState.totalPages}
             />
             <Dialog onClose={handleCloseDialog} {...dialogProps} />
-        </>
+        </div>
     );
 }
 

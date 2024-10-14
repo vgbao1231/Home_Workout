@@ -1,8 +1,15 @@
 import { Send } from 'lucide-react';
-import { cloneElement, memo, useEffect, useRef } from 'react';
+import { cloneElement, memo, useCallback, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
-function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered = () => { }, ...props }) {
+function TableRow({ tableState,
+    columns,
+    rowData,
+    updatingRowId,
+    canSelectingRow = true,
+    eventRegistered = () => { },
+    ...props
+}) {
     // console.log('row render: ' + rowData.exerciseId);
     const tableRowRef = useRef();
     const rowId = rowData[tableState.primaryKey];
@@ -20,6 +27,7 @@ function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered
             return () => window.removeEventListener('keydown', handleKeyDown);
         }
     }, [updatingRowId]);
+
     return (
         <>
             <Form
@@ -28,23 +36,33 @@ function TableRow({ tableState, columns, rowData, updatingRowId, eventRegistered
                 {...eventRegistered(rowData)}
                 {...props}
             >
-                <div className="table-cell">
-                    {updatingRowId === rowId ? (
-                        <Send className="send-icon" onClick={() => tableRowRef.current.requestSubmit()} />
-                    ) : (
-                        <input type="checkbox" checked={!!tableState.selectedRows[rowId]} readOnly />
-                    )}
-                </div>
-                {columns.map((column, index) => (
-                    <div className="table-cell" key={index}>
-                        {column.buildField
+                {canSelectingRow &&
+                    <div className="table-cell">
+                        {updatingRowId === rowId ? (
+                            <Send className="send-icon" onClick={() => tableRowRef.current.requestSubmit()} />
+                        ) : (
+                            <input type="checkbox" checked={!!tableState.selectedRows[rowId]} readOnly />
+                        )}
+                    </div>
+                }
+                {columns.map((columnInfo, index) => {
+                    if (columnInfo.buildField) console.log(columnInfo);
+                    return <div className="table-cell" key={index}>
+                        {columnInfo.buildField
                             ? cloneElement(
-                                column.buildField(rowData),
-                                { disabled: updatingRowId !== rowId, defaultValue: rowData[column.name] }
-                            ) : <span>{rowData[column.name]}</span>
+                                columnInfo.buildField(rowData),
+                                { disabled: updatingRowId !== rowId, defaultValue: rowData[columnInfo.name] }
+                            )
+                            : (columnInfo.replacedContent
+                                ? cloneElement(
+                                    columnInfo.replacedContent(rowData),
+                                    { defaultValue: rowData[columnInfo.name] }
+                                ) : <span>{rowData[columnInfo.name]}</span>
+
+                            )
                         }
                     </div>
-                ))}
+                })}
             </Form>
             {updatingRowId === rowId && (
                 <div className="table-row-overlay" onClick={() => tableRowRef.current.requestSubmit()}></div>

@@ -7,14 +7,11 @@ import { ArrowDownUp, ListFilter, Plus, Send, X } from 'lucide-react';
 import Form from '../Form/Form';
 import Select from '../Select/Select';
 
-function Table({ className, headers, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
-    console.log('table');
+function Table({ headers, title, data, selectedRows, primaryKey, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
 
     const dispatch = useDispatch();
-    const { data, selectedRows, primaryKey } = state;
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
-    const [isAddingRow, setIsAddingRow] = useState(false);
     const addRowRef = useRef();
 
     // Handle select all rows
@@ -25,24 +22,8 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
         [dispatch],
     );
 
-    useEffect(() => {
-        if (addRowProps && isAddingRow) {
-            const handleKeyDown = (e) => {
-                if (e.key === 'Escape') {
-                    setIsAddingRow(false); // Turn off adding mode
-                }
-            };
-            window.addEventListener('keydown', handleKeyDown);
-
-            // Cleanup when component unmount or isAddingRow is false
-            return () => {
-                window.removeEventListener('keydown', handleKeyDown);
-            };
-        }
-    }, [addRowProps, isAddingRow]);
-
     return (
-        <div className={`table-wrapper ${className}`}>
+        <div className={`table-wrapper`}>
             <div className="table-feature">
                 <div className="table-title">{title}</div>
                 <div className="table-tool center">
@@ -113,13 +94,13 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
             </div>
             <div className="table-header">
                 <div className="table-row">
-                    <div className="table-cell">
+                    {rowProps.canSelectingRow && <div className="table-cell">
                         <input
                             type="checkbox"
                             checked={data.every((rowData) => selectedRows[rowData[primaryKey]])}
                             onChange={handleSelectAll}
                         />
-                    </div>
+                    </div>}
                     {rowProps.columns.map((column, index) => (
                         <div key={index} className="table-cell">
                             {column.header}
@@ -132,13 +113,12 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
                 {data.map((rowData, index) => {
                     return <TableRow key={index} {...rowProps} rowData={rowData} />;
                 })}
-                {addRowProps && (isAddingRow ? (
+                {addRowProps && (addRowProps.isAddingRow ? (
                     <Form
                         ref={addRowRef}
                         className="table-row add-row"
                         onSubmit={(formData) => {
                             addRowProps.onSubmit(formData);
-                            setIsAddingRow(false);
                         }}
                     >
                         <div className="table-cell">
@@ -151,7 +131,7 @@ function Table({ className, headers, title, state, rowProps, addRowProps, onFilt
                         ))}
                     </Form>
                 ) : (
-                    <div className="table-row add-row" onClick={() => setIsAddingRow(true)}>
+                    <div className="table-row add-row" onClick={() => addRowProps.setIsAddingRow(true)}>
                         <div className="table-cell">
                             <Plus />
                         </div>
