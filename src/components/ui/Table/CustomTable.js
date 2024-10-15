@@ -32,8 +32,8 @@ export const FormatterDict = {
     }) {
         return { reduxInfo, inputCompos, handleSubmit };
     },
-    ContextMenuComponents({ menuItems=[] }) {
-        return { menuItems };
+    ContextMenuComponents({ menuItemBuilders=[] }) {
+        return { menuItemBuilders };
     },
     TableModes(canSelectingRow = false, canUpdatingRow = false, canDeletingRow = false, hasAddingForm = false,
         hasContextMenu = false) {
@@ -42,13 +42,13 @@ export const FormatterDict = {
     ColumnInfo(name = "Name", headerLabel = "Header Label", updatingFieldBuilder, replacedContent) {
         return { name, headerLabel, updatingFieldBuilder, replacedContent };
     },
-    FilterField: (name = "name", inputCompo = (<></>)) => ({ name, inputCompo }),
+    FilterField: (filterLabel = "Name", inputCompo = (<></>)) => ({ filterLabel, inputCompo }),
     SortingField: (name = "name", sortingLabel = "Name") => ({ name, sortingLabel }),
     AddingField: (name = "name", inputCompo = (<></>)) => ({ name, inputCompo }),
 }
 
-// export function Table2({ className, headers, title, state, rowProps, addRowProps, onFilter, onSort, filterData, sortData }) {
-export function Table({ className, title, tableState, pageState, tableComponents, addingFormComponents, contextMenuComponents, tableModes }) {
+export function Table({ className, title, tableState, pageState,
+    tableComponents, addingFormComponents, contextMenuComponents, tableModes }) {
     console.log('table');
     
     const dispatch = useDispatch();
@@ -68,14 +68,17 @@ export function Table({ className, title, tableState, pageState, tableComponents
         setFilterData(filterData);
     }, []);
     const handleSort = useCallback((sortData) => setSortData(sortData), [])
-    const handleSelectAll = useCallback((e) =>
-        dispatch(tableComponents.reducers.selectingRows.selectAllRows(e.target.checked))
-    , [dispatch]);
-
-    const handleSelectingRow = useCallback((_, rowData) => {
-        if (rowData[primaryKey] !== updatingRowId)
-            dispatch(tableComponents.reducers.selectingRows.toggleSelectRow(rowData[primaryKey]));
-    }, [updatingRowId]);
+    const handleSelectAll = useCallback((e) => {
+        dispatch(tableComponents.reducers.selectingRows
+            .selectAllRows({ page:pageState, allRows:tableState.data, remove:e.target.checked })
+        );
+    }, [dispatch]);
+    const handleSelectingRow = useCallback((e, rowData) => {
+        if (updatingRowId in rowData[pageState])
+            dispatch(tableComponents.reducers.selectingRows
+                .toggleSelectRow({ page:pageState, rowData, remove:e.target.checked })
+            );
+    }, [dispatch, updatingRowId, pageState]);
     
     const handleContextMenu = useCallback((e, rowData) => {
         e.preventDefault();
@@ -112,6 +115,8 @@ export function Table({ className, title, tableState, pageState, tableComponents
         };
         if(tableComponents.GET_replacedAction)  getData();
         else    fetchData();
+        setIsFilterOpen(false);
+        setIsSortOpen(false);
     }, [dispatch, sortData, filterData, pageState]);
 
     useEffect(() => {
@@ -149,7 +154,7 @@ export function Table({ className, title, tableState, pageState, tableComponents
                                 <div className="filter-body">
                                     {tableComponents.tableInfo.filterFields.map((filterField, index) => (
                                         <div key={index} className="filter-criteria">
-                                            <span>{filterField.name}</span>
+                                            <span>{filterField.filterLabel}</span>
                                             {filterField.inputCompo}
                                         </div>
                                     ))}

@@ -10,7 +10,7 @@ const exerciseSlice = createSlice({
     name: 'exercise',
     initialState: {
         primaryKey: 'exerciseId',
-        selectedRows: {},
+        selectedRows: {},   //--{ page: {id: rowdata} }
         data: [],
         totalPages: 1,
         loading: true, // Default is true so that when there is no data, loading will appear
@@ -26,8 +26,7 @@ const exerciseSlice = createSlice({
                 ? state.data.reduce((acc, row) => {
                       acc[row.exerciseId] = true;
                       return acc;
-                  }, {})
-                : {};
+                }, {}) : {};
         },
     },
     extraReducers: (builder) => {

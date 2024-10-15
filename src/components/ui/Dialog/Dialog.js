@@ -2,15 +2,18 @@ import { createPortal } from 'react-dom';
 import './Dialog.scss';
 import { X } from 'lucide-react';
 
-const Dialog = ({ isOpen, onClose, title, body }) => {
+const Dialog = ({ isOpen, title, body, setDialogProps }) => {
+    const handleCloseDialog = () => {
+        setDialogProps({ isOpen: false, title: '', content: null }); // Reset content when closing
+    };
     return isOpen
         ? createPortal(
-              <div className="dialog" onClick={onClose}>
+              <div className="dialog" onClick={handleCloseDialog}>
                   <div className="dialog-container" onClick={(e) => e.stopPropagation()}>
                       {title && (
                           <div className="dialog-header">
                               <h2>{title}</h2>
-                              <X className="dialog-close" onClick={onClose} />
+                              <X className="dialog-close" onClick={handleCloseDialog} />
                           </div>
                       )}
                       <div className="dialog-body">{body}</div>

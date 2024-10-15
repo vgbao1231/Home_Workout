@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SubscriptionAdminThunk } from '../thunks/subscriptionThunk';
+import { formatResponseLocalDateTime } from '~/utils/formatters';
 
 const subscriptionSlice = createSlice({
     name: 'subscription',
@@ -13,17 +14,26 @@ const subscriptionSlice = createSlice({
     },
     reducers: {
         toggleSelectRow: (state, action) => {
-            const rowId = action.payload;
-            state.selectedRows[rowId] = !state.selectedRows[rowId];
+            const { page, rowData, remove } = action.payload;
+            if (remove){
+                delete state.selectedRows[page][rowData.exerciseId];    //--Remove row
+                Object.keys(state.selectedRows[page]).length === 0 && delete state.selectedRows[page];  //--Remove page if it's empty
+            } else {
+                if (!(page in rowData)) state.selectedRows[page] = {};  //--Create empty page if it's not existing.
+                state.selectedRows[page][rowData.exerciseId] = rowData;
+            }
         },
         selectAllRows: (state, action) => {
-            console.log(action.payload);
-            state.selectedRows = action.payload
-                ? state.data.reduce((acc, row) => {
-                    acc[row.subscriptionId] = true;
+            const { page, allRows, remove } = action.payload;
+            if (remove)
+                delete state.selectedRows[page];
+            else {
+                if (!(page in state.selectedRows)) state.selectedRows[page] = {};  //--Create empty page if it's not existing.
+                state.selectedRows[page] = allRows.reduce((acc, row) => {
+                    acc[row.exerciseId] = row;
                     return acc;
-                }, {})
-                : {};
+                }, {});
+            }
         },
     },
     extraReducers: (builder) => {
@@ -34,37 +44,13 @@ const subscriptionSlice = createSlice({
             })
             .addCase(SubscriptionAdminThunk.getAllSubscriptionByUserInfoThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                // state.data = action.payload.data.data.map(objData => ({
-                //     ...objData,
-                //     dob: new Date(...objData.dob).toISOString().slice(0, 10),
-                //     createdTime: new Date(...objData.createdTime).toISOString(),
-                // }));
-                // state.data = action.payload.data.data;
-                // state.totalPages = action.payload.data.totalPages;
-                // state.message = action.payload.message;
-                const data = {
-                    data: {
-                        data: [],
-                        totalPages: 1
-                    },
-                    message: "Hello"
-                };
-                for (let ind = 0; ind <= 20; ind++)
-                    data.data.data.push({
-                        subscriptionId: ind,
-                        firstName: "Dung",
-                        lastName: "Le Van",
-                        subscribedTime: new Date(2024, 11, 11, 11, 0, 0).toISOString(),
-                        efficientDays: 60,
-                        scheduleName: "Yeah Yeah Yeah",
-                        scheduleLevelEnum: "BEGINNER",
-                        scheduleCoins: 2000,
-                        completedTime: new Date(2025, 11, 11, 11, 0, 0).toISOString()
-                        // ind%2==0 ? null : 
-                    });
-                state.data = data.data.data;
-                state.totalPages = data.data.totalPages;
-                state.message = data.message;
+                state.data = action.payload.data.data.map(objData => ({
+                    ...objData,
+                    completedTime: formatResponseLocalDateTime(objData.completedTime),
+                    subscribedTime: formatResponseLocalDateTime(objData.subscribedTime),
+                }));
+                state.totalPages = action.payload.data.totalPages;
+                state.message = action.payload.message;
             })
             .addCase(SubscriptionAdminThunk.getAllSubscriptionByUserInfoThunk.rejected, (state) => {
                 state.loading = false;
