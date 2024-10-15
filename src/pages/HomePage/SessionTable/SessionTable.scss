@@ -1,4 +1,7 @@
-.exercise-table {
+.session-table {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 20px;
     .table-header,
     .table-body {
         div.table-row.add-row {
@@ -26,24 +29,6 @@
                     width: 35%;
                 }
             }
-
-            &.add-row .table-cell {
-                &:nth-of-type(5) {
-                    width: 15%;
-                }
-                &:nth-of-type(6) {
-                    width: 20%;
-                    .upload-icon {
-                        width: 1.6rem;
-                        &:hover {
-                            transform: scale(1.2);
-                        }
-                    }
-                }
-            }
-        }
-        #exercise-img::-webkit-file-upload-button {
-            display: none;
         }
     }
 }

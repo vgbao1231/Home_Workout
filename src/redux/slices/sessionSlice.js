@@ -1,30 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-    createExerciseThunk,
-    deleteExerciseThunk,
-    fetchExerciseThunk,
-    updateExerciseThunk,
-} from '../thunks/exerciseThunk';
+import { createSessionThunk, deleteSessionThunk, fetchSessionThunk, updateSessionThunk } from '../thunks/sessionThunk';
 
-const exerciseSlice = createSlice({
-    name: 'exercise',
+const sessionSlice = createSlice({
+    name: 'session',
     initialState: {
-        primaryKey: 'exerciseId',
+        primaryKey: 'sessionId',
         selectedRows: {},
-        filterData: [],
-        sortData: [],
         data: [],
         totalPages: 1,
         loading: true, // Default is true so that when there is no data, loading will appear
         message: '',
     },
     reducers: {
-        setFilterData(state, action) {
-            state.filterData = Object.fromEntries(Object.entries(action.payload).filter(([_, value]) => value.length > 0));
-        },
-        setSortData(state, action) {
-            state.sortData = action.payload;
-        },
         toggleSelectRow: (state, action) => {
             const rowId = action.payload;
             state.selectedRows[rowId] = !state.selectedRows[rowId];
@@ -32,72 +19,71 @@ const exerciseSlice = createSlice({
         selectAllRows: (state, action) => {
             state.selectedRows = action.payload
                 ? state.data.reduce((acc, row) => {
-                    acc[row.exerciseId] = true;
-                    return acc;
-                }, {})
+                      acc[row.sessionId] = true;
+                      return acc;
+                  }, {})
                 : {};
         },
     },
     extraReducers: (builder) => {
-        // Get exercise data
+        // Get session data
         builder
-            .addCase(fetchExerciseThunk.pending, (state) => {
+            .addCase(fetchSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchExerciseThunk.fulfilled, (state, action) => {
+            .addCase(fetchSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data.data;
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })
-            .addCase(fetchExerciseThunk.rejected, (state) => {
+            .addCase(fetchSessionThunk.rejected, (state) => {
                 state.loading = false;
             });
 
-        // Create exercise
+        // Create session
         builder
-            .addCase(createExerciseThunk.pending, (state) => {
+            .addCase(createSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(createExerciseThunk.fulfilled, (state, action) => {
+            .addCase(createSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(createExerciseThunk.rejected, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            });
-
-        // Update exercise
-        builder
-            .addCase(updateExerciseThunk.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(updateExerciseThunk.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(updateExerciseThunk.rejected, (state, action) => {
+            .addCase(createSessionThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
 
-        // Delete exercise
+        // Update session
         builder
-            .addCase(deleteExerciseThunk.pending, (state) => {
+            .addCase(updateSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(deleteExerciseThunk.fulfilled, (state, action) => {
+            .addCase(updateSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(deleteExerciseThunk.rejected, (state, action) => {
+            .addCase(updateSessionThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            });
+
+        // Delete session
+        builder
+            .addCase(deleteSessionThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteSessionThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            })
+            .addCase(deleteSessionThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
     },
 });
 
-export const { toggleSelectRow, selectAllRows, setFilterData, setSortData } = exerciseSlice.actions;
-export const { ...exerciseActions } = exerciseSlice.actions;
-export default exerciseSlice.reducer;
+export const { toggleSelectRow, selectAllRows } = sessionSlice.actions;
+export default sessionSlice.reducer;

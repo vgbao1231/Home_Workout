@@ -3,9 +3,9 @@ import './Select.scss';
 import { useController, useFormContext } from 'react-hook-form';
 
 function Select({ name, className = '', validators = {}, formatters = {}, options, defaultValue = '', ...rest }) {
-    const { getValues, control } = useFormContext();
+    const { control } = useFormContext();
     const setupDefaultValuesWithObjectFormat = useCallback((defaultValue, options) => {
-        if (!defaultValue)  return defaultValue;
+        if (!defaultValue) return defaultValue;
 
         //--Create UpperCased Variables
         const upperCaseDefVal = typeof defaultValue == "string" ? defaultValue.toUpperCase() : defaultValue;
@@ -27,7 +27,7 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
         rules: { validate: validators },
         defaultValue: setupDefaultValuesWithObjectFormat(defaultValue, options), // Get default value from Form, if not, get from props
     });
-    
+
     // console.log(error.message ? 'Render: error' : 'Render: select');
 
     // Filter out props that are events with the prefix 'on'
@@ -46,7 +46,7 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
     const eventNames = [...new Set([...Object.keys(formatters), ...Object.keys(events)])];
     const eventHandlers = Object.fromEntries(
         eventNames.map((eventName) => [
-            eventName, 
+            eventName,
             (e) => handleEvent(eventName, e)
         ]),
     );

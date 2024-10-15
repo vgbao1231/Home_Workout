@@ -31,6 +31,7 @@ const unawareErrorHandler = () => {
 const refreshTokenHandler = async (error) => {
     const { response } = error;
     const originalRequest = error.config;
+    console.log(response);
 
     if (response && response.status === 403 && response.data.body.applicationCode === 11003) {
         if (!originalRequest._retry) {
@@ -72,9 +73,6 @@ const refreshTokenHandler = async (error) => {
 springService.interceptors.request.use(interceptorHander, (error) => Promise.reject(error));
 fastApiService.interceptors.request.use(interceptorHander, (error) => Promise.reject(error));
 springService.interceptors.response.use((response) => response, refreshTokenHandler);
-fastApiService.interceptors.response.use((response) => {
-    // console.log(response);
-    return response;
-}, refreshTokenHandler);
+fastApiService.interceptors.response.use((response) => response, refreshTokenHandler);
 
 export { springService, fastApiService };

@@ -1,21 +1,12 @@
 import { Send } from 'lucide-react';
-import { cloneElement, memo, useCallback, useEffect, useRef } from 'react';
+import { cloneElement, memo, useEffect, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
-function TableRow({ tableState, 
-    columns, 
-    rowData, 
-    updatingRowId, 
-    canSelectingRow=true,
-    eventRegistered = ()=>{}, 
-    ...props
-}) {
-    // console.log('row render: ' + rowData.exerciseId);
+function TableRow({ columns, rowData, tableMode, isSelected, isUpdating, ...props }) {
     const tableRowRef = useRef();
-    const rowId = rowData[tableState.primaryKey];
-
+    const { enableSelect, enableEdit } = tableMode
     useEffect(() => {
-        if (updatingRowId === rowId) {
+        if (isUpdating) {
             const handleKeyDown = (e) => {
                 if (e.key === 'Enter' || e.key === 'Escape') {
                     tableRowRef.current.requestSubmit();
@@ -26,58 +17,42 @@ function TableRow({ tableState,
             // Cleanup when component unmount or isAddingRow is false
             return () => window.removeEventListener('keydown', handleKeyDown);
         }
-    }, [updatingRowId]);
-
-    const getCellContent = useCallback((columnInfo) => {
-        if (columnInfo.buildField)  //--For Updating
-            return cloneElement(
-                columnInfo.buildField(rowData),
-                { disabled: updatingRowId !== rowId, defaultValue: rowData[columnInfo.name]}
-            );
-        else if (columnInfo.replacedContent)    //--For orthers componenet
-            return cloneElement(
-                columnInfo.replacedContent(rowData),
-                { defaultValue: rowData[columnInfo.name]}
-            );
-        else    //--For regular content
-            return <span>{rowData[columnInfo.name]}</span>;
-    }, []);
+    }, [isUpdating]);
 
     return (
         <>
             <Form
-                ref={updatingRowId === rowId ? tableRowRef : null}
-                className={`table-row${updatingRowId === rowId ? ' active' : ''}`}
-                {...eventRegistered(rowData)}
+                ref={tableRowRef}
+                className={`table-row ${!enableEdit ? (isUpdating ? ' active' : '') : ''}`}
                 {...props}
             >
-                {canSelectingRow &&
+                {enableSelect &&
                     <div className="table-cell">
-                        {updatingRowId === rowId ? (
-                            <Send className="send-icon" onClick={() => tableRowRef.current.requestSubmit()} />
-                        ) : (
-                            <input type="checkbox" checked={!!tableState.selectedRows[rowId]} readOnly />
-                        )}
+                        {enableEdit &&
+                            (isUpdating
+                                ? <Send className="send-icon" onClick={() => tableRowRef.current.requestSubmit()} />
+                                : <input type="checkbox" checked={!!isSelected} readOnly={!enableEdit} />)}
                     </div>
                 }
-                {columns.map((columnInfo, index) => <div className="table-cell" key={index}>
-                    {getCellContent(columnInfo)}
-                </div>)}
+                {columns.map((column, index) => (
+                    <div className="table-cell" key={index}>
+                        {cloneElement(column.cell(rowData), {
+                            // disabled: !isUpdating,
+                            defaultValue: rowData[column.name]
+                        })}
+                    </div>
+                ))}
             </Form>
-            {updatingRowId === rowId && (
-                <div className="table-row-overlay" onClick={() => tableRowRef.current.requestSubmit()}></div>
-            )}
+            {isUpdating && <div className="table-row-overlay" onClick={() => tableRowRef.current.requestSubmit()}></div>}
         </>
     );
 }
 
 // export default memo(TableRow);
 export default memo(TableRow, (prevProps, nextProps) => {
-    const primaryKey = prevProps.tableState.primaryKey;
     return (
-        JSON.stringify(prevProps.rowData) === JSON.stringify(nextProps.rowData)
-        && prevProps.tableState.selectedRows[prevProps.rowData[primaryKey]] === 
-            nextProps.tableState.selectedRows[nextProps.rowData[primaryKey]]
-        && prevProps.updatingRowId === nextProps.updatingRowId
+        JSON.stringify(prevProps.rowData) === JSON.stringify(nextProps.rowData) &&
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.isUpdating === nextProps.isUpdating
     );
 });

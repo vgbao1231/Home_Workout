@@ -22,6 +22,7 @@ function Form({ children, className = '', defaultValues = {}, onSubmit, confirm,
                 if (window.confirm('Bạn có chắc chắn muốn submit không?')) {
                     onSubmit(data);
                 } else {
+                    onSubmit()
                     methods.reset(defaultValues);
                 }
             }

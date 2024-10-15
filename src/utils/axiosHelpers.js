@@ -1,4 +1,3 @@
-
 export default class AxiosHelpers {
     static paramsSerializerForGet(params) {
         let filterFields = {};
