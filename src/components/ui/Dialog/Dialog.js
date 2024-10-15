@@ -6,7 +6,7 @@ const Dialog = ({ dialogProps, setDialogProps }) => {
     const { isOpen, title, body } = dialogProps
     return isOpen
         ? createPortal(
-            <div className="dialog" onClick={setDialogProps({ isOpen: false, title: '', content: null })}>
+            <div className="dialog" onClick={() => setDialogProps({ isOpen: false, title: '', content: null })}>
                 <div className="dialog-container" onClick={(e) => e.stopPropagation()}>
                     {title && (
                         <div className="dialog-header">

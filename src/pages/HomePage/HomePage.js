@@ -46,7 +46,7 @@ const HomePage = () => {
             <h1>Homepage </h1>
             <button onClick={handleLogout}>Log Out</button>
             <ExerciseTable />
-            {/* <SessionTable /> */}
+            <SessionTable />
         </div>
     );
 };
