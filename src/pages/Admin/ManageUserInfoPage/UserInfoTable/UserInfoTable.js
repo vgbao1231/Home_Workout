@@ -4,15 +4,17 @@ import { Book } from 'lucide-react';
 import { UserInfoAdminThunk } from '~/redux/thunks/userInfoThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import SubscriptionsDialog from './SubscriptionsDialog/SubscriptionsDialog';
-import { Dialog, Input, Select, Table } from '~/components';
+import { Dialog, Input, Select } from '~/components';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
 import './UserInfoTable.scss';
-import { FormatterDict } from '~/components/ui/Table/CustomTable';
+import { FormatterDict, Table } from '~/components/ui/Table/CustomTable';
+import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 
-export default function UserInfoTable({ userInfoId }) {
+export default function UserInfoTable() {
     const dispatch = useDispatch()
     const userInfoState = useSelector((state) => state.userInfo);
     const genderData = useSelector((state) => state.enum.data.genders);
+    const [contextMenu, setContextMenu] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
@@ -54,16 +56,18 @@ export default function UserInfoTable({ userInfoId }) {
             filterFields:[
                 FormatterDict.FilterField("First Name", <Input name="fisrtName" />),
                 FormatterDict.FilterField("Last Name", <Input name="lastName" />),
-                FormatterDict.FilterField("From Date of Birth", <Input type="datetime-local" name="fromDob" />),
-                FormatterDict.FilterField("To Date of Birth", <Input type="datetime-local" name="toDob" />),
-                FormatterDict.FilterField("Gender", <Input type="datetime-local" name="toSubscribedTime" />),
+                FormatterDict.FilterField("From Date of Birth", <Input type="date" name="fromDob" />),
+                FormatterDict.FilterField("To Date of Birth", <Input type="date" name="toDob" />),
+                FormatterDict.FilterField("Gender", <Select name="genderId" options={genderData.map(dataObj => (
+                    { value: dataObj["id"], text: dataObj["raw"] }
+                ))} />),
                 FormatterDict.FilterField("Email", <Input name="email" />),
                 FormatterDict.FilterField("Coins", <Input type="number" name="coins" />),
                 FormatterDict.FilterField("From Created Time", <Input type="datetime-local" name="fromCreatedTime" />),
                 FormatterDict.FilterField("To Created Time", <Input type="datetime-local" name="toCreatedTime" />),
-                FormatterDict.FilterField("Active Status", <Select name="active" options={genderData.map(dataObj => ({
-                    value: dataObj["id"], text: dataObj["gender"]
-                }))}/>),
+                FormatterDict.FilterField("Active Status", <Select name="active" options={
+                    [{ value: true, text: "Activating" }, { value: false, text: "Deactivated" },]
+                } />),
             ],
             sortingFields:[
                 FormatterDict.SortingField('firstName', 'First Name' ),
@@ -91,20 +95,21 @@ export default function UserInfoTable({ userInfoId }) {
                     title: '',
                     body: <SubscriptionsDialog userInfoId={rowData["userInfoId"]} />,
                 }),
-        })
+        }),
     ]), []);
 
     return (
         <>
             <Table
-                className="user-info-page"
+                className="user-info-table"
                 title="User Information"
                 tableState={userInfoState}
                 pageState={currentPage}
                 tableComponents={tableComponents}
                 contextMenuComponents={contextMenuComponents}
-                tableModes={FormatterDict.TableModes(false, false, false, false, false)}
+                tableModes={FormatterDict.TableModes(false, false, false, false, true)}
             />
+            <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />
             <Pagination
                 setCurrentPage={setCurrentPage}
                 currentPage={currentPage}

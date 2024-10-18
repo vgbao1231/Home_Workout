@@ -15,6 +15,6 @@ export class SubscriptionAdminThunk {
     )
 }
 
-export class UserInfoUserThunk {
+export class SubscriptionUserThunk {
 
 }

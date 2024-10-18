@@ -8,32 +8,32 @@ import Select from '../Select/Select';
 import ContextMenu from './ContextMenu/ContextMenu';
 
 export const FormatterDict = {
-    TableComponents({ 
-        reduxInfo={
-            GET_thunk:{ thunk(){}, moreParams:{} },
-            GET_replacedAction:{ action(){}, moreParams:{} },
-            UPDATE_thunk:{ thunk(){}, moreParams:{} },
-            DELETE_thunk:{ thunk(){}, moreParams:{} }
-        }, 
-        tableInfo={ columnsInfo: [], filterFields: [], sortingFields: [] },
-        reducers={
-            selectingRows: { selectAllRows(){}, toggleSelectRow(){} },
-            globalToastEngine() {}
+    TableComponents({
+        reduxInfo = {
+            GET_thunk: { thunk() { }, moreParams: {} },
+            GET_replacedAction: { action() { }, moreParams: {} },
+            UPDATE_thunk: { thunk() { }, moreParams: {} },
+            DELETE_thunk: { thunk() { }, moreParams: {} }
+        },
+        tableInfo = { columnsInfo: [], filterFields: [], sortingFields: [] },
+        reducers = {
+            selectingRows: { selectAllRows() { }, toggleSelectRow() { } },
+            globalToastEngine() { }
         },
     }) {
         return { reduxInfo, tableInfo, reducers };
     },
-    AddingFormComponents({ 
-        reduxInfo={     
-            POST_thunk:{ thunk(){}, moreParams:{} },
-        }, 
-        inputCompos=[],
-        handleSubmit=()=>{}
+    AddingFormComponents({
+        reduxInfo = {
+            POST_thunk: { thunk() { }, moreParams: {} },
+        },
+        inputCompos = [],
+        handleSubmit = null
     }) {
         return { reduxInfo, inputCompos, handleSubmit };
     },
-    ContextMenuComponents({ menuItemBuilders=[] }) {
-        return { menuItemBuilders };
+    ContextMenuComponents(menuBuilders = []) {
+        return { menuBuilders };
     },
     TableModes(canSelectingRow = false, canUpdatingRow = false, canDeletingRow = false, hasAddingForm = false,
         hasContextMenu = false) {
@@ -42,15 +42,13 @@ export const FormatterDict = {
     ColumnInfo(name = "Name", headerLabel = "Header Label", updatingFieldBuilder, replacedContent) {
         return { name, headerLabel, updatingFieldBuilder, replacedContent };
     },
-    FilterField: (filterLabel = "Name", inputCompo = (<></>)) => ({ filterLabel, inputCompo }),
+    FilterField: (name = "name", inputCompo = (<></>)) => ({ name, inputCompo }),
     SortingField: (name = "name", sortingLabel = "Name") => ({ name, sortingLabel }),
-    AddingField: (name = "name", inputCompo = (<></>)) => ({ name, inputCompo }),
+    AddingField: (inputCompo = (<></>)) => inputCompo,
 }
 
-export function Table({ className, title, tableState, pageState,
-    tableComponents, addingFormComponents, contextMenuComponents, tableModes }) {
-    console.log('table');
-    
+export function Table({ className, title, tableState, pageState, tableComponents, addingFormComponents, contextMenuComponents, tableModes }) {
+    console.log("table")
     const dispatch = useDispatch();
     const { data, selectedRows } = useMemo(() => tableState, [tableState]);
     const { primaryKey } = useMemo(() => tableState, []);
@@ -67,30 +65,39 @@ export function Table({ className, title, tableState, pageState,
         filterData = Object.fromEntries(Object.entries(filterData).filter(([_, value]) => value.length > 0));
         setFilterData(filterData);
     }, []);
-    const handleSort = useCallback((sortData) => setSortData(sortData), [])
+    const handleSort = useCallback((data) => setSortData(data), [])
     const handleSelectAll = useCallback((e) => {
-        dispatch(tableComponents.reducers.selectingRows
-            .selectAllRows({ page:pageState, allRows:tableState.data, remove:e.target.checked })
-        );
-    }, [dispatch]);
+        dispatch(tableComponents.reducers.selectingRows.selectAllRows({ page: pageState }));
+    }, [dispatch, pageState]);
     const handleSelectingRow = useCallback((e, rowData) => {
-        if (updatingRowId in rowData[pageState])
-            dispatch(tableComponents.reducers.selectingRows
-                .toggleSelectRow({ page:pageState, rowData, remove:e.target.checked })
-            );
-    }, [dispatch, updatingRowId, pageState]);
-    
+        dispatch(tableComponents.reducers.selectingRows.toggleSelectRow({ page: pageState, rowData }));
+    }, [dispatch, updatingRowId, pageState, tableState]);
+
     const handleContextMenu = useCallback((e, rowData) => {
         e.preventDefault();
+        if (!contextMenuComponents.menuBuilders)
+            contextMenuComponents.menuBuilders = []
+        if (tableModes.canUpdatingRow)
+            contextMenuComponents.menuBuilders.push(
+                rowData => ({ text: 'Update Row Info', icon: <Pencil />, action: () => setUpdatingRowId(rowData[primaryKey]) })
+            );
         setContextMenu({
             isShown: true,
             x: e.pageX,
             y: e.pageY,
-            menuItems: tableModes.canUpdatingRow
-                ? [...(contextMenuComponents.menuItems ? contextMenuComponents.menuItems : []), {
-                    text: 'Update Row Info', icon: <Pencil />, action: () => setUpdatingRowId(rowData[primaryKey])
-                }] : (contextMenuComponents.menuItems ? contextMenuComponents.menuItems : []),
+            menuItems: contextMenuComponents.menuBuilders.map(menuContextBuilder => menuContextBuilder(rowData))
         });
+    }, []);
+
+    const handleSubmitAddingForm = useCallback(formData => {
+        if (addingFormComponents.handleSubmit)
+            addingFormComponents.handleSubmit(formData);
+        else {
+            if (addingFormComponents.reduxInfo.POST_thunk.moreParams)
+                formData = { ...formData, ...addingFormComponents.reduxInfo.POST_thunk.moreParams };
+            dispatch(addingFormComponents.reduxInfo.POST_thunk.thunk(formData));
+        }
+        setIsAddingRow(false);
     }, []);
 
     useEffect(() => {
@@ -113,10 +120,8 @@ export function Table({ className, title, tableState, pageState,
                 dispatch(tableComponents.reducers.globalToastEngine(error, 'error'));
             }
         };
-        if(tableComponents.GET_replacedAction)  getData();
-        else    fetchData();
-        setIsFilterOpen(false);
-        setIsSortOpen(false);
+        if (tableComponents.GET_replacedAction) getData();
+        else fetchData();
     }, [dispatch, sortData, filterData, pageState]);
 
     useEffect(() => {
@@ -140,71 +145,75 @@ export function Table({ className, title, tableState, pageState,
                 <div className="table-feature">
                     <div className="table-title">{title}</div>
                     <div className="table-tool center">
-                        <div className="tool-button">
-                            <ListFilter className="tool-icon" onClick={() => setIsFilterOpen(!isFilterOpen)} />
-                            <Form
-                                className={`filter-box${isFilterOpen ? ' open' : ''}`}
-                                onSubmit={handleFilter}
-                                defaultValues={filterData}
-                            >
-                                <div className="filter-header">
-                                    <span>Filter</span>
-                                    <X onClick={() => setIsFilterOpen(!isFilterOpen)} />
-                                </div>
-                                <div className="filter-body">
-                                    {tableComponents.tableInfo.filterFields.map((filterField, index) => (
-                                        <div key={index} className="filter-criteria">
-                                            <span>{filterField.filterLabel}</span>
-                                            {filterField.inputCompo}
-                                        </div>
-                                    ))}
-                                </div>
-                                <button className="filter-footer">
-                                    <ListFilter />
-                                    <span>Confirm</span>
-                                </button>
-                            </Form>
-                            {isFilterOpen && (
-                                <div className="filter-overlay" onClick={() => setIsFilterOpen(!isFilterOpen)}></div>
-                            )}
-                        </div>
-                        <div className="tool-button">
-                            <ArrowDownUp className="tool-icon" onClick={() => setIsSortOpen(!isSortOpen)} />
-                            <Form
-                                className={`sort-box${isSortOpen ? ' open' : ''}`}
-                                onSubmit={handleSort}
-                                defaultValues={sortData}
-                            >
-                                <div className="sort-header">
-                                    <span>Sort</span>
-                                    <X onClick={() => setIsSortOpen(!isSortOpen)} />
-                                </div>
-                                <div className="sort-body">
-                                    <div className="sort-criteria">
-                                        <Select
-                                            name="sortedField"
-                                            placeholder="Field"
-                                            options={tableComponents.tableInfo.sortingFields.map((columnInfo) => (
-                                                { value: columnInfo.name, text: columnInfo.sortingLabel }
-                                            ))}
-                                        />
-                                        <Select
-                                            name="sortedMode"
-                                            placeholder="Mode"
-                                            options={[
-                                                { value: 1, text: 'Ascending' },
-                                                { value: -1, text: 'Descending' },
-                                            ]}
-                                        />
+                        {tableComponents.filterFields &&
+                            <div className="tool-button">
+                                <ListFilter className="tool-icon" onClick={() => setIsFilterOpen(!isFilterOpen)} />
+                                <Form
+                                    className={`filter-box${isFilterOpen ? ' open' : ''}`}
+                                    onSubmit={handleFilter}
+                                    defaultValues={filterData}
+                                >
+                                    <div className="filter-header">
+                                        <span>Filter</span>
+                                        <X onClick={() => setIsFilterOpen(!isFilterOpen)} />
                                     </div>
-                                </div>
-                                <button className="sort-footer">
-                                    <ArrowDownUp />
-                                    <span>Confirm</span>
-                                </button>
-                            </Form>
-                            {isSortOpen && <div className="sort-overlay" onClick={() => setIsSortOpen(!isSortOpen)}></div>}
-                        </div>
+                                    <div className="filter-body">
+                                        {tableComponents.tableInfo.filterFields.map((filterField, index) => (
+                                            <div key={index} className="filter-criteria">
+                                                <span>{filterField.name}</span>
+                                                {filterField.inputCompo}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button className="filter-footer">
+                                        <ListFilter />
+                                        <span>Confirm</span>
+                                    </button>
+                                </Form>
+                                {isFilterOpen && (
+                                    <div className="filter-overlay" onClick={() => setIsFilterOpen(!isFilterOpen)}></div>
+                                )}
+                            </div>
+                        }
+                        {tableComponents.sortingFields &&
+                            <div className="tool-button">
+                                <ArrowDownUp className="tool-icon" onClick={() => setIsSortOpen(!isSortOpen)} />
+                                <Form
+                                    className={`sort-box${isSortOpen ? ' open' : ''}`}
+                                    onSubmit={handleSort}
+                                    defaultValues={sortData}
+                                >
+                                    <div className="sort-header">
+                                        <span>Sort</span>
+                                        <X onClick={() => setIsSortOpen(!isSortOpen)} />
+                                    </div>
+                                    <div className="sort-body">
+                                        <div className="sort-criteria">
+                                            <Select
+                                                name="sortedField"
+                                                placeholder="Field"
+                                                options={tableComponents.tableInfo.sortingFields.map((columnInfo) => (
+                                                    { value: columnInfo.name, text: columnInfo.sortingLabel }
+                                                ))}
+                                            />
+                                            <Select
+                                                name="sortedMode"
+                                                placeholder="Mode"
+                                                options={[
+                                                    { value: 1, text: 'Ascending' },
+                                                    { value: -1, text: 'Descending' },
+                                                ]}
+                                            />
+                                        </div>
+                                    </div>
+                                    <button className="sort-footer">
+                                        <ArrowDownUp />
+                                        <span>Confirm</span>
+                                    </button>
+                                </Form>
+                                {isSortOpen && <div className="sort-overlay" onClick={() => setIsSortOpen(!isSortOpen)}></div>}
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className="table-header">
@@ -213,7 +222,7 @@ export function Table({ className, title, tableState, pageState,
                             <div className="table-cell">
                                 <input
                                     type="checkbox"
-                                    checked={data.every((rowData) => selectedRows[rowData[primaryKey]])}
+                                    checked={!!selectedRows[pageState] && data.length === Object.keys(selectedRows[pageState]).length}
                                     onChange={handleSelectAll}
                                 />
                             </div>}
@@ -225,38 +234,30 @@ export function Table({ className, title, tableState, pageState,
                     </div>
                 </div>
                 <div className="table-body">
-                    {data.map((rowData, index) => {
-                        return <TableRowBuilder
-                            key={index}
-                            rowData={rowData}
-                            primaryKeyName={primaryKey}
-                            columnsInfo={tableComponents.tableInfo.columnsInfo}
-                            selectedRows={tableModes.canSelectingRow ? selectedRows : null}
-                            handleSelectRow={tableModes.canSelectingRow ? handleSelectingRow : null}
-                            updatingRowIdState={tableModes.canUpdatingRow ? updatingRowId : null}
-                            handleContextMenu={tableModes.hasContextMenu ? handleContextMenu : null}
-                        />;
-                    })}
+                    {tableState.loading
+                        ? <div className="table-body-loading">Loading...</div>
+                        : data.map((rowData, index) => {
+                            return <TableRowBuilder
+                                key={index}
+                                rowData={rowData}
+                                primaryKeyName={primaryKey}
+                                currentPage={pageState}
+                                columnsInfo={tableComponents.tableInfo.columnsInfo}
+                                selectedRows={tableModes.canSelectingRow ? selectedRows : null}
+                                handleSelectingRow={tableModes.canSelectingRow ? handleSelectingRow : null}
+                                updatingRowIdState={tableModes.canUpdatingRow ? updatingRowId : null}
+                                handleContextMenu={tableModes.hasContextMenu ? handleContextMenu : null}
+                            />;
+                        })
+                    }
                     {tableModes.hasAddingForm && (isAddingRow ? (
-                        <Form
-                            ref={addRowRef}
-                            className="table-row add-row"
-                            onSubmit={(formData) => {
-                                if (addingFormComponents.handleSubmit)
-                                    addingFormComponents.handleSubmit(formData);
-                                else
-                                //--Adding reduxInfo.moreParams into formData.
-                                    addingFormComponents.reduxInfo.POST_thunk(formData);
-                                setIsAddingRow(false);
-                            }}
-                        >
+                        <Form ref={addRowRef} className="table-row add-row" onSubmit={(formData) => handleSubmitAddingForm(formData)}>
                             <div className="table-cell">
                                 <Send className="send-icon" onClick={() => addRowRef.current.requestSubmit()} />
                             </div>
                             {tableModes.hasAddingForm &&
                                 addingFormComponents.inputCompos.map((inputCompo, index) =>
-                                    <div className="table-cell" key={index}> {inputCompo} </div>
-                            )}
+                                    <div className="table-cell" key={index}> {inputCompo} </div>)}
                         </Form>
                     ) : (
                         <div className="table-row add-row" onClick={() => setIsAddingRow(true)}>

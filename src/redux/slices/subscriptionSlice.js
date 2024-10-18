@@ -12,30 +12,6 @@ const subscriptionSlice = createSlice({
         loading: true, // Default is true so that when there is no data, loading will appear
         message: '',
     },
-    reducers: {
-        toggleSelectRow: (state, action) => {
-            const { page, rowData, remove } = action.payload;
-            if (remove){
-                delete state.selectedRows[page][rowData.exerciseId];    //--Remove row
-                Object.keys(state.selectedRows[page]).length === 0 && delete state.selectedRows[page];  //--Remove page if it's empty
-            } else {
-                if (!(page in rowData)) state.selectedRows[page] = {};  //--Create empty page if it's not existing.
-                state.selectedRows[page][rowData.exerciseId] = rowData;
-            }
-        },
-        selectAllRows: (state, action) => {
-            const { page, allRows, remove } = action.payload;
-            if (remove)
-                delete state.selectedRows[page];
-            else {
-                if (!(page in state.selectedRows)) state.selectedRows[page] = {};  //--Create empty page if it's not existing.
-                state.selectedRows[page] = allRows.reduce((acc, row) => {
-                    acc[row.exerciseId] = row;
-                    return acc;
-                }, {});
-            }
-        },
-    },
     extraReducers: (builder) => {
         // Get all subscriptions by userInfoId
         builder
@@ -58,5 +34,4 @@ const subscriptionSlice = createSlice({
     },
 });
 
-export const { toggleSelectRow, selectAllRows } = subscriptionSlice.actions;
 export default subscriptionSlice.reducer;
