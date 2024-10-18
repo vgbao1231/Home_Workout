@@ -2,7 +2,8 @@ import { createPortal } from 'react-dom';
 import './Dialog.scss';
 import { X } from 'lucide-react';
 
-const Dialog = ({ isOpen, title, body, setDialogProps }) => {
+const Dialog = ({ dialogProps, setDialogProps }) => {
+    const { isOpen, title, body } = dialogProps;
     const handleCloseDialog = () => {
         setDialogProps({ isOpen: false, title: '', content: null }); // Reset content when closing
     };
