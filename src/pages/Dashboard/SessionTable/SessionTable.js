@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Pencil, Trash2 } from 'lucide-react';
+import { BookText, Pencil, Trash2 } from 'lucide-react';
 import './SessionTable.scss';
 import { sessionActions, toggleSelectRow } from '~/redux/slices/sessionSlice';
 import {
-    createSessionThunk,
     deleteSessionThunk,
     fetchSessionThunk,
     updateSessionThunk,
@@ -13,7 +12,8 @@ import { addToast } from '~/redux/slices/toastSlice';
 import { Dialog, Input, MultiSelect, Select, Table } from '~/components';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
-import ShowSelectedExercises from './ShowSelectedExercises/ShowSelectedExercises';
+import AddSessionDialog from './AddSessionDialog/AddSessionDialog';
+import ExercisesOfSessionDialog from './ExercisesOfSessionDialog/ExercisesOfSessionDialog';
 
 function SessionTable() {
     const dispatch = useDispatch();
@@ -27,18 +27,18 @@ function SessionTable() {
     const [isAddingRow, setIsAddingRow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
-    const muscleOptions = muscleData.map((muscle) => ({ value: muscle.id, text: muscle.name }))
+    const muscleOptions = muscleData.map((muscle) => ({ value: muscle.muscleId, text: muscle.muscleName }))
     const levelOptions = levelData.map((level) => ({ value: level.level, text: level.name }))
 
     const columns = useMemo(() => [
         { header: 'Name', name: 'name', cell: (row) => <Input name="name" /> },
         {
-            header: 'Muscle List', name: 'muscleList', cell: (row) => <MultiSelect name="muscleList" options={muscleOptions} />,
+            header: 'Muscle List', name: 'musclesList', cell: (row) => <MultiSelect name="musclesList" options={muscleOptions} />,
             customFilter: (row) => <MultiSelect name="muscleIds" options={muscleOptions} />
         },
         {
             header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} />,
-            customFilter: (row) => <Select name="levelEnum" options={levelOptions} />
+            customFilter: (row) => <Select name="level" options={levelOptions} />
         },
         { header: 'Description', name: 'description', cell: (row) => <Input name="description" /> },
     ], [muscleOptions, levelOptions]);
@@ -52,13 +52,21 @@ function SessionTable() {
         const handleClick = () => !isUpdating && dispatch(toggleSelectRow(rowData.sessionId));
 
         //Handle open menu when right click
-        const handleContextMenu = (e, rowData) => {
+        const handleContextMenu = (e) => {
             e.preventDefault();
             setContextMenu({
                 isShown: true,
                 x: e.pageX,
                 y: e.pageY,
                 menuItems: [
+                    {
+                        text: 'Show Exercise', icon: <BookText />, action: () =>
+                            setDialogProps({
+                                isOpen: true,
+                                className: 'exercise-of-session',
+                                body: <ExercisesOfSessionDialog id={rowData.sessionId} />,
+                            })
+                    },
                     { text: 'Update Session', icon: <Pencil />, action: () => setUpdatingRowId(rowData.sessionId) },
                     {
                         text: 'Delete Session', icon: <Trash2 />,
@@ -76,7 +84,6 @@ function SessionTable() {
         };
 
         return {
-            rowData,
             isSelected,
             isUpdating,
             onClick: handleClick,
@@ -97,18 +104,19 @@ function SessionTable() {
                 } else {
                     setDialogProps({
                         isOpen: true,
-                        body: <ShowSelectedExercises sessionData={formData} setIsAddingRow={setIsAddingRow} />,
+                        className: 'add-session',
+                        body: <AddSessionDialog sessionData={formData} setIsAddingSession={setIsAddingRow} />,
                     });
                 }
             },
             fields: [
-                { field: <Input placeholder="Name" name="name" /> },
+                { field: <Input placeholder="Name" name="name" defaultValue='123' /> },
                 { field: <MultiSelect placeholder="Muscle List" name="muscleIds" options={muscleOptions} /> },
                 { field: <Select placeholder="Select Level" name="level" options={levelOptions} /> },
-                { field: <Input placeholder="Description" name="description" /> },
+                { field: <Input placeholder="Description" name="description" defaultValue='123' /> },
             ],
         };
-    }, [levelOptions, muscleOptions, isAddingRow, setIsAddingRow, dispatch]);
+    }, [levelOptions, muscleOptions, selectedExercise, isAddingRow, setIsAddingRow]);
 
     useEffect(() => {
         const fetchData = async () => {

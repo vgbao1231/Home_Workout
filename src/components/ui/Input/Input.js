@@ -2,8 +2,8 @@ import { cloneElement, memo } from 'react';
 import './Input.scss';
 import { useController, useFormContext } from 'react-hook-form';
 
-function Input({ name, className = '', validators = {}, formatters = {}, iconSupport, defaultValue = '', ...rest }) {
-    const { getValues, control } = useFormContext();
+function Input({ name, className = '', validators = {}, formatters = {}, iconSupport, ...rest }) {
+    const { control } = useFormContext();
     const {
         field: { value, ...field },
         fieldState: { error = {} },
@@ -11,10 +11,8 @@ function Input({ name, className = '', validators = {}, formatters = {}, iconSup
         name,
         control,
         rules: { validate: validators },
-        defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
+        defaultValue: '',
     });
-
-    // console.log(error.message ? 'Render: error' : 'Render: input');
 
     // Filter out props and events
     const { events, props } = Object.keys(rest).reduce(

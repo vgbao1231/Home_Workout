@@ -42,6 +42,9 @@ const sessionSlice = createSlice({
             .addCase(fetchSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data.data;
+                state.data.forEach(element => {
+                    element.musclesList = element.muscles.map(muscle => muscle.muscleName)
+                });
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })

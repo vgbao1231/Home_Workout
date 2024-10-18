@@ -1,5 +1,5 @@
 import { Upload } from 'lucide-react';
-import './ShowImage.scss';
+import './ExerciseImageDialog.scss';
 import { useState } from 'react';
 import Form from '~/components/ui/Form/Form';
 import Input from '~/components/ui/Input/Input';
@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { addToast } from '~/redux/slices/toastSlice';
 import noImage from '~/assets/no_image.jpg';
 
-function ShowImage({ id, imageUrl }) {
+function ExerciseImageDialog({ id, imageUrl }) {
     const [image, setImage] = useState(imageUrl || noImage);
 
     const dispatch = useDispatch();
@@ -54,4 +54,4 @@ function ShowImage({ id, imageUrl }) {
     );
 }
 
-export default ShowImage;
+export default ExerciseImageDialog;

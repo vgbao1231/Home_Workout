@@ -1,8 +1,8 @@
 import SidebarLayout from '~/layout/SidebarLayout/SidebarLayout';
-import HomePage from '~/pages/HomePage/HomePage';
+import Dashboard from '~/pages/Dashboard/Dashboard';
+import SchedulePage from '~/pages/SchedulePage/SchedulePage';
 import LoginPage from '~/pages/LoginPage/LoginPage';
 import ManageUserInfoPage from '~/pages/ManageUserInfoPage/ManageUserInfoPage';
-// import TestPage from '~/pages/TestPage/TestPage';
 
 // Public routes
 const publicRoutes = [
@@ -13,9 +13,8 @@ const publicRoutes = [
 
 // Private routes
 const privateRoutes = [
-    { path: '/', component: HomePage, layout: SidebarLayout },
-    // { path: '/test', component: TestPage }, // Test
-    { path: '/homepage', component: HomePage }, // Test
-    { path: '/admin/manage-user-info', component: ManageUserInfoPage },
+    { path: '/admin/dashboard', component: Dashboard, layout: SidebarLayout },
+    { path: '/admin/manage-user-info', component: ManageUserInfoPage, layout: SidebarLayout },
+    { path: '/user/choose-schedule', component: SchedulePage, layout: SidebarLayout },
 ];
 export { publicRoutes, privateRoutes };

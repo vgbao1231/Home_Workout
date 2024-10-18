@@ -45,8 +45,14 @@
 }
 .upload-button {
     display: flex;
-    background-color: transparent;
+    background-color: #fff;
+    border: 2px solid #555;
     border-radius: 20px;
-    padding: 10px 20px;
+    padding: 10px 30px;
     margin: 10px auto;
+    transition: all 0.2s ease;
+    &:hover {
+        background-color: #333;
+        color: #fff;
+    }
 }

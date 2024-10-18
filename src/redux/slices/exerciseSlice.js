@@ -20,6 +20,8 @@ const exerciseSlice = createSlice({
     },
     reducers: {
         setFilterData(state, action) {
+            console.log(action.payload);
+
             state.filterData = Object.fromEntries(Object.entries(action.payload).filter(([_, value]) => value.length > 0));
         },
         setSortData(state, action) {
@@ -47,6 +49,10 @@ const exerciseSlice = createSlice({
             .addCase(fetchExerciseThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data.data;
+                state.data.forEach(element => {
+                    element.musclesList = element.muscles.map(muscle => muscle.muscleName)
+                });
+
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })

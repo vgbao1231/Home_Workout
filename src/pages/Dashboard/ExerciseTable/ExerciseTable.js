@@ -13,7 +13,7 @@ import { addToast } from '~/redux/slices/toastSlice';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import { Dialog, Input, MultiSelect, Select, Table } from '~/components';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
-import ShowImage from '~/components/ui/Dialog/DialogContent/ShowImage/ShowImage';
+import ExerciseImageDialog from './ExerciseImageDialog/ExerciseImageDialog';
 
 function ExerciseTable() {
     const dispatch = useDispatch();
@@ -26,18 +26,18 @@ function ExerciseTable() {
     const [isAddingRow, setIsAddingRow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
-    const muscleOptions = muscleData.map((muscle) => ({ value: muscle.id, text: muscle.name }))
+    const muscleOptions = muscleData.map((muscle) => ({ value: muscle.muscleId, text: muscle.muscleName }))
     const levelOptions = levelData.map((level) => ({ value: level.level, text: level.name }))
 
     const columns = useMemo(() => [
         { header: 'Name', name: 'name', cell: (row) => <Input name="name" /> },
         {
-            header: 'Muscle List', name: 'muscleList', cell: (row) => <MultiSelect name="muscleList" options={muscleOptions} />,
-            customFilter: (row) => <MultiSelect name="muscleIds" options={muscleOptions} />
+            header: 'Muscle List', name: 'musclesList', cell: (row) => <MultiSelect name="musclesList" options={muscleOptions} />,
+            customFilter: (row) => <MultiSelect name="muscleIds" options={muscleOptions} />, sortable: false
         },
         {
             header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} />,
-            customFilter: (row) => <Select name="levelEnum" options={levelOptions} />
+            customFilter: (row) => <Select name="level" options={levelOptions} />
         },
         { header: 'Basic Reps', name: 'basicReps', cell: (row) => <Input name="basicReps" type="number" /> },
     ], [muscleOptions, levelOptions]);
@@ -59,14 +59,17 @@ function ExerciseTable() {
                 y: e.pageY,
                 menuItems: [
                     { text: 'Update Exercise', icon: <Pencil />, action: () => setUpdatingRowId(rowData.exerciseId) },
-                    { text: 'Delete Exercise', icon: <Trash2 />, action: () => window.confirm('Delete ?') && dispatch(deleteExerciseThunk(rowData.exerciseId)) },
+                    {
+                        text: 'Delete Exercise', icon: <Trash2 />,
+                        action: () => window.confirm('Delete ?') && dispatch(deleteExerciseThunk(rowData.exerciseId))
+                    },
                     {
                         text: 'Show Exercise Img', icon: <Image />,
                         action: () =>
                             setDialogProps({
                                 isOpen: true,
                                 title: 'Exercise Image',
-                                body: <ShowImage id={rowData.exerciseId} imageUrl={rowData.imageUrl} />,
+                                body: <ExerciseImageDialog id={rowData.exerciseId} imageUrl={rowData.imageUrl} />,
                             }),
                     },
                 ],
@@ -80,7 +83,6 @@ function ExerciseTable() {
         };
 
         return {
-            rowData,
             isSelected,
             isUpdating,
             onClick: handleClick,

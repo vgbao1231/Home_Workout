@@ -7,7 +7,6 @@ import Form from '../Form/Form';
 import Select from '../Select/Select';
 
 function Table({ title, columns, tableStates, tableReducers, rowProps, addRowProps, tableModes }) {
-    console.log('table');
 
     const dispatch = useDispatch();
     const { data, primaryKey, selectedRows, filterData, sortData } = tableStates;
@@ -17,8 +16,8 @@ function Table({ title, columns, tableStates, tableReducers, rowProps, addRowPro
 
     // Handle select all rows
     const handleSelectAll = useCallback(
-        (e) => dispatch(tableReducers.selectAllRows(e.target.checked)),
-        [dispatch, tableStates],
+        (e) => tableReducers && dispatch(tableReducers.selectAllRows(e.target.checked)),
+        [dispatch, tableReducers],
     );
 
     useEffect(() => {
@@ -47,7 +46,7 @@ function Table({ title, columns, tableStates, tableReducers, rowProps, addRowPro
                         <ListFilter className="tool-icon" onClick={() => setIsFilterOpen(!isFilterOpen)} />
                         <Form
                             className={`filter-box${isFilterOpen ? ' open' : ''}`}
-                            onSubmit={(formData) => dispatch(tableReducers.setFilterData(formData))}
+                            onSubmit={(formData) => tableReducers && dispatch(tableReducers.setFilterData(formData))}
                             defaultValues={filterData}
                         >
                             <div className="filter-header">
@@ -77,7 +76,7 @@ function Table({ title, columns, tableStates, tableReducers, rowProps, addRowPro
                         <ArrowDownUp className="tool-icon" onClick={() => setIsSortOpen(!isSortOpen)} />
                         <Form
                             className={`sort-box${isSortOpen ? ' open' : ''}`}
-                            onSubmit={(formData) => dispatch(tableReducers.setSortData(formData))}
+                            onSubmit={(formData) => tableReducers && dispatch(tableReducers.setSortData(formData))}
                             defaultValues={sortData}
                         >
                             <div className="sort-header">
@@ -89,7 +88,9 @@ function Table({ title, columns, tableStates, tableReducers, rowProps, addRowPro
                                     <Select
                                         name="sortedField"
                                         placeholder="Field"
-                                        options={columns.map((column) => ({ value: column.name, text: column.header }))}
+                                        options={columns
+                                            .filter(({ sortable = true }) => sortable)
+                                            .map(({ customSort, name, header }) => ({ value: customSort || name, text: header }))}
                                     />
                                     <Select
                                         name="sortedMode"
@@ -130,35 +131,34 @@ function Table({ title, columns, tableStates, tableReducers, rowProps, addRowPro
             <div className="table-body">
                 {data.map((rowData, index) =>
                     <TableRow key={index} {...rowProps(rowData)}
+                        rowData={rowData}
                         columns={columns}
                         tableStates={tableStates}
                         tableReducers={tableReducers}
                         tableModes={tableModes}
                     />
                 )}
-                {addRowProps && (addRowProps.isAddingRow ? (
-                    <Form
-                        ref={addRowRef}
-                        className="table-row add-row"
-                        onSubmit={(formData) => addRowProps.onSubmit(formData)}
-                    >
-                        <div className="table-cell">
-                            <Send className="send-icon" onClick={() => addRowRef.current.requestSubmit()} />
-                        </div>
-                        {addRowProps.fields.map((addField, index) => (
-                            <div className="table-cell" key={index}>
-                                {addField.field}
+                {addRowProps &&
+                    (addRowProps.isAddingRow ? (
+                        <Form ref={addRowRef} className="table-row add-row" onSubmit={(formData) => addRowProps.onSubmit(formData)} >
+                            <div className="table-cell">
+                                <Send className="send-icon" onClick={() => addRowRef.current.requestSubmit()} />
                             </div>
-                        ))}
-                    </Form>
-                ) : (
-                    <div className="table-row add-row" onClick={() => addRowProps.setIsAddingRow(true)}>
-                        <div className="table-cell">
-                            <Plus />
+                            {addRowProps.fields.map((addField, index) => (
+                                <div className="table-cell" key={index}>
+                                    {addField.field}
+                                </div>
+                            ))}
+                        </Form>
+                    ) : (
+                        <div className="table-row add-row"
+                            onClick={() => addRowProps.customAddForm ? addRowProps.customAddForm() : addRowProps.setIsAddingRow(true)}>
+                            <div className="table-cell">
+                                <Plus />
+                            </div>
+                            <div className="table-cell">Add row</div>
                         </div>
-                        <div className="table-cell">Add row</div>
-                    </div>
-                ))}
+                    ))}
             </div>
         </div>
     );

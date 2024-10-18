@@ -4,14 +4,14 @@ import { useDispatch } from 'react-redux';
 import Form from '~/components/ui/Form/Form';
 
 function TableRow({ columns, rowData, tableStates, tableReducers, tableModes, isSelected, isUpdating, ...props }) {
-    console.log('render: ', rowData);
+    // console.log('render: ', rowData);
 
     const dispatch = useDispatch()
     const tableRowRef = useRef();
     const { enableSelect, enableEdit } = tableModes
 
     const handleChange = (e) => {
-        dispatch(tableReducers.toggleSelectRow(rowData[tableStates.primaryKey]))
+        tableReducers && dispatch(tableReducers.toggleSelectRow(rowData[tableStates.primaryKey]))
     };
 
     useEffect(() => {
@@ -33,6 +33,7 @@ function TableRow({ columns, rowData, tableStates, tableReducers, tableModes, is
             <Form
                 ref={tableRowRef}
                 className={`table-row ${!enableEdit ? (isUpdating ? ' active' : '') : ''}`}
+                defaultValues={rowData}
                 {...props}
             >
                 {enableSelect &&
@@ -52,7 +53,6 @@ function TableRow({ columns, rowData, tableStates, tableReducers, tableModes, is
                     <div className="table-cell" key={index}>
                         {cloneElement(column.cell(rowData), {
                             disabled: column.editable === false || !(isUpdating || enableEdit),
-                            defaultValue: rowData[column.name]
                         })}
                     </div>
                 ))}

@@ -1,0 +1,30 @@
+.add-session {
+    .table-row {
+        .table-cell {
+            font-size: 1.3rem;
+            min-height: 40px;
+            padding: 0 4px;
+            // &:nth-of-type(1) {
+            //     width: 4%;
+            //     justify-content: center;
+            // }
+            &:nth-of-type(1),
+            &:nth-of-type(2),
+            &:nth-of-type(9) {
+                width: 14%;
+            }
+            &:nth-of-type(3),
+            &:nth-of-type(4),
+            &:nth-of-type(5),
+            &:nth-of-type(7) {
+                width: 8%;
+            }
+            &:nth-of-type(6) {
+                width: 10%;
+            }
+            &:nth-of-type(8) {
+                width: 12%;
+            }
+        }
+    }
+}
