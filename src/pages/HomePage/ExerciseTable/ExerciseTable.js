@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image, Pencil, Trash2, Upload } from 'lucide-react';
 import './ExerciseTable.scss';
-import { exerciseActions, selectAllRows, setFilterData, setSortData, toggleSelectRow } from '~/redux/slices/exerciseSlice';
+import { exerciseActions, toggleSelectRow } from '~/redux/slices/exerciseSlice';
 import {
     createExerciseThunk,
     deleteExerciseThunk,
@@ -12,12 +12,13 @@ import {
 import { addToast } from '~/redux/slices/toastSlice';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import { Dialog, Input, MultiSelect, Select, Table } from '~/components';
-import ShowImage from '~/components/ui/Dialog/DialogContent/ShowImage/ShowImage';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
+import ShowImage from '~/components/ui/Dialog/DialogContent/ShowImage/ShowImage';
 
 function ExerciseTable() {
     const dispatch = useDispatch();
     const exerciseState = useSelector((state) => state.exercise);
+    const { sortData, filterData } = exerciseState
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
     const [contextMenu, setContextMenu] = useState({});
@@ -25,24 +26,21 @@ function ExerciseTable() {
     const [isAddingRow, setIsAddingRow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
-    const { sortData, filterData } = exerciseState
-    const muscleOptions = muscleData.map((muscle) => ({ value: muscle.raw, text: muscle.name }))
-    const levelOptions = levelData.map((level) => ({ value: level.raw, text: level.name }))
+    const muscleOptions = muscleData.map((muscle) => ({ value: muscle.id, text: muscle.name }))
+    const levelOptions = levelData.map((level) => ({ value: level.level, text: level.name }))
 
-    const exerciseColumns = useMemo(() => [
+    const columns = useMemo(() => [
         { header: 'Name', name: 'name', cell: (row) => <Input name="name" /> },
-        { header: 'Muscle List', name: 'muscleList', cell: (row) => <MultiSelect name="muscleList" options={muscleOptions} /> },
-        { header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} /> },
         {
-            header: 'Basic Reps', name: 'basicReps', cell: (row) => <Input name="basicReps" type="number" />,
-            customFilter: (row) =>
-                <div>
-                    <Input name="basicReps" type="number" />
-                    <Input name="basicReps" type="number" />
-                </div>
+            header: 'Muscle List', name: 'muscleList', cell: (row) => <MultiSelect name="muscleList" options={muscleOptions} />,
+            customFilter: (row) => <MultiSelect name="muscleIds" options={muscleOptions} />
         },
-    ], [muscleOptions, levelOptions],
-    );
+        {
+            header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} />,
+            customFilter: (row) => <Select name="levelEnum" options={levelOptions} />
+        },
+        { header: 'Basic Reps', name: 'basicReps', cell: (row) => <Input name="basicReps" type="number" /> },
+    ], [muscleOptions, levelOptions]);
 
     // Properties of table row
     const rowProps = useCallback((rowData) => {
@@ -85,7 +83,7 @@ function ExerciseTable() {
             rowData,
             isSelected,
             isUpdating,
-            // onClick: handleClick,
+            onClick: handleClick,
             onContextMenu: handleContextMenu,
             onSubmit: handleUpdate,
             confirm: true, // Ask confirm before submit
@@ -141,12 +139,12 @@ function ExerciseTable() {
         <div className="exercise-table">
             <Table
                 title="Exercise"
-                columns={exerciseColumns}
-                state={exerciseState}
-                reducers={exerciseActions}
+                columns={columns}
+                tableStates={exerciseState}
+                tableReducers={exerciseActions}
                 rowProps={rowProps}
                 addRowProps={addRowProps}
-                tableMode={{ enableFilter: true, enableSort: true, enableSelect: true, enableEdit: true }}
+                tableModes={{ enableFilter: true, enableSort: true, enableSelect: true }}
             />
             <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />
             <Pagination

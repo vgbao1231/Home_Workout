@@ -9,19 +9,19 @@ const Dialog = ({ dialogProps, setDialogProps }) => {
     };
     return isOpen
         ? createPortal(
-              <div className="dialog" onClick={handleCloseDialog}>
-                  <div className="dialog-container" onClick={(e) => e.stopPropagation()}>
-                      {title && (
-                          <div className="dialog-header">
-                              <h2>{title}</h2>
-                              <X className="dialog-close" onClick={handleCloseDialog} />
-                          </div>
-                      )}
-                      <div className="dialog-body">{body}</div>
-                  </div>
-              </div>,
-              document.getElementById('root'), // Take Dialog outside the original DOM structure
-          )
+            <div className="dialog" onClick={() => setDialogProps({ isOpen: false, title: '', content: null })}>
+                <div className="dialog-container" onClick={(e) => e.stopPropagation()}>
+                    {title && (
+                        <div className="dialog-header">
+                            <h2>{title}</h2>
+                            <X className="dialog-close" onClick={setDialogProps({ isOpen: false, title: '', content: null })} />
+                        </div>
+                    )}
+                    <div className="dialog-body">{body}</div>
+                </div>
+            </div>,
+            document.getElementById('root'), // Take Dialog outside the original DOM structure
+        )
         : null;
 };
 
