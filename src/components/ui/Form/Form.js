@@ -2,22 +2,21 @@ import { forwardRef, memo, useCallback, useEffect } from 'react';
 import './Form.scss';
 import { FormProvider, useForm } from 'react-hook-form';
 
-function Form({ children, className = '', defaultValues = {}, onSubmit, confirm, ...props }, ref) {
+function Form({ children, className = '', defaultValues, onSubmit, confirm, ...props }, ref) {
     const methods = useForm({
-        defaultValues, // Default values for all fields
+        defaultValues: defaultValues || {}, // Default values for all fields
         mode: 'all', // Validate on change,blur and submit
     });
 
     // Reset form when there is new default data
     useEffect(() => {
-        methods.reset(defaultValues); // Reset form with new default data
+        !Array.isArray(defaultValues) && methods.reset(defaultValues); // Reset form with new default data
     }, [defaultValues, methods]);
 
     const handleSubmit = useCallback(
         (data) => {
             console.log(data);
             const isChanged = JSON.stringify(data) !== JSON.stringify(defaultValues);
-            console.log(isChanged);
 
             // If don't need confirmation then just submit it
             if (!confirm) {

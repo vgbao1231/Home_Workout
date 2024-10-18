@@ -1,16 +1,16 @@
-import { useState, memo, useMemo, useEffect } from 'react';
+import { useState, memo, useMemo } from 'react';
 import './MultiSelect.scss';
 import { useController, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
 import { equalsIgnoreCaseCustom } from '~/utils/formatters';
 
-function MultiSelect({ name, validators, className = '', options, placeholder, ...rest }) {
+function MultiSelect({ name, validators, className = '', options, placeholder, defaultValue = [], ...rest }) {
     const { getValues, trigger, control } = useFormContext();
 
-    const {
-        field,
-        fieldState: { error = {} },
-    } = useController({ name, control, rules: { validate: validators }, defaultValue: [] });
+    const { field, fieldState: { error = {} } } = useController({
+        name, control, rules: { validate: validators },
+        defaultValue // This will not apply if there is a defaultValues in Form
+    });
 
     field.value = getValues(name) ? getValues(name).map(value =>
         options.find((option) => equalsIgnoreCaseCustom(option.value, value) || equalsIgnoreCaseCustom(option.text, value))?.value

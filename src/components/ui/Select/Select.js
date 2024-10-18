@@ -1,15 +1,15 @@
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import './Select.scss';
 import { useController, useFormContext } from 'react-hook-form';
 import { equalsIgnoreCaseCustom } from '~/utils/formatters';
 
-function Select({ name, className = '', validators = {}, formatters = {}, options, ...rest }) {
+function Select({ name, className = '', validators = {}, formatters = {}, options, defaultValue = '', ...rest }) {
     const { getValues, control } = useFormContext();
 
-    const {
-        field,
-        fieldState: { error = {} },
-    } = useController({ name, control, rules: { validate: validators }, defaultValue: '' });
+    const { field, fieldState: { error = {} } } = useController({
+        name, control, rules: { validate: validators },
+        defaultValue // This will not apply if there is a defaultValues in Form
+    });
 
     field.value = options.find((option) =>
         (equalsIgnoreCaseCustom(option.value, getValues(name)) || equalsIgnoreCaseCustom(option.text, getValues(name))))?.value

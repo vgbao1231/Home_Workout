@@ -4,9 +4,9 @@ import { Input, MultiSelect, Select, Table } from "~/components";
 import Pagination from "~/components/ui/Table/Pagination/Pagination";
 import { addToast } from "~/redux/slices/toastSlice";
 import { fetchExerciseThunk } from "~/redux/thunks/exerciseThunk";
-import './AddExercisesDialog.scss'
+import './AddExercisesOfSessionDialog.scss'
 
-function AddExercisesDialog({ columns: exerciseOfSessionColumns, setTableData, onClose }) {
+function AddExercisesOfSessionDialog({ columns: exerciseOfSessionColumns, setTableData, onClose }) {
     const dispatch = useDispatch();
     const exerciseState = useSelector((state) => state.exercise);
     const { sortData, filterData } = exerciseState
@@ -67,7 +67,7 @@ function AddExercisesDialog({ columns: exerciseOfSessionColumns, setTableData, o
     return exerciseState.loading ? (
         <div>Loading Exercise Data...</div>
     ) : (
-        <div className="add-exercise-table">
+        <div className="add-exercises-of-session-table">
             <Table
                 title="Select Exercises"
                 columns={columns}
@@ -84,4 +84,4 @@ function AddExercisesDialog({ columns: exerciseOfSessionColumns, setTableData, o
     );
 }
 
-export default AddExercisesDialog;
+export default AddExercisesOfSessionDialog;

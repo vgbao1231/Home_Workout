@@ -2,16 +2,11 @@ import { cloneElement, memo } from 'react';
 import './Input.scss';
 import { useController, useFormContext } from 'react-hook-form';
 
-function Input({ name, className = '', validators = {}, formatters = {}, iconSupport, ...rest }) {
+function Input({ name, className = '', validators = {}, formatters = {}, iconSupport, defaultValue = '', ...rest }) {
     const { control } = useFormContext();
-    const {
-        field: { value, ...field },
-        fieldState: { error = {} },
-    } = useController({
-        name,
-        control,
-        rules: { validate: validators },
-        defaultValue: '',
+    const { field: { value, ...field }, fieldState: { error = {} } } = useController({
+        name, control, rules: { validate: validators },
+        defaultValue: defaultValue, // This will not apply if there is a defaultValues in Form
     });
 
     // Filter out props and events

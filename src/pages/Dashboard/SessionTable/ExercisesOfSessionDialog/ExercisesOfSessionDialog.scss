@@ -2,6 +2,10 @@
     .dialog-container {
         width: 90vw;
     }
+    .dialog-body {
+        display: flex;
+        flex-direction: column;
+    }
     .table-body {
         margin-right: -4px;
         overflow-y: scroll;
@@ -25,48 +29,77 @@
             background: #f1f1f1; /* Background color of the scrollbar track */
             border-radius: 5px;
         }
-    }
-    .table-row {
-        .table-cell {
-            font-size: 1.3rem;
-            min-height: 40px;
-            padding: 0 4px;
-            // &:nth-of-type(1) {
-            //     width: 4%;
-            //     justify-content: center;
-            // }
-            &:nth-of-type(1),
-            &:nth-of-type(2),
-            &:nth-of-type(9) {
-                width: 14%;
+        .table-row {
+            .table-cell {
+                font-size: 1.3rem;
+                min-height: 40px;
+                padding: 0 4px;
+                &:nth-of-type(1),
+                &:nth-of-type(2),
+                &:nth-of-type(3),
+                &:nth-of-type(4) {
+                    background-color: #eee;
+                    cursor: not-allowed !important;
+                }
+                &:nth-of-type(1),
+                &:nth-of-type(2),
+                &:nth-of-type(9) {
+                    width: 14%;
+                }
+                &:nth-of-type(3),
+                &:nth-of-type(4),
+                &:nth-of-type(5),
+                &:nth-of-type(7) {
+                    width: 8%;
+                }
+                &:nth-of-type(6) {
+                    width: 10%;
+                }
+                &:nth-of-type(8) {
+                    width: 12%;
+                }
+                &:nth-of-type(10) {
+                    width: 5%;
+                    justify-content: center;
+                    svg {
+                        border-radius: 10px;
+                        padding: 8px;
+                        width: 3.2rem;
+                        height: 3.2rem;
+                        &:hover {
+                            background-color: #eee;
+                        }
+                    }
+                }
             }
-            &:nth-of-type(3),
-            &:nth-of-type(4),
-            &:nth-of-type(5),
-            &:nth-of-type(7) {
-                width: 8%;
-            }
-            &:nth-of-type(6) {
-                width: 10%;
-            }
-            &:nth-of-type(8) {
-                width: 12%;
-            }
-            &:nth-of-type(10) {
-                width: 5%;
+            &.add-row {
+                .table-cell {
+                    color: #aaa;
+                    &:nth-of-type(1) {
+                        width: 4%;
+                        justify-content: center;
+                        background-color: transparent;
+                    }
+                    &:nth-of-type(2) {
+                        margin-left: 10px;
+                        background-color: transparent;
+                    }
+                }
             }
         }
-        &.add-row {
-            .table-cell {
-                color: #aaa;
-                &:nth-of-type(1) {
-                    width: 4%;
-                    justify-content: center;
-                }
-                &:nth-of-type(2) {
-                    margin-left: 10px;
-                }
-            }
+    }
+
+    .update-exercise-of-session-btn {
+        display: flex;
+        background-color: #fff;
+        border: 2px solid #555;
+        border-radius: 20px;
+        padding: 10px 30px;
+        margin: 10px auto;
+        transition: all 0.2s ease;
+        &:hover {
+            background-color: #333;
+            color: #fff;
         }
     }
 }

@@ -20,8 +20,6 @@ const exerciseSlice = createSlice({
     },
     reducers: {
         setFilterData(state, action) {
-            console.log(action.payload);
-
             state.filterData = Object.fromEntries(Object.entries(action.payload).filter(([_, value]) => value.length > 0));
         },
         setSortData(state, action) {

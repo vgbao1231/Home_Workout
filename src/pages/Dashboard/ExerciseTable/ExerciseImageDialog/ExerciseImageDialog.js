@@ -48,7 +48,7 @@ function ExerciseImageDialog({ id, imageUrl }) {
                     onChange={handleImageUpload}
                     hidden
                 />
-                <button className="upload-button">Upload</button>
+                <button className="upload-btn">Upload</button>
             </Form>
         </>
     );

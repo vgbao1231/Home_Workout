@@ -8,10 +8,10 @@ import './ExercisesOfSessionDialog.scss';
 import { addToast } from '~/redux/slices/toastSlice';
 import { getAllExercisesOfSession } from '~/services/exercisesOfSessionService';
 import { Dialog } from '~/components';
-import AddExercisesDialog from './AddExercisesDialog/AddExercisesDialog';
+import AddExercisesOfSessionDialog from '../AddExercisesOfSessionDialog/AddExercisesOfSessionDialog';
 import { Trash2 } from 'lucide-react';
 
-function ExercisesOfSessionDialog({ id }) {
+function ExercisesOfSessionDialog({ id, onClose }) {
     const dispatch = useDispatch();
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
@@ -33,20 +33,10 @@ function ExercisesOfSessionDialog({ id }) {
             { header: 'Slack In Second', name: 'slackInSecond', cell: row => <Input name="slackInSecond" type="number" />, defaultValue: 0 },
             { header: 'Raise Slack In Second', name: 'raiseSlackInSecond', cell: row => <Input name="raiseSlackInSecond" type="number" />, defaultValue: 0 },
             {
-                header: 'Need Switch Exercise Delay', name: 'needSwitchExerciseDelay',
-                cell: row => <Select name="needSwitchExerciseDelay" options={[{ value: true, text: "True" }, { value: false, text: "False" }]} />, defaultValue: false
+                header: 'Need Switch Exercise Delay', name: 'needSwitchExerciseDelay', defaultValue: false,
+                cell: row => <Select name="needSwitchExerciseDelay" options={[{ value: true, text: "True" }, { value: false, text: "False" }]} />
             },
-            {
-                header: 'Action',
-                cell: row => <Trash2 onClick={() => setTableData(prev => {
-                    const result = prev.filter(rowData => {
-                        return rowData.id !== row.id
-                    })
-                    console.log(result);
-                    return result
-
-                })} />
-            },
+            { header: 'Action', cell: row => <Trash2 onClick={() => setTableData(prev => prev.filter(rowData => rowData.id !== row.id))} /> },
         ],
         [muscleOptions, levelOptions, tableData],
     );
@@ -62,7 +52,7 @@ function ExercisesOfSessionDialog({ id }) {
             customAddForm: () => {
                 setDialogProps({
                     isOpen: true,
-                    body: <AddExercisesDialog columns={columns} setTableData={setTableData} />,
+                    body: <AddExercisesOfSessionDialog columns={columns} setTableData={setTableData} />,
                 })
             },
         };
@@ -89,8 +79,12 @@ function ExercisesOfSessionDialog({ id }) {
 
         fetchData();
     }, [dispatch, id]);
-    console.log('table data: ', tableData);
 
+    const handleSubmit = () => {
+        console.log(tableData);
+        onClose()
+        // setIsAddingSession(false)
+    }
 
     return isLoading ? (
         <div>Loading Exercise Data...</div>
@@ -105,6 +99,7 @@ function ExercisesOfSessionDialog({ id }) {
                 tableModes={{ enableEdit: true }}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
+            <button className="update-exercise-of-session-btn" onClick={handleSubmit}>Update</button>
         </>
     );
 }

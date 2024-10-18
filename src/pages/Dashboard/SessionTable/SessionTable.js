@@ -41,6 +41,7 @@ function SessionTable() {
             customFilter: (row) => <Select name="level" options={levelOptions} />
         },
         { header: 'Description', name: 'description', cell: (row) => <Input name="description" /> },
+        { header: 'Switch Exercise Delay', name: 'switchExerciseDelay', cell: (row) => <Input name="switchExerciseDelay" /> },
     ], [muscleOptions, levelOptions]);
 
     // Properties of table row
@@ -111,9 +112,10 @@ function SessionTable() {
             },
             fields: [
                 { field: <Input placeholder="Name" name="name" defaultValue='123' /> },
-                { field: <MultiSelect placeholder="Muscle List" name="muscleIds" options={muscleOptions} /> },
-                { field: <Select placeholder="Select Level" name="level" options={levelOptions} /> },
+                { field: <MultiSelect placeholder="Muscle List" name="muscleIds" options={muscleOptions} defaultValue={[1, 2]} /> },
+                { field: <Select placeholder="Select Level" name="level" options={levelOptions} defaultValue='1' /> },
                 { field: <Input placeholder="Description" name="description" defaultValue='123' /> },
+                { field: <Input placeholder="Switch Exercise Delay" name="switchExerciseDelay" defaultValue='300' /> },
             ],
         };
     }, [levelOptions, muscleOptions, selectedExercise, isAddingRow, setIsAddingRow]);
