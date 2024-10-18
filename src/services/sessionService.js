@@ -2,6 +2,7 @@ import AxiosHelpers from '~/utils/axiosHelpers';
 import { springService } from './apiService';
 
 const API_ADMIN_PREFIX = process.env.REACT_APP_API_ADMIN_PREFIX;
+const API_USER_PREFIX = process.env.REACT_APP_API_USER_PREFIX;
 
 export const getAllSessions = async (page, filterFields, sortedField, sortedMode) => {
     try {
@@ -66,3 +67,20 @@ export const deleteSession = async (sessionId) => {
         throw error.response ? error.response.data : error;
     }
 };
+
+export class SessionAdminService {
+}
+
+export class SessionUserService {
+    static async getSessionsOfScheduleRelationship(scheduleId) {
+        try {
+            const response = await springService.get(`${API_USER_PREFIX}/v1/get-sessions-of-schedule-relationship`, {
+                params: { id: scheduleId },
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
+}
