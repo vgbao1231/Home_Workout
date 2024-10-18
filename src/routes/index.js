@@ -1,20 +1,27 @@
-import SidebarLayout from '~/layout/SidebarLayout/SidebarLayout';
-import Dashboard from '~/pages/Dashboard/Dashboard';
-import SchedulePage from '~/pages/SchedulePage/SchedulePage';
+import { AdminSidebarLayout, UserSidebarLayout } from '~/layout/SidebarLayout/SidebarLayout';
+import HomePage from '~/pages/HomePage/HomePage';
+import UserHomePage from '~/pages/User/HomePage/UserHomePage';
 import LoginPage from '~/pages/LoginPage/LoginPage';
-import ManageUserInfoPage from '~/pages/ManageUserInfoPage/ManageUserInfoPage';
+import ManageUserInfoPage from '~/pages/Admin/ManageUserInfoPage/ManageUserInfoPage';
+import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
+// import TestPage from '~/pages/TestPage/TestPage';
 
-// Public routes
 const publicRoutes = [
     { path: '/login', component: LoginPage },
     { path: '/register', component: LoginPage }, // Test
     { path: '/forgot-password', component: LoginPage }, // Test
 ];
 
-// Private routes
-const privateRoutes = [
-    { path: '/admin/dashboard', component: Dashboard, layout: SidebarLayout },
-    { path: '/admin/manage-user-info', component: ManageUserInfoPage, layout: SidebarLayout },
-    { path: '/user/choose-schedule', component: SchedulePage, layout: SidebarLayout },
+const adminRoutes = [
+    { path: '/', component: HomePage, layout: AdminSidebarLayout },
+    // { path: '/test', component: TestPage }, // Test
+    { path: '/homepage', component: HomePage }, // Test
+    { path: '/manage-user-info', component: ManageUserInfoPage, layout: AdminSidebarLayout },
+    { path: '/manage-slides', component: ManageSlidesPage, layout: AdminSidebarLayout },
 ];
-export { publicRoutes, privateRoutes };
+
+const userRoutes = [
+    { path: '/', component: UserHomePage, layout: UserSidebarLayout },
+];
+
+export { publicRoutes, adminRoutes, userRoutes };

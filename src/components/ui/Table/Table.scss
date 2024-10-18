@@ -2,7 +2,8 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    margin: 0 20px;
+    margin: 0 30px;
+
     .table-feature {
         display: flex;
         justify-content: space-between;
@@ -139,7 +140,7 @@
             display: flex;
             transition: background-color 0.2s ease;
             .table-cell {
-                justify-content: center;
+                justify-content: center;    
             }
         }
     }
@@ -148,6 +149,10 @@
         display: flex;
         flex-direction: column;
         z-index: 2;
+        .add-row {
+            cursor: pointer;
+            color: #888;
+        }
         .table-row {
             border-top: 1px solid #ccc;
             display: flex;

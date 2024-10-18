@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { UserInfoAdminThunk, UserInfoUserThunk } from '../thunks/userInfoThunk';
+import { formatResponseLocalDate, formatResponseLocalDateTime } from '~/utils/formatters';
 
 const userInfoSlice = createSlice({
     name: 'userInfo',
@@ -21,8 +22,8 @@ const userInfoSlice = createSlice({
                 state.loading = false;
                 state.data = action.payload.data.data.map(objData => ({
                     ...objData,
-                    dob: new Date(...objData.dob).toISOString().slice(0, 10),
-                    createdTime: new Date(...objData.createdTime).toISOString(),
+                    dob: formatResponseLocalDate(objData.dob),
+                    createdTime: formatResponseLocalDateTime(objData.createdTime),
                 }));
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;

@@ -133,7 +133,8 @@ function ExerciseTable() {
 
         fetchData();
     }, [dispatch, currentPage, sortData, filterData]);
-
+    console.log(exerciseState);
+    
     return exerciseState.loading ? (
         <div>Loading Exercise Data...</div>
     ) : (
