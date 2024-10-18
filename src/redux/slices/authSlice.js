@@ -1,11 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loginThunk, logoutThunk } from '../thunks/authThunk';
-import Cookies from 'js-cookie';
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        isAuthenticated: !!Cookies.get('accessToken'),
         loading: false,
         message: null,
     },

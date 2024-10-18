@@ -3,11 +3,10 @@ import { cloneElement, memo, useEffect, useMemo, useRef } from 'react';
 import Form from '~/components/ui/Form/Form';
 
 function TableRowBuilder({
-    rowData, primaryKeyName, columnsInfo, selectedRows,
-    handleSelectRow, updatingRowIdState, handleContextMenu,
+    rowData, primaryKeyName, columnsInfo, selectedRows, currentPage,
+    handleSelectingRow, updatingRowIdState, handleContextMenu,
     ...props
 }) {
-    console.log(rowData);
     const tableRowRef = useRef();
     const rowId = useMemo(() => rowData[primaryKeyName], []);
     const canUpdatingRow = useMemo(() => updatingRowIdState === rowId, [updatingRowIdState]), isUpdatingRow = canUpdatingRow;
@@ -30,11 +29,11 @@ function TableRowBuilder({
             <Form
                 ref={canUpdatingRow ? tableRowRef : null}
                 className={`table-row${isUpdatingRow ? ' active' : ''}`}
-                onClick={e => handleSelectRow !== null ? handleSelectRow(e, rowData) : ()=>{}}
+                onClick={e => handleSelectingRow !== null ? handleSelectingRow(e, rowData) : ()=>{}}
                 onContextMenu={e => handleContextMenu !== null ? handleContextMenu(e, rowData) : ()=>{}}
                 {...props}
             >
-                {handleSelectRow === null || selectedRows === null
+                {handleSelectingRow === null || selectedRows === null
                     ? (isUpdatingRow ?
                         <div className="table-cell">
                             <Send className="send-icon" onClick={() => tableRowRef.current.requestSubmit()} />
@@ -43,7 +42,7 @@ function TableRowBuilder({
                         <div className="table-cell">
                             {isUpdatingRow
                                 ? <Send className="send-icon" onClick={() => tableRowRef.current.requestSubmit()} />
-                                : <input type="checkbox" checked={!!selectedRows[rowId]} readOnly />
+                                : <input type="checkbox" readOnly checked={!!selectedRows[currentPage] && !!selectedRows[currentPage][rowId]} />
                             }
                         </div>
                     )
@@ -75,12 +74,8 @@ function TableRowBuilder({
 // export default memo(TableRow);
 export default memo(TableRowBuilder, (prevProps, nextProps) => {
     return (
-        JSON.stringify(prevProps.rowData) === JSON.stringify(nextProps.rowData)
-        && (
-            prevProps.selectedRows !== null &&
-            prevProps.selectedRows[prevProps.rowData[prevProps.primaryKeyName]] === 
-            nextProps.selectedRows[nextProps.rowData[prevProps.primaryKeyName]]
-        )
-        && prevProps.updatingRowIdState === nextProps.updatingRowIdState
+        prevProps.rowData === nextProps.rowData &&
+        prevProps.selectedRows === nextProps.selectedRows &&
+        prevProps.updatingRowIdState === nextProps.updatingRowIdState
     );
 });

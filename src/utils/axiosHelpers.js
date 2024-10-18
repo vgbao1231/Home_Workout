@@ -1,3 +1,4 @@
+
 export default class AxiosHelpers {
     static paramsSerializerForGet(params) {
         let filterFields = {};
@@ -22,5 +23,10 @@ export default class AxiosHelpers {
                 , []).join("&"));
         }
         return result.join('&');
+    }
+    static checkAndReadBase64Token(token) {
+        if (!token)
+            return {};
+        return JSON.parse(atob(token.split(".")[1]));
     }
 }

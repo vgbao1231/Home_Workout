@@ -64,7 +64,8 @@
                         border-radius: 4px;
                         padding: 3px 0;
                         width: 75px;
-                        transition: background-color ease 0.3s;
+                        border: none;
+                        transition: background-color ease 0.3s, border-radius ease 0.3s;
                         &:hover {
                             &::after{
                                 font-size: 10px;
@@ -85,20 +86,16 @@
                     button[plain="true"] {
                         background-color: var(--active-tag-bg-color);
                         color: white;
-                        border: 1px solid var(--active-tag-bg-color);
                         &:hover {
                             background-color: var(--inactive-tag-bg-color);
-                            border: 1px solid var(--inactive-tag-bg-color);
                             border-radius: 12px;
                         }
                     }
                     button[plain="false"] {
                         background-color: var(--inactive-tag-bg-color);
                         color: white;
-                        border: 1px solid var(--inactive-tag-bg-color);
                         &:hover {
                             background-color: var(--active-tag-bg-color);
-                            border: 1px solid var(--active-tag-bg-color);
                             border-radius: 12px;
                         }
                     }

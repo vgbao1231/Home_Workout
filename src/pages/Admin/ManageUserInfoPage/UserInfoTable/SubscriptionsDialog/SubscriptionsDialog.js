@@ -5,7 +5,6 @@ import { Input } from '~/components';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
 import { addToast } from '~/redux/slices/toastSlice';
 import { Table, FormatterDict } from '~/components/ui/Table/CustomTable';
-import { toggleSelectRow, selectAllRows } from '~/redux/slices/subscriptionSlice';
 import { useMemo, useState } from 'react';
 
 export default function SubscriptionsDialog({ userInfoId }) {
@@ -51,13 +50,8 @@ export default function SubscriptionsDialog({ userInfoId }) {
             ],
         },
         reducers: {
-            selectingRows: { toggleSelectRow, selectAllRows },
             globalToastEngine: addToast
         }
-    }), []);
-
-    const contextMenuComponents = useMemo(() => ({
-        menuItems: []
     }), []);
 
     return (
@@ -68,8 +62,7 @@ export default function SubscriptionsDialog({ userInfoId }) {
                 tableState={subscriptionsState}
                 pageState={currentPage}
                 tableComponents={tableComponents}
-                contextMenuComponents={contextMenuComponents}
-                tableModes={FormatterDict.TableModes(true, false, false, false, false)}
+                tableModes={FormatterDict.TableModes(false, false, false, false, false)}
             />
             <Pagination
                 setCurrentPage={setCurrentPage}
