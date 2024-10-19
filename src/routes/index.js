@@ -5,6 +5,7 @@ import ManageUserInfoPage from '~/pages/Admin/ManageUserInfoPage/ManageUserInfoP
 import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
 import SubscribeSchedules from '~/pages/User/SubscribeSchedules/SubscribeSchedules';
 import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
+import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
@@ -22,6 +23,7 @@ const adminRoutes = [
 const userRoutes = [
     { path: '/', component: UserHomePage, layout: UserSidebarLayout },
     { path: '/subscribe-schedules', component: SubscribeSchedules, layout: UserSidebarLayout },
+    { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
 ];
 
 export { publicRoutes, adminRoutes, userRoutes };

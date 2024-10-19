@@ -50,6 +50,7 @@ function TableRow({ columns, rowData, tableStates, tableReducers, tableModes, is
                     </div>
                 }
                 {columns.map((column, index) => (
+                    !column.hidden &&
                     <div className="table-cell" key={index}>
                         {cloneElement(column.cell(rowData), {
                             disabled: column.editable === false || !(isUpdating || enableEdit),

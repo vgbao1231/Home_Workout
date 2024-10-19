@@ -120,11 +120,14 @@ function Table({ title, columns, tableStates, tableReducers, rowProps, addRowPro
                             onChange={handleSelectAll}
                         />
                     </div>}
-                    {columns.map((column, index) => (
-                        <div key={index} className="table-cell">
-                            {column.header}
-                        </div>
-                    ))}
+                    {columns.map((column, index) =>
+                        !column.hidden &&
+                        (
+                            <div key={index} className="table-cell">
+                                {column.header}
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
 

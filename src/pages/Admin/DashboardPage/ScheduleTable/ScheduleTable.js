@@ -31,7 +31,17 @@ function ScheduleTable() {
             header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} />,
             customFilter: (row) => <Select name="level" options={levelOptions} />
         },
-        { header: 'Coins', name: 'coins', cell: (row) => <Input name="coins" /> },
+        { header: 'Coins', name: 'coins', cell: (row) => <Input name="coins" />, filterable: false },
+        { header: 'From coins', name: 'fromCoins', cell: (row) => <Input name="fromCoins" />, hidden: true },
+        { header: 'To coins', name: 'toCoins', cell: (row) => <Input name="toCoins" />, hidden: true },
+        // {
+        //     header: 'Coins', name: 'coins', cell: (row) => <Input name="coins" />,
+        //     customFilter: (row) =>
+        //         <div className='flex-col' style={{ gap: '4px' }}>
+        //             <Input name="fromCoins" placeholder='From' />
+        //             <Input name="toCoins" placeholder='To' />
+        //         </div>
+        // },
     ], [levelOptions]);
 
     // Properties of table row
