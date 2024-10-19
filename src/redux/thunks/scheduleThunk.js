@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { SessionAdminService } from '~/services/sessionService';
+import { ScheduleAdminService } from '~/services/scheduleService';
 import { addToast } from '../slices/toastSlice';
 
-export class SessionAdminThunk {
-    static fetchSessionThunk = createAsyncThunk(
-        'session/fetchSession',
+export class ScheduleAdminThunk {
+    static fetchScheduleThunk = createAsyncThunk(
+        'schedule/fetchSchedule',
         async ({ page = 1, filterFields, sortedField, sortedMode } = {}, { dispatch, rejectWithValue }) => {
             try {
-                const response = await SessionAdminService.getAllSessions(page, filterFields, sortedField, sortedMode);
+                const response = await ScheduleAdminService.getAllSchedules(page, filterFields, sortedField, sortedMode);
                 return response;
             } catch (error) {
                 dispatch(addToast(error.message, 'error'));
@@ -16,13 +16,13 @@ export class SessionAdminThunk {
         },
     );
 
-    static createSessionThunk = createAsyncThunk(
-        'session/createSession',
+    static createScheduleThunk = createAsyncThunk(
+        'schedule/createSchedule',
         async (formData, { dispatch, rejectWithValue }) => {
             try {
-                const response = await SessionAdminService.createSession(formData);
+                const response = await ScheduleAdminService.createSchedule(formData);
                 dispatch(addToast(response.message, 'success'));
-                dispatch(SessionAdminThunk.fetchSessionThunk());
+                dispatch(ScheduleAdminThunk.fetchScheduleThunk());
                 return response;
             } catch (error) {
                 dispatch(addToast(error.message, 'error'));
@@ -31,13 +31,13 @@ export class SessionAdminThunk {
         },
     );
 
-    static updateSessionThunk = createAsyncThunk(
-        'session/updateSession',
+    static updateScheduleThunk = createAsyncThunk(
+        'schedule/updateSchedule',
         async (formData, { dispatch, rejectWithValue }) => {
             try {
-                const response = await SessionAdminService.updateSession(formData);
+                const response = await ScheduleAdminService.updateSchedule(formData);
                 dispatch(addToast(response.message, 'success'));
-                dispatch(SessionAdminThunk.fetchSessionThunk());
+                dispatch(ScheduleAdminThunk.fetchScheduleThunk());
                 return response;
             } catch (error) {
                 dispatch(addToast(error.message, 'error'));
@@ -46,13 +46,13 @@ export class SessionAdminThunk {
         },
     );
 
-    static deleteSessionThunk = createAsyncThunk(
-        'session/deleteSession',
-        async (sessionId, { dispatch, rejectWithValue }) => {
+    static deleteScheduleThunk = createAsyncThunk(
+        'schedule/deleteSchedule',
+        async (scheduleId, { dispatch, rejectWithValue }) => {
             try {
-                const response = await SessionAdminService.deleteSession(sessionId);
+                const response = await ScheduleAdminService.deleteSchedule(scheduleId);
                 dispatch(addToast(response.message, 'success'));
-                dispatch(SessionAdminThunk.fetchSessionThunk());
+                dispatch(ScheduleAdminThunk.fetchScheduleThunk());
                 return response;
             } catch (error) {
                 dispatch(addToast(error.message, 'error'));

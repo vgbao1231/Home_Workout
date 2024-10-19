@@ -3,17 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Image, Pencil, Trash2, Upload } from 'lucide-react';
 import './ExerciseTable.scss';
 import { exerciseActions, toggleSelectRow } from '~/redux/slices/exerciseSlice';
-import {
-    createExerciseThunk,
-    deleteExerciseThunk,
-    fetchExerciseThunk,
-    updateExerciseThunk,
-} from '~/redux/thunks/exerciseThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import { Dialog, Input, MultiSelect, Select, Table } from '~/components';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
 import ExerciseImageDialog from './ExerciseImageDialog/ExerciseImageDialog';
+import { ExerciseAdminThunk } from '~/redux/thunks/exerciseThunk';
 
 function ExerciseTable() {
     const dispatch = useDispatch();
@@ -61,7 +56,7 @@ function ExerciseTable() {
                     { text: 'Update Exercise', icon: <Pencil />, action: () => setUpdatingRowId(rowData.exerciseId) },
                     {
                         text: 'Delete Exercise', icon: <Trash2 />,
-                        action: () => window.confirm('Delete ?') && dispatch(deleteExerciseThunk(rowData.exerciseId))
+                        action: () => window.confirm('Delete ?') && dispatch(ExerciseAdminThunk.deleteExerciseThunk(rowData.exerciseId))
                     },
                     {
                         text: 'Show Exercise Img', icon: <Image />,
@@ -78,7 +73,7 @@ function ExerciseTable() {
 
         // Handle update row data
         const handleUpdate = (formData) => {
-            if (formData) dispatch(updateExerciseThunk(formData));
+            if (formData) dispatch(ExerciseAdminThunk.updateExerciseThunk(formData));
             setUpdatingRowId();
         };
 
@@ -98,7 +93,7 @@ function ExerciseTable() {
             isAddingRow,
             setIsAddingRow,
             onSubmit: (formData) => {
-                dispatch(createExerciseThunk(formData));
+                dispatch(ExerciseAdminThunk.createExerciseThunk(formData));
                 setIsAddingRow(false);
             },
             fields: [
@@ -120,7 +115,7 @@ function ExerciseTable() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                await dispatch(fetchExerciseThunk({
+                await dispatch(ExerciseAdminThunk.fetchExerciseThunk({
                     page: currentPage,
                     filterFields: filterData,
                     sortedField: sortData?.sortedField,
@@ -133,8 +128,7 @@ function ExerciseTable() {
 
         fetchData();
     }, [dispatch, currentPage, sortData, filterData]);
-    console.log(exerciseState);
-    
+
     return exerciseState.loading ? (
         <div>Loading Exercise Data...</div>
     ) : (

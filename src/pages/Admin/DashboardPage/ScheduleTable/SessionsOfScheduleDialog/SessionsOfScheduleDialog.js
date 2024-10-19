@@ -4,14 +4,16 @@ import Input from '~/components/ui/Input/Input';
 import MultiSelect from '~/components/ui/MultiSelect/MultiSelect';
 import Select from '~/components/ui/Select/Select';
 import Table from '~/components/ui/Table/Table';
-import './ExercisesOfSessionDialog.scss';
+import './SessionsOfScheduleDialog.scss';
 import { addToast } from '~/redux/slices/toastSlice';
-import { getAllExercisesOfSession } from '~/services/exercisesOfSessionService';
 import { Dialog } from '~/components';
-import AddExercisesOfSessionDialog from '../AddExercisesOfSessionDialog/AddExercisesOfSessionDialog';
 import { Trash2 } from 'lucide-react';
+import AddSessionsOfScheduleDialog from '../AddSessionsOfScheduleDialog/AddSessionsOfScheduleDialog';
+import { SessionAdminService } from '~/services/sessionService';
 
-function ExercisesOfSessionDialog({ id, onClose }) {
+function SessionsOfScheduleDialog({ id, onClose }) {
+    console.log('ok');
+
     const dispatch = useDispatch();
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
@@ -27,15 +29,9 @@ function ExercisesOfSessionDialog({ id, onClose }) {
             { header: 'Name', name: 'name', cell: row => <Input name="name" />, editable: false },
             { header: 'Muscle List', name: 'musclesList', cell: row => <MultiSelect name="musclesList" options={muscleOptions} />, editable: false },
             { header: 'Level', name: 'levelEnum', cell: row => <Select name="levelEnum" options={levelOptions} />, editable: false },
-            { header: 'Basic Reps', name: 'basicReps', cell: row => <Input name="basicReps" type="number" />, editable: false },
+            { header: 'Description', name: 'description', cell: row => <Input name="description" />, editable: false },
+            { header: 'Switch Exercise Delay', name: 'switchExerciseDelay', cell: (row) => <Input name="switchExerciseDelay" />, editable: false },
             { header: 'Ordinal', name: 'ordinal', cell: row => <Input name="ordinal" type="number" />, defaultValue: tableData.length + 1 },
-            { header: 'Down Reps Ratio', name: 'downRepsRatio', cell: row => <Input name="downRepsRatio" type="number" />, defaultValue: 0 },
-            { header: 'Slack In Second', name: 'slackInSecond', cell: row => <Input name="slackInSecond" type="number" />, defaultValue: 0 },
-            { header: 'Raise Slack In Second', name: 'raiseSlackInSecond', cell: row => <Input name="raiseSlackInSecond" type="number" />, defaultValue: 0 },
-            {
-                header: 'Need Switch Exercise Delay', name: 'needSwitchExerciseDelay', defaultValue: false,
-                cell: row => <Select name="needSwitchExerciseDelay" options={[{ value: true, text: "True" }, { value: false, text: "False" }]} />
-            },
             { header: 'Action', cell: row => <Trash2 onClick={() => setTableData(prev => prev.filter(rowData => rowData.id !== row.id))} /> },
         ],
         [muscleOptions, levelOptions, tableData],
@@ -52,7 +48,7 @@ function ExercisesOfSessionDialog({ id, onClose }) {
             customAddForm: () => {
                 setDialogProps({
                     isOpen: true,
-                    body: <AddExercisesOfSessionDialog columns={columns} setTableData={setTableData} />,
+                    body: <AddSessionsOfScheduleDialog columns={columns} setTableData={setTableData} />,
                 })
             },
         };
@@ -61,13 +57,13 @@ function ExercisesOfSessionDialog({ id, onClose }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getAllExercisesOfSession(id)
+                const response = await SessionAdminService.getSessionsOfScheduleRelationship(id)
                 const responseData = response.data.map(element => {
-                    const { exercise, ...rest } = element
+                    const { session, ...rest } = element
                     return {
                         ...rest,
-                        ...exercise,
-                        musclesList: exercise.muscles.map(muscle => muscle.muscleName)
+                        ...session,
+                        musclesList: session.muscles.map(muscle => muscle.muscleName)
                     };
                 });
                 setTableData(responseData)
@@ -83,25 +79,25 @@ function ExercisesOfSessionDialog({ id, onClose }) {
     const handleSubmit = () => {
         console.log(tableData);
         onClose()
-        // setIsAddingSession(false)
+        // setIsAddingSchedule(false)
     }
 
     return isLoading ? (
-        <div>Loading Exercise Data...</div>
+        <div>Loading Session Data...</div>
     ) : (
         <>
             <Table
-                title="Exercises Of Session"
+                title="Sessions Of Schedule"
                 columns={columns}
-                tableStates={{ data: tableData, primaryKey: 'exerciseId' }}
+                tableStates={{ data: tableData, primaryKey: 'sessionId' }}
                 rowProps={rowProps}
                 addRowProps={addRowProps}
                 tableModes={{ enableEdit: true }}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-            <button className="update-exercise-of-session-btn" onClick={handleSubmit}>Update</button>
+            <button className="update-sessions-of-schedule-btn" onClick={handleSubmit}>Update</button>
         </>
     );
 }
 
-export default ExercisesOfSessionDialog;
+export default SessionsOfScheduleDialog;

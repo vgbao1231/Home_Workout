@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { ExerciseAdminThunk } from '../thunks/exerciseThunk';
+import { ScheduleAdminThunk } from '../thunks/scheduleThunk';
 
-const exerciseSlice = createSlice({
-    name: 'exercise',
+const scheduleSlice = createSlice({
+    name: 'schedule',
     initialState: {
-        primaryKey: 'exerciseId',
+        primaryKey: 'scheduleId',
         selectedRows: {},
         filterData: [],
         sortData: [],
@@ -27,76 +27,72 @@ const exerciseSlice = createSlice({
         selectAllRows: (state, action) => {
             state.selectedRows = action.payload
                 ? state.data.reduce((acc, row) => {
-                    acc[row.exerciseId] = true;
+                    acc[row.scheduleId] = true;
                     return acc;
                 }, {})
                 : {};
         },
     },
     extraReducers: (builder) => {
-        // Get exercise data
+        // Get schedule data
         builder
-            .addCase(ExerciseAdminThunk.fetchExerciseThunk.pending, (state) => {
+            .addCase(ScheduleAdminThunk.fetchScheduleThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(ExerciseAdminThunk.fetchExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ScheduleAdminThunk.fetchScheduleThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data.data;
-                state.data.forEach(element => {
-                    element.musclesList = element.muscles.map(muscle => muscle.muscleName)
-                });
-
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })
-            .addCase(ExerciseAdminThunk.fetchExerciseThunk.rejected, (state) => {
+            .addCase(ScheduleAdminThunk.fetchScheduleThunk.rejected, (state) => {
                 state.loading = false;
             });
 
-        // Create exercise
+        // Create schedule
         builder
-            .addCase(ExerciseAdminThunk.createExerciseThunk.pending, (state) => {
+            .addCase(ScheduleAdminThunk.createScheduleThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(ExerciseAdminThunk.createExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ScheduleAdminThunk.createScheduleThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(ExerciseAdminThunk.createExerciseThunk.rejected, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            });
-
-        // Update exercise
-        builder
-            .addCase(ExerciseAdminThunk.updateExerciseThunk.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(ExerciseAdminThunk.updateExerciseThunk.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(ExerciseAdminThunk.updateExerciseThunk.rejected, (state, action) => {
+            .addCase(ScheduleAdminThunk.createScheduleThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
 
-        // Delete exercise
+        // Update schedule
         builder
-            .addCase(ExerciseAdminThunk.deleteExerciseThunk.pending, (state) => {
+            .addCase(ScheduleAdminThunk.updateScheduleThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(ExerciseAdminThunk.deleteExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ScheduleAdminThunk.updateScheduleThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(ExerciseAdminThunk.deleteExerciseThunk.rejected, (state, action) => {
+            .addCase(ScheduleAdminThunk.updateScheduleThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            });
+
+        // Delete schedule
+        builder
+            .addCase(ScheduleAdminThunk.deleteScheduleThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(ScheduleAdminThunk.deleteScheduleThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            })
+            .addCase(ScheduleAdminThunk.deleteScheduleThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
     },
 });
 
-export const { toggleSelectRow, selectAllRows, setFilterData, setSortData } = exerciseSlice.actions;
-export const { ...exerciseActions } = exerciseSlice.actions;
-export default exerciseSlice.reducer;
+export const { toggleSelectRow, selectAllRows, setFilterData, setSortData } = scheduleSlice.actions;
+export const { ...scheduleActions } = scheduleSlice.actions;
+export default scheduleSlice.reducer;

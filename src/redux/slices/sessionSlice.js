@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createSessionThunk, deleteSessionThunk, fetchSessionThunk, updateSessionThunk } from '../thunks/sessionThunk';
+import { SessionAdminThunk } from '../thunks/sessionThunk';
 
 const sessionSlice = createSlice({
     name: 'session',
@@ -36,10 +36,10 @@ const sessionSlice = createSlice({
     extraReducers: (builder) => {
         // Get session data
         builder
-            .addCase(fetchSessionThunk.pending, (state) => {
+            .addCase(SessionAdminThunk.fetchSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchSessionThunk.fulfilled, (state, action) => {
+            .addCase(SessionAdminThunk.fetchSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data.data;
                 state.data.forEach(element => {
@@ -48,48 +48,48 @@ const sessionSlice = createSlice({
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })
-            .addCase(fetchSessionThunk.rejected, (state) => {
+            .addCase(SessionAdminThunk.fetchSessionThunk.rejected, (state) => {
                 state.loading = false;
             });
 
         // Create session
         builder
-            .addCase(createSessionThunk.pending, (state) => {
+            .addCase(SessionAdminThunk.createSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(createSessionThunk.fulfilled, (state, action) => {
+            .addCase(SessionAdminThunk.createSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(createSessionThunk.rejected, (state, action) => {
+            .addCase(SessionAdminThunk.createSessionThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
 
         // Update session
         builder
-            .addCase(updateSessionThunk.pending, (state) => {
+            .addCase(SessionAdminThunk.updateSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(updateSessionThunk.fulfilled, (state, action) => {
+            .addCase(SessionAdminThunk.updateSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(updateSessionThunk.rejected, (state, action) => {
+            .addCase(SessionAdminThunk.updateSessionThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
 
         // Delete session
         builder
-            .addCase(deleteSessionThunk.pending, (state) => {
+            .addCase(SessionAdminThunk.deleteSessionThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(deleteSessionThunk.fulfilled, (state, action) => {
+            .addCase(SessionAdminThunk.deleteSessionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(deleteSessionThunk.rejected, (state, action) => {
+            .addCase(SessionAdminThunk.deleteSessionThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });

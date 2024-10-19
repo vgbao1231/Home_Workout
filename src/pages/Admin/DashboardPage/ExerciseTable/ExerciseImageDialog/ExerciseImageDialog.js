@@ -3,10 +3,10 @@ import './ExerciseImageDialog.scss';
 import { useState } from 'react';
 import Form from '~/components/ui/Form/Form';
 import Input from '~/components/ui/Input/Input';
-import { uploadExerciseImage } from '~/services/exerciseService';
 import { useDispatch } from 'react-redux';
 import { addToast } from '~/redux/slices/toastSlice';
 import noImage from '~/assets/no_image.jpg';
+import { ExerciseAdminService } from '~/services/exerciseService';
 
 function ExerciseImageDialog({ id, imageUrl }) {
     const [image, setImage] = useState(imageUrl || noImage);
@@ -22,7 +22,7 @@ function ExerciseImageDialog({ id, imageUrl }) {
     };
     const handleSubmit = async (img) => {
         try {
-            const response = await uploadExerciseImage(img, id);
+            const response = await ExerciseAdminService.uploadExerciseImage(img, id);
             dispatch(addToast(response.message, 'success'));
         } catch (error) {
             dispatch(addToast(error.message, 'error'));

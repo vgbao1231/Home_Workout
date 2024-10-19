@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Input, MultiSelect, Select, Table } from "~/components";
 import Pagination from "~/components/ui/Table/Pagination/Pagination";
 import { addToast } from "~/redux/slices/toastSlice";
-import { fetchExerciseThunk } from "~/redux/thunks/exerciseThunk";
-import './AddExercisesOfSessionDialog.scss'
+import './AddSessionsOfScheduleDialog.scss'
+import { SessionAdminThunk } from "~/redux/thunks/sessionThunk";
 
-function AddExercisesOfSessionDialog({ columns: exerciseOfSessionColumns, setTableData, onClose }) {
+function AddSessionsOfScheduleDialog({ columns: sessionOfScheduleColumns, setTableData, onClose }) {
     const dispatch = useDispatch();
-    const exerciseState = useSelector((state) => state.exercise);
-    const { sortData, filterData } = exerciseState
+    const sessionState = useSelector((state) => state.session);
+    const { sortData, filterData } = sessionState
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
     const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +34,7 @@ function AddExercisesOfSessionDialog({ columns: exerciseOfSessionColumns, setTab
         //Handle click row
         const handleClick = () => {
             // Add more field and value to rowData like ordinal, slack,...
-            const formatredRowData = exerciseOfSessionColumns.reduce((acc, column) => {
+            const formatredRowData = sessionOfScheduleColumns.reduce((acc, column) => {
                 if (!acc[column.name]) acc[column.name] = column.defaultValue
                 return acc
             }, { ...rowData })
@@ -45,12 +45,12 @@ function AddExercisesOfSessionDialog({ columns: exerciseOfSessionColumns, setTab
         return {
             onClick: handleClick,
         };
-    }, [exerciseOfSessionColumns, onClose, setTableData])
+    }, [sessionOfScheduleColumns, onClose, setTableData])
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                await dispatch(fetchExerciseThunk({
+                await dispatch(SessionAdminThunk.fetchSessionThunk({
                     page: currentPage,
                     filterFields: filterData,
                     sortedField: sortData?.sortedField,
@@ -64,24 +64,24 @@ function AddExercisesOfSessionDialog({ columns: exerciseOfSessionColumns, setTab
         fetchData();
     }, [dispatch, currentPage, sortData, filterData]);
 
-    return exerciseState.loading ? (
-        <div>Loading Exercise Data...</div>
+    return sessionState.loading ? (
+        <div>Loading Session Data...</div>
     ) : (
-        <div className="add-exercises-of-session-table">
+        <div className="add-sessions-of-schedule-table">
             <Table
-                title="Select Exercises"
+                title="Select Sessions"
                 columns={columns}
-                tableStates={exerciseState}
+                tableStates={sessionState}
                 rowProps={rowProps}
                 tableModes={{ enableFilter: true, enableSort: true }}
             />
             <Pagination
                 setCurrentPage={setCurrentPage}
                 currentPage={currentPage}
-                totalPages={exerciseState.totalPages}
+                totalPages={sessionState.totalPages}
             />
         </div>
     );
 }
 
-export default AddExercisesOfSessionDialog;
+export default AddSessionsOfScheduleDialog;

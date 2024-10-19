@@ -2,18 +2,17 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addToast } from '~/redux/slices/toastSlice';
-import './Dashboard.scss';
+import './DashboardPage.scss';
 import { logoutThunk } from '~/redux/thunks/authThunk';
 import { EnumAdminThunk } from '~/redux/thunks/enumThunk';
 import ExerciseTable from './ExerciseTable/ExerciseTable';
 import SessionTable from './SessionTable/SessionTable';
+import ScheduleTable from './ScheduleTable/ScheduleTable';
 
-const Dashboard = () => {
+const DashboardPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isLoading = useSelector((state) => state.enum.loading);
-
-    console.log('home');
 
     // Handle log out
     const handleLogout = async () => {
@@ -43,13 +42,14 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="dashboard">
-            <h1>Dashboard</h1>
+        <div className="dashboard-page">
+            <h1>Dashboard Page</h1>
             <button onClick={handleLogout}>Log Out</button>
             <ExerciseTable />
             <SessionTable />
+            <ScheduleTable />
         </div>
     );
 };
 
-export default Dashboard;
+export default DashboardPage;
