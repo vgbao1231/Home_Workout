@@ -6,7 +6,7 @@ export default function SessionsDialog({ scheduleId }) {
     const [ sessionsData, setSessionsData ] = useState([]);
 
     const handleClickSession = useCallback((e, sessionId) => {
-
+        document.location.href = "/start-session?id=" + sessionId;
     }, []);
 
     useEffect(() => {
