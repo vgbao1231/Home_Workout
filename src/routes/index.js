@@ -4,6 +4,7 @@ import UserHomePage from '~/pages/User/HomePage/UserHomePage';
 import LoginPage from '~/pages/LoginPage/LoginPage';
 import ManageUserInfoPage from '~/pages/Admin/ManageUserInfoPage/ManageUserInfoPage';
 import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
+import SubscribeSchedules from '~/pages/User/SubscribeSchedules/SubscribeSchedules';
 // import TestPage from '~/pages/TestPage/TestPage';
 
 const publicRoutes = [
@@ -22,6 +23,7 @@ const adminRoutes = [
 
 const userRoutes = [
     { path: '/', component: UserHomePage, layout: UserSidebarLayout },
+    { path: '/subscribe-schedules', component: SubscribeSchedules, layout: UserSidebarLayout },
 ];
 
 export { publicRoutes, adminRoutes, userRoutes };
