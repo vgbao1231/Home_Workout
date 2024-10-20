@@ -3,18 +3,11 @@ import './Input.scss';
 import { useController, useFormContext } from 'react-hook-form';
 
 function Input({ name, className = '', validators = {}, formatters = {}, iconSupport, defaultValue = '', ...rest }) {
-    const { getValues, control } = useFormContext();
-    const {
-        field: { value, ...field },
-        fieldState: { error = {} },
-    } = useController({
-        name,
-        control,
-        rules: { validate: validators },
-        defaultValue: getValues(name) || defaultValue, // Get default value from Form, if not, get from props
+    const { control } = useFormContext();
+    const { field: { value, ...field }, fieldState: { error = {} } } = useController({
+        name, control, rules: { validate: validators },
+        defaultValue: defaultValue, // This will not apply if there is a defaultValues in Form
     });
-
-    // console.log(error.message ? 'Render: error' : 'Render: input');
 
     // Filter out props and events
     const { events, props } = Object.keys(rest).reduce(

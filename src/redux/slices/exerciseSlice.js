@@ -1,10 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-    createExerciseThunk,
-    deleteExerciseThunk,
-    fetchExerciseThunk,
-    updateExerciseThunk,
-} from '../thunks/exerciseThunk';
+import { ExerciseAdminThunk } from '../thunks/exerciseThunk';
 
 const exerciseSlice = createSlice({
     name: 'exercise',
@@ -41,57 +36,61 @@ const exerciseSlice = createSlice({
     extraReducers: (builder) => {
         // Get exercise data
         builder
-            .addCase(fetchExerciseThunk.pending, (state) => {
+            .addCase(ExerciseAdminThunk.fetchExerciseThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ExerciseAdminThunk.fetchExerciseThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload.data.data;
+                state.data.forEach(element => {
+                    element.musclesList = element.muscles.map(muscle => muscle.muscleName)
+                });
+
                 state.totalPages = action.payload.data.totalPages;
                 state.message = action.payload.message;
             })
-            .addCase(fetchExerciseThunk.rejected, (state) => {
+            .addCase(ExerciseAdminThunk.fetchExerciseThunk.rejected, (state) => {
                 state.loading = false;
             });
 
         // Create exercise
         builder
-            .addCase(createExerciseThunk.pending, (state) => {
+            .addCase(ExerciseAdminThunk.createExerciseThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(createExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ExerciseAdminThunk.createExerciseThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(createExerciseThunk.rejected, (state, action) => {
+            .addCase(ExerciseAdminThunk.createExerciseThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
 
         // Update exercise
         builder
-            .addCase(updateExerciseThunk.pending, (state) => {
+            .addCase(ExerciseAdminThunk.updateExerciseThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(updateExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ExerciseAdminThunk.updateExerciseThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(updateExerciseThunk.rejected, (state, action) => {
+            .addCase(ExerciseAdminThunk.updateExerciseThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
 
         // Delete exercise
         builder
-            .addCase(deleteExerciseThunk.pending, (state) => {
+            .addCase(ExerciseAdminThunk.deleteExerciseThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(deleteExerciseThunk.fulfilled, (state, action) => {
+            .addCase(ExerciseAdminThunk.deleteExerciseThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             })
-            .addCase(deleteExerciseThunk.rejected, (state, action) => {
+            .addCase(ExerciseAdminThunk.deleteExerciseThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });

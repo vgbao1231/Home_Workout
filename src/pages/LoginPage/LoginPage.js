@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { addToast } from '~/redux/slices/toastSlice';
 import './LoginPage.scss';
 import { isEmail, isRequired } from '~/utils/validators';
-import axios from 'axios';
 import { loginThunk } from '~/redux/thunks/authThunk';
 import { trimWords } from '~/utils/formatters';
 
@@ -38,10 +37,10 @@ function LoginPage() {
                         email: 'root@gmail.com',
                         password: 'rootroot',
                     }}
-                    // defaultValues={{
-                    //     email: 'user@gmail.com',
-                    //     password: 'useruser',
-                    // }}
+                // defaultValues={{
+                //     email: 'user@gmail.com',
+                //     password: 'useruser',
+                // }}
                 >
                     <Input
                         name="email"
@@ -91,32 +90,6 @@ function LoginPage() {
                     </div>
                 </Form>
             </div>
-            <button
-                onClick={() => {
-                    axios
-                        .post(
-                            'https://109f-2001-ee0-5045-9420-4935-6915-9bc3-570.ngrok-free/free',
-                            {
-                                name: 'gura',
-                                size: 12,
-                            },
-                            {
-                                headers: {
-                                    'ngrok-skip-browser-warning': true,
-                                    'Content-Type': 'application/json',
-                                },
-                            },
-                        )
-                        .then((response) => {
-                            console.log(response.data); // Handle the response data here
-                        })
-                        .catch((error) => {
-                            console.error(error); // Handle errors here
-                        });
-                }}
-            >
-                on click
-            </button>
         </div>
     );
 }

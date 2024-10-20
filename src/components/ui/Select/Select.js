@@ -1,34 +1,24 @@
-import { memo, useCallback } from 'react';
+import { memo, useMemo } from 'react';
 import './Select.scss';
 import { useController, useFormContext } from 'react-hook-form';
+import { equalsIgnoreCaseCustom } from '~/utils/formatters';
 
 function Select({ name, className = '', validators = {}, formatters = {}, options, defaultValue = '', ...rest }) {
-    const { control } = useFormContext();
-    const setupDefaultValuesWithObjectFormat = useCallback((defaultValue, options) => {
-        if (!defaultValue) return defaultValue;
+    const { getValues, control } = useFormContext();
 
-        //--Create UpperCased Variables
-        const upperCaseDefVal = typeof defaultValue == "string" ? defaultValue.toUpperCase() : defaultValue;
-        const upperCaseEngine = typeof options[0]["text"] == "string"
-            ? str => str.toUpperCase()
-            : str => str;
-        for (let { text, value } of options)
-            if (upperCaseDefVal.includes(upperCaseEngine(text)))
-                return value;
-        throw Error("Invalid Select Value or Texts");
-    }, []);
-
-    const {
-        field,
-        fieldState: { error = {} },
-    } = useController({
-        name,
-        control,
-        rules: { validate: validators },
-        defaultValue: setupDefaultValuesWithObjectFormat(defaultValue, options), // Get default value from Form, if not, get from props
+    const { field, fieldState: { error = {} } } = useController({
+        name, control, rules: { validate: validators },
+        defaultValue // This will not apply if there is a defaultValues in Form
     });
 
-    // console.log(error.message ? 'Render: error' : 'Render: select');
+    field.value = options.find((option) =>
+        (equalsIgnoreCaseCustom(option.value, getValues(name)) || equalsIgnoreCaseCustom(option.text, getValues(name))))?.value
+
+    //--Built Options: {value:text, ...} instead of [{value:text}, ...]    
+    const builtOptions = useMemo(() => options.reduce((acc, obj) => {
+        const [value, text] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
+        return { ...acc, [value]: text };
+    }, {}), [options]);
 
     // Filter out props that are events with the prefix 'on'
     const { events, props } = Object.keys(rest).reduce(
@@ -69,9 +59,9 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
         >
             <div className="field-wrapper">
                 {props.disabled ? (
-                    <span>{options.find((option) => option.value === field.value)?.text}</span>
+                    <span>{builtOptions[field.value]}</span>
                 ) : (
-                    <select {...field} {...eventHandlers} {...props}>
+                    <select {...field} {...eventHandlers} {...props} >
                         <option value="" hidden> {props.placeholder} </option>
                         {options.map((option, index) => (
                             <option key={index} value={option.value}>

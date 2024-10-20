@@ -1,0 +1,71 @@
+.start-session {
+    width: 80vw;
+    margin: 20px auto;
+    .cards-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 40px;
+    }
+    .card {
+        min-width: 20vw;
+        .card-element + .card-element {
+            margin-top: 10px;
+        }
+        &.session-information {
+            span {
+                color: #0969da;
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+            .muscle-list {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                .muscle {
+                    padding: 0 8px;
+                    background-color: #e0e7ff;
+                    color: #0969da;
+                    border: 1px solid #0969da;
+                    border-radius: 12px;
+                    font-size: 1.4rem;
+                }
+            }
+        }
+        &.current-exercise {
+            .card-body {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+                font-size: 1.4rem;
+            }
+            svg {
+                color: #0969da;
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+            .card-element {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                .info-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                }
+            }
+            .muscle-list {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                .muscle {
+                    padding: 0 8px;
+                    background-color: #e0e7ff;
+                    color: #0969da;
+                    border: 1px solid #0969da;
+                    border-radius: 12px;
+                    font-size: 1.4rem;
+                }
+            }
+        }
+    }
+}

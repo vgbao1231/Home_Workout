@@ -1,43 +1,28 @@
-import { useState, memo, useCallback, useEffect, useMemo } from 'react';
+import { useState, memo, useMemo } from 'react';
 import './MultiSelect.scss';
 import { useController, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
+import { equalsIgnoreCaseCustom } from '~/utils/formatters';
 
 function MultiSelect({ name, validators, className = '', options, placeholder, defaultValue = [], ...rest }) {
     const { getValues, trigger, control } = useFormContext();
-    const setupDefaultValuesWithObjectFormat = useCallback((defaultValue, options) => {
-        if (!defaultValue || defaultValue.length == 0) return defaultValue;
 
-        //--Create UpperCased Variables
-        const tempInitialValue = typeof defaultValue[0] == "string"
-            ? defaultValue.map(value => value.toUpperCase())
-            : defaultValue;
-        const upperCaseEngine = typeof options[0]["text"] == "string"
-            ? str => str.toUpperCase()
-            : str => str;
-        return options.reduce((acc, { text, value }, index) =>
-            tempInitialValue.includes(upperCaseEngine(text)) ? [...acc, value] : acc
-            , []);
-    }, []);
-
-    const {
-        field,
-        fieldState: { error = {} },
-    } = useController({
-        name,
-        control,
-        rules: { validate: validators },
-        defaultValue: setupDefaultValuesWithObjectFormat(defaultValue, options), // Get default value from Form, if not, get from props
+    const { field, fieldState: { error = {} } } = useController({
+        name, control, rules: { validate: validators },
+        defaultValue // This will not apply if there is a defaultValues in Form
     });
-    const [isOpen, setIsOpen] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+
+    field.value = getValues(name) ? getValues(name).map(value =>
+        options.find((option) => equalsIgnoreCaseCustom(option.value, value) || equalsIgnoreCaseCustom(option.text, value))?.value
+    ) : [];
     //--Built Options: {value:text, ...} instead of [{value:text}, ...]    
     const builtOptions = useMemo(() => options.reduce((acc, obj) => {
         const [value, text] = Object.values(obj);   //--obj: {text:rawText, value:rawValue}  => pairs: [rawText, rawValue]
         return { ...acc, [value]: text };
     }, {}), [options]);
 
-    // console.log(error.message ? 'Render: error' : 'Render: multi');
+    const [isOpen, setIsOpen] = useState(false);
+    const [inputValue, setInputValue] = useState('');
 
     // Filter out props that are events with the prefix 'on'
     const { events, props } = Object.keys(rest).reduce(
@@ -59,11 +44,9 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
     };
 
     const handleSelect = (newValue) => {
-        if (!field.value.find(value => value === newValue)) {
-            setInputValue('');
+        if (!field.value.find(selectedValue => selectedValue === newValue)) {
             field.value.push(newValue);
             field.onChange(field.value);
-            events.onChange && events.onChange(field.value);
         }
     };
 
@@ -102,12 +85,11 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                 <div className={`field-wrapper`} onClick={toggleDropdown}>
                     <div className="selected-values">
                         {!field.value.length && <span className="placeholder">{placeholder}</span>}
-                        {field.value.map((value, index) => (
+                        {field.value.map((value, index) =>
                             <div key={index} className="selected-value center">
                                 <span>{builtOptions[value]}</span>
                                 {isOpen && <X onClick={(e) => handleRemove(e, value)} />}
-                            </div>
-                        ))}
+                            </div>)}
                         {!props.disabled && isOpen && (
                             <div className="input-wrapper">
                                 <input
@@ -134,7 +116,7 @@ function MultiSelect({ name, validators, className = '', options, placeholder, d
                 </div>
                 {isOpen && (
                     <div className="options-container">
-                        {options.map(({ text, value }, index) =>
+                        {options.map(({ value, text }, index) =>
                             text.toLowerCase().includes(inputValue.toLowerCase()) && (
                                 <div key={index} className="option" onClick={() => handleSelect(value)}>
                                     <span>{text}</span>

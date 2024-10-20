@@ -3,6 +3,7 @@ import authSlice from './slices/authSlice';
 import toastSlice from './slices/toastSlice';
 import exerciseSlice from './slices/exerciseSlice';
 import sessionSlice from './slices/sessionSlice';
+import scheduleSlice from './slices/scheduleSlice ';
 import userInfoSlice from './slices/userInfoSlice';
 import enumSlice from './slices/enumSlice';
 import subscriptionSlice from './slices/subscriptionSlice';
@@ -15,6 +16,7 @@ const store = configureStore({
         toast: toastSlice,
         exercise: exerciseSlice,
         session: sessionSlice,
+        schedule: scheduleSlice,
         userInfo: userInfoSlice,
         enum: enumSlice,
         subscription: subscriptionSlice,

@@ -1,55 +1,63 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { createSession, deleteSession, getAllSessions, updateSession, uploadSessionImage } from '~/services/sessionService';
+import { SessionAdminService } from '~/services/sessionService';
+import { addToast } from '../slices/toastSlice';
 
-export const fetchSessionThunk = createAsyncThunk(
-    'session/fetchSession',
-    async ({ page = 1, filterFields, sortedField, sortedMode } = {}, { rejectWithValue }) => {
-        try {
-            const response = await getAllSessions(page, filterFields, sortedField, sortedMode);
-            return response;
-        } catch (error) {
-            return rejectWithValue(error);
-        }
-    },
-);
+export class SessionAdminThunk {
+    static fetchSessionThunk = createAsyncThunk(
+        'session/fetchSession',
+        async ({ page = 1, filterFields, sortedField, sortedMode } = {}, { dispatch, rejectWithValue }) => {
+            try {
+                const response = await SessionAdminService.getAllSessions(page, filterFields, sortedField, sortedMode);
+                return response;
+            } catch (error) {
+                dispatch(addToast(error.message, 'error'));
+                return rejectWithValue(error);
+            }
+        },
+    );
 
-export const createSessionThunk = createAsyncThunk(
-    'session/createSession',
-    async (formData, { dispatch, rejectWithValue }) => {
-        try {
-            const { img, ...form } = formData;
-            const { imagePublicId, ...createResponse } = await createSession(form);
-            const uploadResponse = await uploadSessionImage(img, createResponse.data.sessionId);
-            dispatch(fetchSessionThunk());
-            return { ...createResponse, ...uploadResponse };
-        } catch (error) {
-            return rejectWithValue(error);
-        }
-    },
-);
+    static createSessionThunk = createAsyncThunk(
+        'session/createSession',
+        async (formData, { dispatch, rejectWithValue }) => {
+            try {
+                const response = await SessionAdminService.createSession(formData);
+                dispatch(addToast(response.message, 'success'));
+                dispatch(SessionAdminThunk.fetchSessionThunk());
+                return response;
+            } catch (error) {
+                dispatch(addToast(error.message, 'error'));
+                return rejectWithValue(error);
+            }
+        },
+    );
 
-export const updateSessionThunk = createAsyncThunk(
-    'session/updateSession',
-    async (formData, { dispatch, rejectWithValue }) => {
-        try {
-            const response = await updateSession(formData);
-            dispatch(fetchSessionThunk());
-            return response;
-        } catch (error) {
-            return rejectWithValue(error);
-        }
-    },
-);
+    static updateSessionThunk = createAsyncThunk(
+        'session/updateSession',
+        async (formData, { dispatch, rejectWithValue }) => {
+            try {
+                const response = await SessionAdminService.updateSession(formData);
+                dispatch(addToast(response.message, 'success'));
+                dispatch(SessionAdminThunk.fetchSessionThunk());
+                return response;
+            } catch (error) {
+                dispatch(addToast(error.message, 'error'));
+                return rejectWithValue(error);
+            }
+        },
+    );
 
-export const deleteSessionThunk = createAsyncThunk(
-    'session/deleteSession',
-    async (sessionId, { dispatch, rejectWithValue }) => {
-        try {
-            const response = await deleteSession(sessionId);
-            dispatch(fetchSessionThunk());
-            return response;
-        } catch (error) {
-            return rejectWithValue(error);
-        }
-    },
-);
+    static deleteSessionThunk = createAsyncThunk(
+        'session/deleteSession',
+        async (sessionId, { dispatch, rejectWithValue }) => {
+            try {
+                const response = await SessionAdminService.deleteSession(sessionId);
+                dispatch(addToast(response.message, 'success'));
+                dispatch(SessionAdminThunk.fetchSessionThunk());
+                return response;
+            } catch (error) {
+                dispatch(addToast(error.message, 'error'));
+                return rejectWithValue(error);
+            }
+        },
+    );
+}

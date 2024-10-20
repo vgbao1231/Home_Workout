@@ -77,7 +77,8 @@ function CompletedSchedules({ handleClickSchedule, dispatch }) {
     useEffect(() => {
         ScheduleUserService.getSchedulesOfUser(true)
             .then(response => {
-                setScheduleData(response.data);
+                if (!response.data) setScheduleData([])
+                else    setScheduleData(response.data);
                 dispatch(addToast(response.message, 'success'));
             })
             .catch(error => setScheduleData([]));

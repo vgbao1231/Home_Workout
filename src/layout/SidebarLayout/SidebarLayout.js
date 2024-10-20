@@ -8,9 +8,9 @@ export function AdminSidebarLayout({ children }) {
     return (
         <div className="container" style={sidebarStyles}>
             <Sidebar>
-                <SidebarItem icon={<LayoutDashboard />} text="Dashboard" path="/" active />
-                <SidebarItem icon={<ChartColumn />} text="Statistic" path="/test" />
-                <SidebarItem icon={<SquareUserRound />} text="Account" path="/homepage" />
+                <SidebarItem icon={<LayoutDashboard />} text="Dashboard" path="/" />
+                <SidebarItem icon={<ChartColumn />} text="Statistic" path="/dashboard" />
+                <SidebarItem icon={<SquareUserRound />} text="Account" path="/manage-user-info" />
             </Sidebar>
             <div className="content" style={{ flex: 1 }}>
                 {children}
@@ -24,7 +24,7 @@ export function UserSidebarLayout({ children }) {
     return (
         <div className="container" style={sidebarStyles}>
             <Sidebar>
-                
+
             </Sidebar>
             <div className="content" style={{ flex: 1 }}>
                 {children}

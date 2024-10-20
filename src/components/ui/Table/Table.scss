@@ -75,7 +75,16 @@
             }
             .filter-body,
             .sort-body {
+                max-height: 38vh;
                 border-bottom: 1px solid #ccc;
+                overflow-y: scroll;
+                &::-webkit-scrollbar {
+                    width: 4px;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background-color: #ccc;
+                    border-radius: 5px;
+                }
             }
             .filter-criteria,
             .sort-criteria {
@@ -177,12 +186,6 @@
     .table-cell {
         display: flex;
         align-items: center;
-        .field-wrapper {
-            input,
-            select {
-                font-size: 1.6rem;
-            }
-        }
         & svg {
             width: 1.6rem;
             cursor: pointer;
