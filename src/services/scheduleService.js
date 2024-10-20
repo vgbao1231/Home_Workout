@@ -63,4 +63,18 @@ export class ScheduleUserService {
             throw error.response ? error.response.data : error;
         }
     }
+    
+    static async getAvailableSchedulesOfUser(page, filterFields, sortedField, sortedMode) {
+        try {
+            console.log(page, filterFields, sortedField, sortedMode)
+            const response = await springService.get(`${API_USER_PREFIX}/v1/get-available-schedules-of-user-pages`, {
+                params: { page, filterFields, sortedField, sortedMode },
+                paramsSerializer: AxiosHelpers.paramsSerializerForGet,
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
 }
