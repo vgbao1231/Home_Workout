@@ -25,7 +25,7 @@ function Form({ children, className = '', defaultValues, onSubmit, confirm, ...p
             }
             // If need confirmation, check if there are any changes. If yes, submit data else reset the data
             if (isChanged) {
-                if (window.confirm('Bạn có chắc chắn muốn submit không?')) {
+                if (window.confirm('Are you sure you want to submit?')) {
                     onSubmit(data);
                 } else {
                     onSubmit() // onSubmit with no argument to run remain code 
