@@ -33,14 +33,14 @@ function LoginPage() {
                 <div className={'login-title'}>Login</div>
                 <Form
                     onSubmit={handleLogin}
+                    // defaultValues={{
+                    //     email: 'root@gmail.com',
+                    //     password: 'rootroot',
+                    // }}
                     defaultValues={{
-                        email: 'root@gmail.com',
-                        password: 'rootroot',
+                        email: 'user@gmail.com',
+                        password: 'useruser',
                     }}
-                // defaultValues={{
-                //     email: 'user@gmail.com',
-                //     password: 'useruser',
-                // }}
                 >
                     <Input
                         name="email"
