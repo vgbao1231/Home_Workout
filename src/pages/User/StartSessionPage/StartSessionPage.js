@@ -72,7 +72,7 @@ function StartSessionPage() {
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
-
+    // useEffect for counter
     useEffect(() => {
         let timer;
         if (isSessionStarted) {
@@ -96,6 +96,21 @@ function StartSessionPage() {
         return () => clearInterval(timer);
     }, [isSessionStarted, isResting, slackTime, handleNextIteration, handleCompleteCurrentIteration, isHoldExercise, exerciseTime]);
 
+    // useEffect to ask confirm before leave
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isSessionStarted) {
+                e.preventDefault()
+                // Chrome didn't support custom message from Chrome 51
+                return (e.returnValue = '');
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isSessionStarted])
+
+    // useEffect for get data
     useEffect(() => {
         const fetchData = async () => {
             const sessionResponse = await SubscriptionUserService.getSessionsOfSubscribedSchedule(sessionId)

@@ -6,8 +6,8 @@ import './InfoForm.scss';
 
 function InfoForm({ back }) {
     const gender = [
-        { raw: '1', value: '1', text: 'Male' },
-        { raw: '0', value: '0', text: 'Female' },
+        { value: '1', text: 'Male' },
+        { value: '0', text: 'Female' },
     ];
     return (
         <>
@@ -28,7 +28,7 @@ function InfoForm({ back }) {
                     onChange: [trimWords],
                 }}
             />
-            <Select name="gender" label="Gender" options={gender} defaultValue="1" />
+            <Select name="genderId" label="Gender" options={gender} defaultValue="1" />
             <Input name="dob" type="date" label="Date of Birth" />
             <div className="form-button">
                 <button className="center" type="button" onClick={back}>

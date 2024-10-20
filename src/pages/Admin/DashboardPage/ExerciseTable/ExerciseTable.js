@@ -72,8 +72,18 @@ function ExerciseTable() {
         };
 
         // Handle update row data
-        const handleUpdate = (formData) => {
-            if (formData) dispatch(ExerciseAdminThunk.updateExerciseThunk(formData));
+        const handleUpdate = (rowData) => {
+            if (rowData) {
+                const formData = {
+                    exerciseId: rowData.exerciseId,
+                    name: rowData.name,
+                    basicReps: rowData.basicReps,
+                    level: rowData.levelEnum,
+                    muscleIds: rowData.musclesList,
+                }
+                console.log(formData);
+                // dispatch(ExerciseAdminThunk.updateExerciseThunk(formData));
+            }
             setUpdatingRowId();
         };
 

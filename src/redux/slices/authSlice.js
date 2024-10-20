@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { loginThunk, logoutThunk } from '../thunks/authThunk';
+import { AuthPrivateThunk, AuthPublicThunk, loginThunk, logoutThunk } from '../thunks/authThunk';
 
 const authSlice = createSlice({
     name: 'auth',
@@ -11,27 +11,27 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         // Login
         builder
-            .addCase(loginThunk.pending, (state) => {
+            .addCase(AuthPublicThunk.loginThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(loginThunk.fulfilled, (state, action) => {
+            .addCase(AuthPublicThunk.loginThunk.fulfilled, (state) => {
                 state.isAuthenticated = true;
                 state.loading = false;
             })
-            .addCase(loginThunk.rejected, (state, action) => {
+            .addCase(AuthPublicThunk.loginThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
             });
         // Logout
         builder
-            .addCase(logoutThunk.pending, (state) => {
+            .addCase(AuthPrivateThunk.logoutThunk.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(logoutThunk.fulfilled, (state, action) => {
+            .addCase(AuthPrivateThunk.logoutThunk.fulfilled, (state) => {
                 state.isAuthenticated = false;
                 state.loading = false;
             })
-            .addCase(logoutThunk.rejected, (state, action) => {
+            .addCase(AuthPrivateThunk.logoutThunk.rejected, (state, action) => {
                 state.isAuthenticated = false;
                 state.loading = false;
                 state.message = action.payload.message;

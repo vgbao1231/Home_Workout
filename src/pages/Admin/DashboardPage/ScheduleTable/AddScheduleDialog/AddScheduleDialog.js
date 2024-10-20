@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Input from '~/components/ui/Input/Input';
 import MultiSelect from '~/components/ui/MultiSelect/MultiSelect';
 import Select from '~/components/ui/Select/Select';
@@ -8,10 +8,13 @@ import './AddScheduleDialog.scss';
 import { Dialog } from '~/components';
 import { Trash2 } from 'lucide-react';
 import AddSessionsOfScheduleDialog from '../AddSessionsOfScheduleDialog/AddSessionsOfScheduleDialog';
+import { ScheduleAdminService } from '~/services/scheduleService';
+import { ScheduleAdminThunk } from '~/redux/thunks/scheduleThunk';
 
 function AddScheduleDialog({ scheduleData, setIsAddingSchedule, onClose }) {
     console.log('dialog');
 
+    const dispatch = useDispatch()
     const sessionState = useSelector((state) => state.session);
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
@@ -77,9 +80,17 @@ function AddScheduleDialog({ scheduleData, setIsAddingSchedule, onClose }) {
     }, [isAddingRow, setIsAddingRow, columns]);
 
     const handleSubmit = () => {
-        console.log(scheduleData, tableData);
+        const formData = {
+            ...scheduleData,
+            sessionsInfo: tableData.map(row => ({
+                sessionId: row.sessionId,
+                ordinal: row.ordinal,
+            }))
+        }
+        console.log(formData);
+        dispatch(ScheduleAdminThunk.createScheduleThunk(formData))
         onClose()
-        // setIsAddingSchedule(false)
+        setIsAddingSchedule(false)
     }
 
     return (

@@ -77,9 +77,16 @@ function SessionsOfScheduleDialog({ id, onClose }) {
     }, [dispatch, id]);
 
     const handleSubmit = () => {
-        console.log(tableData);
+        const formData = {
+            scheduleId: id,
+            sessionsInfo: tableData.map(row => ({
+                sessionId: row.sessionId,
+                ordinal: row.ordinal,
+            }))
+        }
+        console.log(formData);
+        SessionAdminService.updateSessionsOfScheduleRelationship(formData)
         onClose()
-        // setIsAddingSchedule(false)
     }
 
     return isLoading ? (

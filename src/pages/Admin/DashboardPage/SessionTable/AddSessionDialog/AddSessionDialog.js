@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Input from '~/components/ui/Input/Input';
 import MultiSelect from '~/components/ui/MultiSelect/MultiSelect';
 import Select from '~/components/ui/Select/Select';
@@ -8,10 +8,13 @@ import './AddSessionDialog.scss';
 import AddExercisesOfSessionDialog from '../AddExercisesOfSessionDialog/AddExercisesOfSessionDialog';
 import { Dialog } from '~/components';
 import { Trash2 } from 'lucide-react';
+import { SessionAdminService } from '~/services/sessionService';
+import { SessionAdminThunk } from '~/redux/thunks/sessionThunk';
 
 function AddSessionDialog({ sessionData, setIsAddingSession, onClose }) {
     console.log('dialog');
 
+    const dispatch = useDispatch()
     const exerciseState = useSelector((state) => state.exercise);
     const levelData = useSelector((state) => state.enum.data.levels);
     const muscleData = useSelector((state) => state.enum.data.muscles);
@@ -30,10 +33,14 @@ function AddSessionDialog({ sessionData, setIsAddingSession, onClose }) {
             { header: 'Level', name: 'levelEnum', cell: row => <Select name="levelEnum" options={levelOptions} />, editable: false },
             { header: 'Basic Reps', name: 'basicReps', cell: row => <Input name="basicReps" type="number" />, editable: false },
             { header: 'Ordinal', name: 'ordinal', cell: row => <Input name="ordinal" type="number" />, defaultValue: 0 },
+            { header: 'Iteration', name: 'iteration', cell: row => <Input name="iteration" type="number" />, defaultValue: 1 },
             { header: 'Down Reps Ratio', name: 'downRepsRatio', cell: row => <Input name="downRepsRatio" type="number" />, defaultValue: 0 },
             { header: 'Slack In Second', name: 'slackInSecond', cell: row => <Input name="slackInSecond" type="number" />, defaultValue: 0 },
             { header: 'Raise Slack In Second', name: 'raiseSlackInSecond', cell: row => <Input name="raiseSlackInSecond" type="number" />, defaultValue: 0 },
-            { header: 'Need Switch Exercise Delay', name: 'needSwitchExerciseDelay', cell: row => <Input name="needSwitchExerciseDelay" type="number" />, defaultValue: 0 },
+            {
+                header: 'Need Switch Exercise Delay', name: 'needSwitchExerciseDelay', defaultValue: false,
+                cell: row => <Select name="needSwitchExerciseDelay" options={[{ value: true, text: "True" }, { value: false, text: "False" }]} />
+            },
             { header: 'Action', cell: row => <Trash2 onClick={() => setTableData(prev => prev.filter(rowData => rowData.id !== row.id))} /> },
         ],
         [muscleOptions, levelOptions],
@@ -80,9 +87,22 @@ function AddSessionDialog({ sessionData, setIsAddingSession, onClose }) {
     }, [isAddingRow, setIsAddingRow, columns]);
 
     const handleSubmit = () => {
-        console.log(sessionData, tableData);
+        const formData = {
+            ...sessionData,
+            exercisesInfo: tableData.map(row => ({
+                exerciseId: row.exerciseId,
+                ordinal: row.ordinal,
+                downRepsRatio: row.downRepsRatio,
+                slackInSecond: row.slackInSecond,
+                raiseSlackInSecond: row.raiseSlackInSecond,
+                iteration: row.iteration,
+                needSwitchExerciseDelay: row.needSwitchExerciseDelay,
+            }))
+        }
+        console.log(formData);
+        dispatch(SessionAdminThunk.createSessionThunk(formData))
         onClose()
-        // setIsAddingSession(false)
+        setIsAddingSession(false)
     }
 
     return (

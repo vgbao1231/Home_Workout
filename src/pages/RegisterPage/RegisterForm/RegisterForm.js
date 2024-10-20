@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Input } from '~/components';
 import { trimWords } from '~/utils/formatters';
-import { isEmail, isRequired } from '~/utils/validators';
+import { isEmail, isRequired, minLength } from '~/utils/validators';
 
 function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +29,7 @@ function RegisterForm() {
                     icon: showPassword ? <EyeOff /> : <Eye />,
                     handleIconClick: () => setShowPassword(!showPassword),
                 }}
-                validators={{ isRequired }}
+                validators={{ isRequired, minlength: minLength(6) }}
                 formatters={{
                     onChange: [trimWords],
                 }}
@@ -60,11 +60,11 @@ function RegisterForm() {
                 <div className="divider-line"></div>
             </div>
             <div className="register-social">
-                <button className="google-btn" onClick={() => {}}>
+                <button className="google-btn" onClick={() => { }}>
                     <img src="https://img.icons8.com/color/40/google-logo.png" alt="google-logo" />
                     <span>Register with google</span>
                 </button>
-                <button className="facebook-btn" onClick={() => {}}>
+                <button className="facebook-btn" onClick={() => { }}>
                     <img src="https://img.icons8.com/fluency/48/facebook-new.png" alt="facebook-new" />
                     <span>Register with facebook</span>
                 </button>

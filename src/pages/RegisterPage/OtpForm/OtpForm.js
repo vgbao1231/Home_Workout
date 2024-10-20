@@ -1,20 +1,18 @@
 import { ArrowLeft } from 'lucide-react';
 import './OtpForm.scss';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addToast } from '~/redux/slices/toastSlice';
+import { AuthPublicService } from '~/services/authService';
 
-function OtpForm({ otp, next, back }) {
+function OtpForm({ email, otpExpiredTime = 0, back }) {
     const otpRefs = useRef([]);
 
     const dispatch = useDispatch();
+    const [counter, setCounter] = useState(otpExpiredTime)
 
     const handleKeyDown = (e, index) => {
-        // setTimeout is to delay focusing on the next otp before the value is entered
-        if (e.key >= '0' && e.key <= '9') {
-            otpRefs.current[index].value = ''; //Rest current value and replace with the new one
-            otpRefs.current[index + 1] && setTimeout(() => otpRefs.current[index + 1].focus(), 0);
-        } else if (e.key === 'Backspace' && !otpRefs.current[index].value) {
+        if (e.key === 'Backspace' && !otpRefs.current[index].value) {
             otpRefs.current[index - 1] && setTimeout(() => otpRefs.current[index - 1].focus(), 0);
         } else if (e.key === 'ArrowLeft') {
             otpRefs.current[index - 1] && setTimeout(() => otpRefs.current[index - 1].focus(), 0);
@@ -23,18 +21,47 @@ function OtpForm({ otp, next, back }) {
         }
     };
 
-    console.log(otp);
+    const handleInput = (e, index) => {
+        const char = e.target.value;
+        if ((char >= '0' && char <= '9') || (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')) {
+            e.target.value = char.toUpperCase();
+            otpRefs.current[index + 1] && otpRefs.current[index + 1].focus();
+        } else {
+            e.target.value = '';
+        }
+    };
 
-    const handleClick = (e) => {
+    const handleClick = async (e) => {
         const otpValues = otpRefs.current.map((ref) => ref.value).join('');
-        if (otpValues === otp) {
-            console.log('OTP is correct!');
+        const response = await AuthPublicService.verifyOtp({ email, otpCode: otpValues })
+        if (response.httpStatusCode) {
             dispatch(addToast('OTP is correct', 'success'));
         } else {
             dispatch(addToast('OTP is incorrect', 'error'));
             e.preventDefault();
         }
     };
+
+    const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCounter(prev => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
 
     return (
         <>
@@ -46,15 +73,14 @@ function OtpForm({ otp, next, back }) {
                         <input
                             key={index}
                             ref={(e) => (otpRefs.current[index] = e)} // Save ref for each input
-                            type="number"
                             className="otp-field"
-                            placeholder="0"
-                            min="0"
-                            max="9"
+                            maxLength={1}
                             onKeyDown={(e) => handleKeyDown(e, index)}
+                            onInput={(e) => handleInput(e, index)}
                         />
                     ))}
             </div>
+            <div className="otp-timer center">{formatTime(counter)}</div>
             <div className="form-button">
                 <button className="center" type="button" onClick={back}>
                     <ArrowLeft />

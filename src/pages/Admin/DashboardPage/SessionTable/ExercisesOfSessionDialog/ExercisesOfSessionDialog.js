@@ -29,6 +29,7 @@ function ExercisesOfSessionDialog({ id, onClose }) {
             { header: 'Level', name: 'levelEnum', cell: row => <Select name="levelEnum" options={levelOptions} />, editable: false },
             { header: 'Basic Reps', name: 'basicReps', cell: row => <Input name="basicReps" type="number" />, editable: false },
             { header: 'Ordinal', name: 'ordinal', cell: row => <Input name="ordinal" type="number" />, defaultValue: tableData.length + 1 },
+            { header: 'Iteration', name: 'iteration', cell: row => <Input name="iteration" type="number" />, defaultValue: 1 },
             { header: 'Down Reps Ratio', name: 'downRepsRatio', cell: row => <Input name="downRepsRatio" type="number" />, defaultValue: 0 },
             { header: 'Slack In Second', name: 'slackInSecond', cell: row => <Input name="slackInSecond" type="number" />, defaultValue: 0 },
             { header: 'Raise Slack In Second', name: 'raiseSlackInSecond', cell: row => <Input name="raiseSlackInSecond" type="number" />, defaultValue: 0 },
@@ -81,9 +82,21 @@ function ExercisesOfSessionDialog({ id, onClose }) {
     }, [dispatch, id]);
 
     const handleSubmit = () => {
-        console.log(tableData);
+        const formData = {
+            sessionId: id,
+            exercisesInfo: tableData.map(row => ({
+                exerciseId: row.exerciseId,
+                ordinal: row.ordinal,
+                downRepsRatio: row.downRepsRatio,
+                slackInSecond: row.slackInSecond,
+                raiseSlackInSecond: row.raiseSlackInSecond,
+                iteration: row.iteration,
+                needSwitchExerciseDelay: row.needSwitchExerciseDelay,
+            }))
+        }
+        console.log(formData);
+        ExerciseAdminService.updateExercisesOfSessionRelationship(formData)
         onClose()
-        // setIsAddingSession(false)
     }
 
     return isLoading ? (

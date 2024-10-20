@@ -6,10 +6,11 @@ import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
 import SubscribeSchedules from '~/pages/User/SubscribeSchedules/SubscribeSchedules';
 import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
 import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
+import RegisterPage from '~/pages/RegisterPage/RegisterPage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
-    { path: '/register', component: LoginPage }, // Test
+    { path: '/register', component: RegisterPage },
     { path: '/forgot-password', component: LoginPage }, // Test
 ];
 

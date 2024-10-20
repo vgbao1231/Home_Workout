@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addToast } from '~/redux/slices/toastSlice';
 import './DashboardPage.scss';
-import { logoutThunk } from '~/redux/thunks/authThunk';
+import { AuthPrivateThunk } from '~/redux/thunks/authThunk';
 import { EnumAdminThunk } from '~/redux/thunks/enumThunk';
 import ExerciseTable from './ExerciseTable/ExerciseTable';
 import SessionTable from './SessionTable/SessionTable';
@@ -16,7 +16,7 @@ const DashboardPage = () => {
 
     // Handle log out
     const handleLogout = async () => {
-        dispatch(logoutThunk()).then((result) => {
+        dispatch(AuthPrivateThunk.logoutThunk()).then((result) => {
             if (result.meta.requestStatus === 'fulfilled') {
                 navigate('/login');
                 dispatch(addToast(result.payload.message, 'success'));

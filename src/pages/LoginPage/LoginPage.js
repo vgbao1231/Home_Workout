@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { addToast } from '~/redux/slices/toastSlice';
 import './LoginPage.scss';
 import { isEmail, isRequired } from '~/utils/validators';
-import { loginThunk } from '~/redux/thunks/authThunk';
+import { AuthPublicThunk } from '~/redux/thunks/authThunk';
 import { trimWords } from '~/utils/formatters';
 
 function LoginPage() {
@@ -16,7 +16,7 @@ function LoginPage() {
 
     // Handle logic
     const handleLogin = async (formData) => {
-        dispatch(loginThunk(formData)).then((result) => {
+        dispatch(AuthPublicThunk.loginThunk(formData)).then((result) => {
             if (result.meta.requestStatus === 'fulfilled') {
                 navigate('/');
                 dispatch(addToast(result.payload.message, 'success'));
