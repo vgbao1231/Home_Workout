@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ScheduleAdminService } from '~/services/scheduleService';
+import { ScheduleAdminService, ScheduleUserService } from '~/services/scheduleService';
 import { addToast } from '../slices/toastSlice';
 
 export class ScheduleAdminThunk {
@@ -60,4 +60,17 @@ export class ScheduleAdminThunk {
             }
         },
     );
+}
+
+export class ScheduleUserThunk {
+    static getAvailableSchedulesOfUser = createAsyncThunk('schedule/admin/getAvailableSchedulesOfUser',
+        async ({ page = 1, filterFields, sortedField, sortedMode } = {}, { rejectWithValue }) => {
+            try {
+                const response = await ScheduleUserService.getAvailableSchedulesOfUser(page, filterFields, sortedField, sortedMode);
+                return response;
+            } catch (error) {
+                return rejectWithValue(error);
+            }
+        },
+    )
 }
