@@ -1,0 +1,138 @@
+:root {
+    --tab-height: 60px;
+    --tab-padding: 10px;
+    --border-color: #ccc;
+    --first-line-height: 20px;
+    --level-enum-width: 80px;
+    --coins-tag-border-color: rgb(153, 161, 31);
+}
+
+.available-schedules-list {
+    font-size: 13px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    min-height: 85vh;
+
+    .table-header .table-row {
+        border: none;
+    }
+    .table-body {
+        overflow-y: scroll;
+        /* Scrollbar styling for WebKit browsers */
+        &::-webkit-scrollbar {
+            width: 5px; /* Width of the scrollbar */
+            height: 10px; /* Height of the scrollbar for horizontal scrolling */
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            // background-color: #888; /* Color of the scrollbar thumb */
+            background-color: #888; /* Color of the scrollbar thumb */
+            border-radius: 5px; /* Rounded corners for the thumb */
+        }
+        
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: #555; /* Color of the thumb when hovered */
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0); /* Background color of the scrollbar track */
+            border-radius: 5px;
+        }
+    }
+    .table-body .table-row {
+        border-top: none;   //--Override default Table scss
+        flex-wrap: wrap;
+        width: 100%;
+        position: relative;
+        min-height: var(--tab-height);
+        border: 1px solid var(--border-color);
+        margin-bottom: 10px;
+        border-radius: 5px;
+        transition: background-color ease 0.3s;
+
+        .table-cell {
+            .field-wrapper {
+                padding: 0;
+            }
+            &:not(:last-child) {
+                border-right: none;
+            }
+            &:nth-of-type(1) {
+                width: 100%;
+                font-weight: 600;
+                color: #262525;
+                padding: var(--tab-padding);
+                padding-bottom: 0;
+                padding-right: 90px;
+            }
+            &:nth-of-type(2) {
+                width: 100%;
+                font-style: italic;
+                color: #555;
+                padding: var(--tab-padding);
+                padding-top: 0;
+                padding-right: 90px;
+            }
+            &:nth-of-type(3),
+            &:nth-of-type(4) {
+                width: var(--level-enum-width);
+                position: absolute;
+            }
+            &:nth-of-type(3) {
+                right: var(--tab-padding);
+                top: var(--tab-padding);
+                span {
+                    text-align: center;
+                    color: #eee;
+                    width: var(--level-enum-width);
+                    font-size: 11px;
+                    padding: 1px 5px;
+                    border-radius: 4px;
+                }
+                span[plain="BEGINNER"] {
+                    background-color: blue;
+                }
+                span[plain="INTERMEDIATE"] {
+                    background-color: rgb(5, 171, 116);
+                }
+                span[plain="ADVANCE"] {
+                    background-color: rgb(174, 122, 11);
+                }
+            }
+            &:nth-of-type(4) {
+                right: var(--tab-padding);
+                top: calc(var(--tab-height)/2);
+                justify-content: end;
+                span {
+                    font-size: 14px;
+                    text-align: right;
+                    color: var(--coins-tag-border-color);
+                    font-weight: 500;
+                    padding-right: 8px;
+                    position: relative;
+                }
+                &::after {
+                    position: absolute;
+                    content: "$";
+                    color: var(--coins-tag-border-color);
+                    display: block;
+                    font-size: 14px;
+                    top: 0;
+                    right: 0;
+                }
+            }
+            input {
+                font-family: "Roboto", sans-serif;
+                font-size: 13px;
+                cursor: pointer;
+            }
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: #ddd;
+        }
+    }
+    
+}
