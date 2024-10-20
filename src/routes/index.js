@@ -3,9 +3,10 @@ import UserHomePage from '~/pages/User/HomePage/UserHomePage';
 import LoginPage from '~/pages/LoginPage/LoginPage';
 import ManageUserInfoPage from '~/pages/Admin/ManageUserInfoPage/ManageUserInfoPage';
 import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
-import SubscribeSchedules from '~/pages/User/SubscribeSchedules/SubscribeSchedules';
 import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
 import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
+import SubscribeSchedulesPage from '~/pages/User/SubscribeSchedules/SubscribeSchedulesPage';
+// import TestPage from '~/pages/TestPage/TestPage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
@@ -22,8 +23,8 @@ const adminRoutes = [
 
 const userRoutes = [
     { path: '/', component: UserHomePage, layout: UserSidebarLayout },
-    { path: '/subscribe-schedules', component: SubscribeSchedules, layout: UserSidebarLayout },
     { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
+    { path: '/subscribe-schedules', component: SubscribeSchedulesPage, layout: UserSidebarLayout },
 ];
 
 export { publicRoutes, adminRoutes, userRoutes };
