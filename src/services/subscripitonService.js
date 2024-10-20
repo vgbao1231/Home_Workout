@@ -42,4 +42,24 @@ export class SubscriptionUserService {
             throw error.response ? error.response.data : error;
         }
     };
+    static async getPreviewScheduleInfoForUserToSubscribe(scheduleId) {
+        try {
+            const response = await springService.get(`${API_USER_PREFIX}/v1/get-preview-schedule-info-for-user-to-subscribe`, {
+                params: { id: scheduleId },
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
+    static async subscribeSchedule(formData) {
+        try {
+            const response = await springService.get(`${API_USER_PREFIX}/v1/subscribe-schedule`, formData);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
 }

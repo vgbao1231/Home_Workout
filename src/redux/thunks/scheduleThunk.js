@@ -63,7 +63,7 @@ export class ScheduleAdminThunk {
 }
 
 export class ScheduleUserThunk {
-    static getAvailableSchedulesOfUser = createAsyncThunk('schedule/admin/getAvailableSchedulesOfUser',
+    static getAvailableSchedulesOfUser = createAsyncThunk('schedule/getAvailableSchedulesOfUser',
         async ({ page = 1, filterFields, sortedField, sortedMode } = {}, { rejectWithValue }) => {
             try {
                 const response = await ScheduleUserService.getAvailableSchedulesOfUser(page, filterFields, sortedField, sortedMode);
@@ -72,5 +72,5 @@ export class ScheduleUserThunk {
                 return rejectWithValue(error);
             }
         },
-    )
+    );
 }

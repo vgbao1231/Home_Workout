@@ -7,7 +7,7 @@ import { Dialog, Input, Select, Table } from '~/components';
 import ContextMenu from '~/components/ui/Table/ContextMenu/ContextMenu';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
 import { ScheduleAdminThunk } from '~/redux/thunks/scheduleThunk';
-import { scheduleActions, toggleSelectRow } from '~/redux/slices/scheduleSlice ';
+import { scheduleActions, toggleSelectRow } from '~/redux/slices/scheduleSlice';
 import AddScheduleDialog from './AddScheduleDialog/AddScheduleDialog';
 import SessionsOfScheduleDialog from './SessionsOfScheduleDialog/SessionsOfScheduleDialog';
 

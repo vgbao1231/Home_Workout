@@ -66,7 +66,6 @@ export class ScheduleUserService {
     
     static async getAvailableSchedulesOfUser(page, filterFields, sortedField, sortedMode) {
         try {
-            console.log(page, filterFields, sortedField, sortedMode)
             const response = await springService.get(`${API_USER_PREFIX}/v1/get-available-schedules-of-user-pages`, {
                 params: { page, filterFields, sortedField, sortedMode },
                 paramsSerializer: AxiosHelpers.paramsSerializerForGet,

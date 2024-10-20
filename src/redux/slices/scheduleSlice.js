@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { ScheduleAdminThunk } from '../thunks/scheduleThunk';
+import { ScheduleAdminThunk, ScheduleUserThunk } from '../thunks/scheduleThunk';
 
 const scheduleSlice = createSlice({
     name: 'schedule',
@@ -34,6 +34,21 @@ const scheduleSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder
+            .addCase(ScheduleUserThunk.getAvailableSchedulesOfUser.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(ScheduleUserThunk.getAvailableSchedulesOfUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.data = action.payload.data.data;
+                state.totalPages = action.payload.data.totalPages;
+                state.message = action.payload.message;
+            })
+            .addCase(ScheduleUserThunk.getAvailableSchedulesOfUser.rejected, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            });
+
         // Get schedule data
         builder
             .addCase(ScheduleAdminThunk.fetchScheduleThunk.pending, (state) => {

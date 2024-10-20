@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AuthPrivateThunk, AuthPublicThunk, loginThunk, logoutThunk } from '../thunks/authThunk';
+import { AuthPrivateThunk, AuthPublicThunk } from '../thunks/authThunk';
 
 const authSlice = createSlice({
     name: 'auth',

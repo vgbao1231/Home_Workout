@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import './SchedulesList.scss';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FormatterDict, Table } from '~/components/ui/Table/CustomTable';
 import { addToast } from '~/redux/slices/toastSlice';
 import Pagination from '~/components/ui/Table/Pagination/Pagination';
