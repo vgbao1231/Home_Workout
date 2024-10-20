@@ -28,12 +28,12 @@ export default function Slides() {
                 ? <div>Loading...</div>
                 : <>
                 <div className="abstract-background" style={{
-                    backgroundImage: `url("${slideState.data[currentIndex].imageUrl}")`
+                    backgroundImage: `url("${slideState.data[currentIndex]?.imageUrl}")`
                 }}>
                     <div className="abstract-purdar"></div>
                 </div>
                 <div className="main-image">
-                    <img src={slideState.data[currentIndex].imageUrl} alt="" />
+                    <img src={slideState.data[currentIndex]?.imageUrl} alt="" />
                 </div>
                 <button className="next-slide-btn" onClick={handlePullingNextSlide}><ChevronRight /></button>
             </>

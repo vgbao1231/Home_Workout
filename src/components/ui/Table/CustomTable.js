@@ -15,9 +15,10 @@ export const FormatterDict = {
             UPDATE_thunk: { thunk() { }, moreParams: {} },
             DELETE_thunk: { thunk() { }, moreParams: {} }
         },
-        tableInfo = { columnsInfo: [], filterFields: [], sortingFields: [] },
+        tableInfo = { columnsInfo: [], filterFields: [], sortingFields: [], offHeaders: false },
         reducers = {
             selectingRows: { selectAllRows() { }, toggleSelectRow() { } },
+            clickingRow() { },
             globalToastEngine() { }
         },
     }) {
@@ -138,14 +139,14 @@ export function Table({ className, title, tableState, pageState, tableComponents
             };
         }
     }, [isAddingRow]);
-
+    
     return (
         <>
             <div className={`table-wrapper ${className}`}>
                 <div className="table-feature">
                     <div className="table-title">{title}</div>
                     <div className="table-tool center">
-                        {tableComponents.filterFields &&
+                        {tableComponents.tableInfo.filterFields &&
                             <div className="tool-button">
                                 <ListFilter className="tool-icon" onClick={() => setIsFilterOpen(!isFilterOpen)} />
                                 <Form
@@ -175,7 +176,7 @@ export function Table({ className, title, tableState, pageState, tableComponents
                                 )}
                             </div>
                         }
-                        {tableComponents.sortingFields &&
+                        {tableComponents.tableInfo.sortingFields &&
                             <div className="tool-button">
                                 <ArrowDownUp className="tool-icon" onClick={() => setIsSortOpen(!isSortOpen)} />
                                 <Form
@@ -226,10 +227,11 @@ export function Table({ className, title, tableState, pageState, tableComponents
                                     onChange={handleSelectAll}
                                 />
                             </div>}
-                        {tableComponents.tableInfo.columnsInfo.map((columnInfo, index) => (
-                            <div key={index} className="table-cell">
-                                {columnInfo.headerLabel}
-                            </div>
+                        {!tableComponents.tableInfo.offHeaders &&
+                            tableComponents.tableInfo.columnsInfo.map((columnInfo, index) => (
+                                <div key={index} className="table-cell">
+                                    {columnInfo.headerLabel}
+                                </div>
                         ))}
                     </div>
                 </div>
@@ -245,6 +247,8 @@ export function Table({ className, title, tableState, pageState, tableComponents
                                 columnsInfo={tableComponents.tableInfo.columnsInfo}
                                 selectedRows={tableModes.canSelectingRow ? selectedRows : null}
                                 handleSelectingRow={tableModes.canSelectingRow ? handleSelectingRow : null}
+                                handleClickingRow={tableComponents.reducers && tableComponents.reducers.clickingRow
+                                    ? tableComponents.reducers.clickingRow : null}
                                 updatingRowIdState={tableModes.canUpdatingRow ? updatingRowId : null}
                                 handleContextMenu={tableModes.hasContextMenu ? handleContextMenu : null}
                             />;

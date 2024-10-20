@@ -3,6 +3,7 @@ import { springService } from './apiService';
 
 const API_ADMIN_PREFIX = process.env.REACT_APP_API_ADMIN_PREFIX;
 const API_USER_PREFIX = process.env.REACT_APP_API_USER_PREFIX;
+const API_USER_PREFIX = process.env.REACT_APP_API_USER_PREFIX;
 
 export class SubscriptionAdminService {
     static async getAllSubscriptionByUserInfo(page, filterFields, sortedField, sortedMode, id) {

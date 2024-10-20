@@ -4,7 +4,7 @@ import Form from '~/components/ui/Form/Form';
 
 function TableRowBuilder({
     rowData, primaryKeyName, columnsInfo, selectedRows, currentPage,
-    handleSelectingRow, updatingRowIdState, handleContextMenu,
+    handleSelectingRow, handleClickingRow, updatingRowIdState, handleContextMenu,
     ...props
 }) {
     const tableRowRef = useRef();
@@ -29,7 +29,8 @@ function TableRowBuilder({
             <Form
                 ref={canUpdatingRow ? tableRowRef : null}
                 className={`table-row${isUpdatingRow ? ' active' : ''}`}
-                onClick={e => handleSelectingRow !== null ? handleSelectingRow(e, rowData) : ()=>{}}
+                onClick={e => handleSelectingRow !== null ? handleSelectingRow(e, rowData)
+                    : (handleClickingRow !== null ? handleClickingRow(e, rowData) : ()=>{})}
                 onContextMenu={e => handleContextMenu !== null ? handleContextMenu(e, rowData) : ()=>{}}
                 {...props}
             >

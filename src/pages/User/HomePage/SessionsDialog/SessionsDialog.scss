@@ -61,6 +61,7 @@
             display: flex;
             flex-wrap: wrap;
             flex-direction: column;
+            padding-right: 30px;
             span.list-content_cell_name {
                 font-weight: 500;
                 width: 100%;
@@ -76,7 +77,8 @@
         div.list-content_cell:nth-of-type(3) {
             text-align: end;
             width: 30%;
-            font-size: 11px;
+            font-size: 13px;
+            color: #555;
             display: flex;
             flex-wrap: wrap;
             flex-direction: column;

@@ -6,7 +6,8 @@ import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
 import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
 import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 import SubscribeSchedulesPage from '~/pages/User/SubscribeSchedules/SubscribeSchedulesPage';
-// import TestPage from '~/pages/TestPage/TestPage';
+import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
+import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
@@ -25,6 +26,7 @@ const userRoutes = [
     { path: '/', component: UserHomePage, layout: UserSidebarLayout },
     { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
     { path: '/subscribe-schedules', component: SubscribeSchedulesPage, layout: UserSidebarLayout },
+    { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
 ];
 
 export { publicRoutes, adminRoutes, userRoutes };

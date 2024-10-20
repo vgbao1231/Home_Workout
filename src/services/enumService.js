@@ -59,4 +59,13 @@ export class EnumUserService {
             throw error.response ? error.response.data : error;
         }
     }
+
+    static async getAllAimsEnum() {
+        try {
+            const res = await springService.get(`${API_USER_PREFIX}/v1/get-all-aims`);
+            return res.data;
+        } catch (error) {
+            throw error.response ? error.response.data : error;
+        }
+    }
 }
