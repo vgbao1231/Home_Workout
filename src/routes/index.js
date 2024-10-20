@@ -6,6 +6,7 @@ import ManageSlidesPage from '~/pages/Admin/ManageSlidesPage/ManageSlidesPage';
 import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
 import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 import SubscribeSchedulesPage from '~/pages/User/SubscribeSchedules/SubscribeSchedulesPage';
+import RegisterPage from '~/pages/RegisterPage/RegisterPage';
 // import TestPage from '~/pages/TestPage/TestPage';
 
 const publicRoutes = [
