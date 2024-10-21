@@ -30,7 +30,7 @@ function SessionTable() {
         { header: 'Name', name: 'name', cell: (row) => <Input name="name" /> },
         {
             header: 'Muscle List', name: 'musclesList', cell: (row) => <MultiSelect name="musclesList" options={muscleOptions} />,
-            customFilter: (row) => <MultiSelect name="muscleIds" options={muscleOptions} />
+            customFilter: (row) => <MultiSelect name="muscleIds" options={muscleOptions} />, sortable: false
         },
         {
             header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} />,

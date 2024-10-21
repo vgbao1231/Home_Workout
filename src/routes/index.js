@@ -25,7 +25,6 @@ const userRoutes = [
     { path: '/', component: UserHomePage, layout: UserSidebarLayout },
     { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
     { path: '/subscribe-schedules', component: SubscribeSchedulesPage, layout: UserSidebarLayout },
-    { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
 ];
 
 export { publicRoutes, adminRoutes, userRoutes };

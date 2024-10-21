@@ -26,7 +26,8 @@ function AddSessionsOfScheduleDialog({ columns: sessionOfScheduleColumns, setTab
             header: 'Level', name: 'levelEnum', cell: (row) => <Select name="levelEnum" options={levelOptions} />,
             customFilter: (row) => <Select name="level" options={levelOptions} />
         },
-        { header: 'Basic Reps', name: 'basicReps', cell: (row) => <Input name="basicReps" type="number" /> },
+        { header: 'Description', name: 'description', cell: (row) => <Input name="description" /> },
+        { header: 'Switch Exercise Delay', name: 'switchExerciseDelay', cell: (row) => <Input name="switchExerciseDelay" /> },
     ], [muscleOptions, levelOptions]);
 
     // Properties of table row

@@ -1,9 +1,27 @@
-import { ChevronFirst, ChevronLast } from 'lucide-react';
+import { ChevronFirst, ChevronLast, LogOut } from 'lucide-react';
 import './Sidebar.scss';
 import { useState, Children, cloneElement } from 'react';
+import { AuthPrivateThunk } from '~/redux/thunks/authThunk';
+import { addToast } from '~/redux/slices/toastSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar({ children }) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    // Handle log out
+    const handleLogout = async () => {
+        dispatch(AuthPrivateThunk.logoutThunk()).then((result) => {
+            if (result.meta.requestStatus === 'fulfilled') {
+                navigate('/login');
+                dispatch(addToast(result.payload.message, 'success'));
+            } else {
+                dispatch(addToast(result.payload.message, 'error'));
+            }
+        });
+    };
 
     return (
         <aside className={`sidebar`}>
@@ -17,6 +35,10 @@ function Sidebar({ children }) {
             </div>
             <div className="item-container">
                 <ul>{Children.map(children, (child) => cloneElement(child, { isExpanded }))}</ul>
+            </div>
+            <div className="logout-container" onClick={handleLogout}>
+                <LogOut className="logout-icon" />
+                <span className={`logout${isExpanded ? ' expand' : ''}`}>Log out</span>
             </div>
             <div className="profile-container center">
                 <div className="avatar center">A</div>

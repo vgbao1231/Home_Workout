@@ -3,10 +3,10 @@ import './SessionsDialog.scss';
 import { SessionUserService } from '~/services/sessionService';
 
 export default function SessionsDialog({ scheduleId }) {
-    const [ sessionsData, setSessionsData ] = useState([]);
+    const [sessionsData, setSessionsData] = useState([]);
 
-    const handleClickSession = useCallback((e, sessionId) => {
-        document.location.href = "/start-session?id=" + sessionId;
+    const handleClickSession = useCallback((e, dataObj) => {
+        document.location.href = `/start-session?id=${scheduleId}&ordinal=${dataObj.ordinal}`;
     }, []);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function SessionsDialog({ scheduleId }) {
 
 function ItemOfListBuilder(dataObj, index, handleClickSession) {
     return <li key={"list-content_row-" + index} className="list-content_row"
-            onClick={e => handleClickSession(e, dataObj.session.sessionId)}>
+        onClick={e => handleClickSession(e, dataObj)}>
         <div className="list-content_cell">
             <i>{dataObj.ordinal}</i>
         </div>
