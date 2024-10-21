@@ -49,10 +49,10 @@ export default function SlidesTable() {
             await dispatch(SlidesAdminThunk.uploadSlide(abstractFormData)).unwrap();
         },
         inputCompos: [
-            FormatterDict.AddingField(<Input name="name" required/>),
+            FormatterDict.AddingField(<Input name="name" placeholder='Slide Name' required />),
             FormatterDict.AddingField(<label htmlFor="slide-img" style={{ display: 'flex' }}>
                 <Upload className="upload-icon" />
-                <Input id="slide-img" name="image" type="file" required/>
+                <Input id="slide-img" name="image" type="file" required />
             </label>),
         ]
     }), []);

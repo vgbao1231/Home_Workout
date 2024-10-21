@@ -9,7 +9,8 @@ import { CircleCheckBig, Clock, Dumbbell, Repeat } from "lucide-react";
 function StartSessionPage() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const sessionId = queryParams.get('id');
+    const scheduleId = queryParams.get('id');
+    const ordinal = queryParams.get('ordinal');
     const [sessionData, setSessionData] = useState(); //Session data
     const [exercisesData, setExercisesData] = useState(); // All exercises of session
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0); // Current exercise index (ordinal)
@@ -56,6 +57,8 @@ function StartSessionPage() {
         }
         // If currentExerciseIndex is not the last exercises of session 
         else if (currentExerciseIndex < exercisesData.length - 1) {
+            console.log(sessionData, currentExercise);
+
             if (currentExercise.needSwitchExerciseDelay) {
                 setIsResting(true)
                 setSlackTime(sessionData.switchExerciseDelay) // Slack switch exercise
@@ -113,20 +116,23 @@ function StartSessionPage() {
     // useEffect for get data
     useEffect(() => {
         const fetchData = async () => {
-            const sessionResponse = await SubscriptionUserService.getSessionsOfSubscribedSchedule(sessionId)
-            const exercisesResponse = await SubscriptionUserService.getExercisesInSessionOfSubscribedSchedule(sessionId)
-            setSessionData(sessionResponse.data);
-            setExercisesData(exercisesResponse.data.map(obj => {
-                const { exercise, ...rest } = obj
-                return { ...rest, ...exercise }
-            }));
+            const sessionResponse = await SubscriptionUserService.getSessionsOfSubscribedSchedule(scheduleId, ordinal)
+            const { session, repRatio } = sessionResponse.data
+            setSessionData({ repRatio, ...session });
+            const exercisesResponse = await SubscriptionUserService.getExercisesInSessionOfSubscribedSchedule(session.sessionId)
+            setExercisesData(exercisesResponse.data.map(({ exercise, ...rest }) => ({
+                ...rest,
+                ...exercise,
+                basicReps: exercise.basicReps * repRatio / 100
+            })));
         }
         fetchData()
 
-    }, [sessionId]);
+    }, [scheduleId]);
+
 
     // If there is no param in param url then redirect to homepage
-    return !sessionId ?
+    return !scheduleId ?
         (<Navigate to="/" />)
         :
         (!sessionData || !exercisesData) ?

@@ -3,6 +3,7 @@ import UserInfoTable from './UserInfoTable/UserInfoTable';
 import { EnumAdminThunk } from '~/redux/thunks/enumThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import { useEffect } from 'react';
+import './ManageUserInfoPage.scss'
 
 export default function ManageUserInfoPage() {
     const dispatch = useDispatch();
@@ -17,14 +18,14 @@ export default function ManageUserInfoPage() {
             }
         })();
     }, [dispatch]);
-    
+
     if (isLoading) {
         return <div>Loading data...</div>;
     }
 
     return (
         <div className="manage-user-info-page">
-            <h1>Manage User Info</h1>
+            <span className='title center'>Manage User Info</span>
             <UserInfoTable />
         </div>
     );

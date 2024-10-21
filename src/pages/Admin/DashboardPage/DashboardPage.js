@@ -11,20 +11,7 @@ import ScheduleTable from './ScheduleTable/ScheduleTable';
 
 const DashboardPage = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const isLoading = useSelector((state) => state.enum.loading);
-
-    // Handle log out
-    const handleLogout = async () => {
-        dispatch(AuthPrivateThunk.logoutThunk()).then((result) => {
-            if (result.meta.requestStatus === 'fulfilled') {
-                navigate('/login');
-                dispatch(addToast(result.payload.message, 'success'));
-            } else {
-                dispatch(addToast(result.payload.message, 'error'));
-            }
-        });
-    };
 
     useEffect(() => {
         (async function fetchEnums() {
@@ -43,8 +30,7 @@ const DashboardPage = () => {
 
     return (
         <div className="dashboard-page">
-            <h1>Dashboard Page</h1>
-            <button onClick={handleLogout}>Log Out</button>
+            <span className='title center'>Dashboard</span>
             <ExerciseTable />
             <SessionTable />
             <ScheduleTable />

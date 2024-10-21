@@ -4,7 +4,7 @@ import './ManageSlidesPage.scss'
 export default function ManageSlidesPage() {
     return (
         <div className="manage-slides-page">
-            <h1>Manage Slides</h1>
+            <span className='title center'>Manage Slides</span>
             <SlidesTable />
         </div>
     );

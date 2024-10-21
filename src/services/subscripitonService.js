@@ -20,10 +20,10 @@ export class SubscriptionAdminService {
 }
 
 export class SubscriptionUserService {
-    static async getSessionsOfSubscribedSchedule(sessionId) {
+    static async getSessionsOfSubscribedSchedule(scheduleId, ordinal) {
         try {
             const response = await springService.get(`${API_USER_PREFIX}/v1/get-sessions-of-subscribed-schedule-of-user`, {
-                params: { id: sessionId },
+                params: { scheduleId, ordinal },
             });
             return response.data;
         } catch (error) {
@@ -55,7 +55,7 @@ export class SubscriptionUserService {
     }
     static async subscribeSchedule(formData) {
         try {
-            const response = await springService.get(`${API_USER_PREFIX}/v1/subscribe-schedule`, formData);
+            const response = await springService.post(`${API_USER_PREFIX}/v1/subscribe-schedule`, formData);
             return response.data;
         } catch (error) {
             console.error(error);
