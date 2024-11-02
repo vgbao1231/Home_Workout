@@ -31,7 +31,7 @@ export default function ScheduleInfoDialog({ scheduleId }) {
         e.preventDefault();
         if (!window.confirm("Confirm this subscription?"))  return;
         const formData = {
-            aimLevel: Number.parseInt(e.target.querySelector("select[name=aimLevel]").value),
+            aimType: Number.parseInt(e.target.querySelector("select[name=aimType]").value),
             repRatio: Number.parseInt(e.target.querySelector("select[name=repRatio]").value),
             height: Number.parseFloat(e.target.querySelector("input[name=height]").value),
             weight: Number.parseInt(e.target.querySelector("input[name=weight]").value),
@@ -102,10 +102,10 @@ export default function ScheduleInfoDialog({ scheduleId }) {
             <div className="subscribe-block">
                 <form onSubmit={e => handleClickSubscribe(e)}>
                     <fieldset>
-                        <legend>Level's Difficulty</legend>
-                        <select name="aimLevel">
+                        <legend>Your Aim</legend>
+                        <select name="aimType">
                             {aimsData.map((aim, index) =>
-                                <option key={"aim-select-" + index} value={aim.level}>{aim.name}</option>
+                                <option key={"aim-select-" + index} value={aim.type}>{aim.name}</option>
                             )}
                         </select>
                     </fieldset>
@@ -116,14 +116,6 @@ export default function ScheduleInfoDialog({ scheduleId }) {
                             <option value="2">Average (90% level)</option>
                             <option value="1">Easy (80% level)</option>
                         </select>
-                    </fieldset>
-                    <fieldset>
-                        <legend>Height (cm)</legend>
-                        <input name="height" type="float" required min="1" max="300" autoComplete="off"/>
-                    </fieldset>
-                    <fieldset>
-                        <legend>Weight (kg)</legend>
-                        <input name="weight" type="float" required min="1" max="300" autoComplete="off"/>
                     </fieldset>
                     <div className="subscribe-btn">
                         <button type="submit">Subscribe</button>
