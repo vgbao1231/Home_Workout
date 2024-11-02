@@ -7,6 +7,7 @@ import DashboardPage from '~/pages/Admin/DashboardPage/DashboardPage';
 import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 import SubscribeSchedulesPage from '~/pages/User/SubscribeSchedules/SubscribeSchedulesPage';
 import RegisterPage from '~/pages/RegisterPage/RegisterPage';
+import ManageScheduleDatasetPage from '~/pages/Admin/ManageScheduleDatasetPage/ManageScheduleDatasetPage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
@@ -19,6 +20,7 @@ const adminRoutes = [
     { path: '/dashboard', component: DashboardPage, layout: AdminSidebarLayout },
     { path: '/manage-user-info', component: ManageUserInfoPage, layout: AdminSidebarLayout },
     { path: '/manage-slides', component: ManageSlidesPage, layout: AdminSidebarLayout },
+    { path: '/manage-decision-schedule-dataset', component: ManageScheduleDatasetPage, layout: AdminSidebarLayout },
 ];
 
 const userRoutes = [

@@ -44,11 +44,11 @@ export default function SchedulesList() {
                 FormatterDict.FilterField("From Coins", <Input type="number" name="fromCoins" />),
                 FormatterDict.FilterField("To Coins", <Input type="number" name="toCoins" />),
                 FormatterDict.FilterField("Level", <Select placeholder="Select Level" name="level"
-                    options={levelData.map(level => ({ value: level.raw, text: level.name }))} />),
+                    options={levelData.map(level => ({ value: level.level, text: level.name }))} />),
             ],
             sortingFields:[
                 FormatterDict.SortingField('coins', 'Coins'),
-                FormatterDict.SortingField('level', 'Level'),
+                FormatterDict.SortingField('levelEnum', 'Level'),
             ],
         },
         reducers: {

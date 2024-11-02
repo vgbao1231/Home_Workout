@@ -1,0 +1,33 @@
+.manage-schedule-dataset-page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: baseline;
+    background-color: rgba($color: #aaa, $alpha: 0.1);
+    width: 100%;
+    min-height: 100vh;
+
+    .title {
+        font-size: 3.6rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .schedule-dataset-table {
+        width: 55%;
+    }
+
+    .main-right-page {
+        width: 40%;
+        .preview-schedule-info {
+            width: 100%;
+        }
+        .export-csv-data-from-db-btn {
+            width: 100%;
+            height: 40px;
+        }
+    }
+}

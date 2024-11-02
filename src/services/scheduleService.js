@@ -49,6 +49,31 @@ export class ScheduleAdminService {
             throw error.response ? error.response.data : error;
         }
     }
+    
+    static async getPreviewScheduleInfo(scheduleId) {
+        try {
+            const response = await springService.get(`${API_ADMIN_PREFIX}/v1/get-preview-schedule`, {
+                params: { id: scheduleId },
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
+    
+    static async getSessionsQuantityOfSchedule(id) {
+        try {
+            const response = await springService.get(`${API_ADMIN_PREFIX}/v1/get-sessions-quantity-of-schedule`, {
+                params: { id }, paramsSerializer: AxiosHelpers.paramsSerializerForGet,
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
+
 }
 
 export class ScheduleUserService {

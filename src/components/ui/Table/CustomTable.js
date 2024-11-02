@@ -6,6 +6,7 @@ import { ArrowDownUp, ListFilter, Pencil, Plus, Send, X } from 'lucide-react';
 import Form from '../Form/Form';
 import Select from '../Select/Select';
 import ContextMenu from './ContextMenu/ContextMenu';
+import { addToast } from '~/redux/slices/toastSlice';
 
 export const FormatterDict = {
     TableComponents({
@@ -91,14 +92,16 @@ export function Table({ className, title, tableState, pageState, tableComponents
     }, []);
 
     const handleSubmitAddingForm = useCallback(formData => {
+        const isPreventDefault = { status: false };
         if (addingFormComponents.handleSubmit)
-            addingFormComponents.handleSubmit(formData);
+            addingFormComponents.handleSubmit(formData, isPreventDefault);
         else {
             if (addingFormComponents.reduxInfo.POST_thunk.moreParams)
                 formData = { ...formData, ...addingFormComponents.reduxInfo.POST_thunk.moreParams };
             dispatch(addingFormComponents.reduxInfo.POST_thunk.thunk(formData));
         }
-        setIsAddingRow(false);
+        !isPreventDefault.status && setIsAddingRow(false);
+        dispatch(addToast("Adding successfully!", "success"));
     }, []);
 
     useEffect(() => {

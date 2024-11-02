@@ -31,9 +31,12 @@ const unawareErrorHandler = () => {
 const refreshTokenHandler = async (error) => {
     const { response } = error;
     const originalRequest = error.config;
+    const appCode = Object.keys(response.data).includes("body")
+        ? response.data.body.applicationCode    // Srping service
+        : response.data.applicationCode;        // Fastapi service
     console.log(response);
 
-    if (response && response.status === 403 && response.data.body.applicationCode === 11003) {
+    if (response && response.status === 403 && appCode === 11003) {
         if (!originalRequest._retry) {
             originalRequest._retry = true;
             try {

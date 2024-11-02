@@ -14,4 +14,6 @@ export const formatResponseLocalDate = (dateAsArr) => dateAsArr ? new Date(...da
 
 export const formatResponseLocalDateTime = (timeAsArr) => timeAsArr ? new Date(...timeAsArr).toISOString().split(".")[0] : timeAsArr;
 
+export const checkIsBlank = value => value !== 0 && value !== "0" && !value;
+
 // Xuất thêm các hàm khác nếu cần

@@ -30,7 +30,7 @@ export default function SchedulePanel() {
             component: <CompletedSchedules handleClickSchedule={handleClickSchedule} dispatch={dispatch}/>
         }
     ], []);
-    
+
     return <>
         <div className="schedule-panel">
             <div className="tabs-bar">{
@@ -86,7 +86,7 @@ function CompletedSchedules({ handleClickSchedule, dispatch }) {
 
     return <ul className="tab-content">
         {scheduleData.length === 0
-            ? <div>You haven't register any Schedule yet!</div>
+            ? <div>You haven't completed any Schedule yet!</div>
             : scheduleData.map((data, index) => ItemOfListBuilder(data, index, handleClickSchedule))
         }
     </ul>;

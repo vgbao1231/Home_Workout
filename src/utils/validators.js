@@ -32,4 +32,9 @@ export const isAdult = (minAge) => (value) => {
         : `Ngày sinh không hợp lệ (Chưa đủ ${minAge} tuổi)`;
 };
 
+export const isNotNegative = (value) => Number.parseFloat(value) >= 0 ? undefined : "Không nhận số âm";
+export const isInteger = (value) => Number.parseFloat(value) - Number.parseInt(value) == 0 ? undefined : "Phải là số nguyên";
+export const isAMultipleOf = (number) => (value) => Number.parseFloat(value)%Number.parseInt(number) === 0
+    ? undefined : ("Phải là bội số của " + number);
+    
 // More validators...
