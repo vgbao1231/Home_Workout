@@ -77,7 +77,7 @@ function Input({ name, className = '', validators = {}, formatters = {}, iconSup
                         </fieldset>
                     </>
                 )}
-                {icon && cloneElement(icon, { onClick: handleIconClick })}
+                {icon && cloneElement(icon, { onClick: handleIconClick, className: 'input-icon' })}
             </div>
             {error.message && <div className="error-msg">{error.message}</div>}
         </div>

@@ -8,7 +8,6 @@ import './AddScheduleDialog.scss';
 import { Dialog } from '~/components';
 import { Trash2 } from 'lucide-react';
 import AddSessionsOfScheduleDialog from '../AddSessionsOfScheduleDialog/AddSessionsOfScheduleDialog';
-import { ScheduleAdminService } from '~/services/scheduleService';
 import { ScheduleAdminThunk } from '~/redux/thunks/scheduleThunk';
 
 function AddScheduleDialog({ scheduleData, setIsAddingSchedule, onClose }) {
@@ -104,7 +103,7 @@ function AddScheduleDialog({ scheduleData, setIsAddingSchedule, onClose }) {
                 tableModes={{ enableEdit: true }}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-            <button className='add-schedule-btn' onClick={handleSubmit}>Submit</button>
+            <button className='btn' onClick={handleSubmit}>Submit</button>
         </>
     );
 }

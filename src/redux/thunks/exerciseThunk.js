@@ -20,7 +20,7 @@ export class ExerciseAdminThunk {
             try {
                 const { img, ...form } = formData;
                 const { imagePublicId, ...createResponse } = await ExerciseAdminService.createExercise(form);
-                const uploadResponse = await ExerciseAdminService.uploadExerciseImage(img, createResponse.data.exerciseId);
+                const uploadResponse = await ExerciseAdminService.uploadExerciseImage(createResponse.data.exerciseId, img);
                 dispatch(ExerciseAdminThunk.fetchExercise());
                 return { ...createResponse, ...uploadResponse };
             } catch (error) {

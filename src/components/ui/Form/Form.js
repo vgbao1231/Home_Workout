@@ -7,6 +7,8 @@ function Form({ children, className = '', defaultValues, onSubmit, confirm, ...p
         defaultValues: defaultValues || {}, // Default values for all fields
         mode: 'all', // Validate on change,blur and submit
     });
+    console.log(defaultValues);
+
 
     // Reset form when there is new default data
     useEffect(() => {

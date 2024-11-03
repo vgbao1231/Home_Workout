@@ -20,12 +20,12 @@ export default function UserInfoTable() {
 
     const statusButtonReplacedContent = useCallback((rowData) => <button name="active" plain={`${rowData['active']}`}
         onMouseEnter={(e) => {
-            if (e.target.innerText.trim() == "Activating")  e.target.innerText = "Inactivate";
+            if (e.target.innerText.trim() == "Activating") e.target.innerText = "Inactivate";
             else if (e.target.innerText.trim() == "Inactivated") e.target.innerText = "Activate";
         }}
         onMouseLeave={(e) => {
-            if (e.target.innerText.trim() == "Activate")    e.target.innerText = "Inactivated";
-            else if (e.target.innerText.trim() == "Inactivate")  e.target.innerText = "Activating";
+            if (e.target.innerText.trim() == "Activate") e.target.innerText = "Inactivated";
+            else if (e.target.innerText.trim() == "Inactivate") e.target.innerText = "Activating";
         }}
         onClick={async (e) => {
             e.stopPropagation();
@@ -43,17 +43,17 @@ export default function UserInfoTable() {
             }
         },
         tableInfo: {
-            columnsInfo:[
-                FormatterDict.ColumnInfo('firstName', 'First Name' ),
-                FormatterDict.ColumnInfo('lastName', 'Last Name' ),
-                FormatterDict.ColumnInfo('dob', 'Date of Birth' ),
-                FormatterDict.ColumnInfo('gender', 'Gender' ),
-                FormatterDict.ColumnInfo('email', 'Email' ),
-                FormatterDict.ColumnInfo('coins', 'Coins' ),
-                FormatterDict.ColumnInfo('createdTime', 'Created Time' ),
-                FormatterDict.ColumnInfo('active', 'Status', null, statusButtonReplacedContent )
+            columnsInfo: [
+                FormatterDict.ColumnInfo('firstName', 'First Name'),
+                FormatterDict.ColumnInfo('lastName', 'Last Name'),
+                FormatterDict.ColumnInfo('dob', 'Date of Birth'),
+                FormatterDict.ColumnInfo('gender', 'Gender'),
+                FormatterDict.ColumnInfo('email', 'Email'),
+                FormatterDict.ColumnInfo('coins', 'Coins'),
+                FormatterDict.ColumnInfo('createdTime', 'Created Time'),
+                FormatterDict.ColumnInfo('active', 'Status', null, statusButtonReplacedContent)
             ],
-            filterFields:[
+            filterFields: [
                 FormatterDict.FilterField("First Name", <Input name="fisrtName" />),
                 FormatterDict.FilterField("Last Name", <Input name="lastName" />),
                 FormatterDict.FilterField("From Date of Birth", <Input type="date" name="fromDob" />),
@@ -69,14 +69,14 @@ export default function UserInfoTable() {
                     [{ value: true, text: "Activating" }, { value: false, text: "Deactivated" },]
                 } />),
             ],
-            sortingFields:[
-                FormatterDict.SortingField('firstName', 'First Name' ),
-                FormatterDict.SortingField('lastName', 'Last Name' ),
-                FormatterDict.SortingField('dob', 'Date of Birth' ),
-                FormatterDict.SortingField('gender', 'Gender' ),
-                FormatterDict.SortingField('email', 'Email' ),
-                FormatterDict.SortingField('coins', 'Coins' ),
-                FormatterDict.SortingField('createdTime', 'Created Time' ),
+            sortingFields: [
+                FormatterDict.SortingField('firstName', 'First Name'),
+                FormatterDict.SortingField('lastName', 'Last Name'),
+                FormatterDict.SortingField('dob', 'Date of Birth'),
+                FormatterDict.SortingField('gender', 'Gender'),
+                FormatterDict.SortingField('email', 'Email'),
+                FormatterDict.SortingField('coins', 'Coins'),
+                FormatterDict.SortingField('createdTime', 'Created Time'),
                 FormatterDict.SortingField('active', 'Status')
             ],
         },
@@ -93,15 +93,15 @@ export default function UserInfoTable() {
                 setDialogProps({
                     isOpen: true,
                     title: '',
+                    className: 'subscriptions-dialog',
                     body: <SubscriptionsDialog userInfoId={rowData["userInfoId"]} />,
                 }),
         }),
     ]), []);
 
     return (
-        <>
+        <div className="user-info-table">
             <Table
-                className="user-info-table"
                 title="User Information"
                 tableState={userInfoState}
                 pageState={currentPage}
@@ -116,6 +116,6 @@ export default function UserInfoTable() {
                 totalPages={userInfoState.totalPages}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-        </>
+        </div>
     );
 }

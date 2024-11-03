@@ -1,24 +1,21 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { adminRoutes, userRoutes, publicRoutes } from './routes';
 import { useSelector } from 'react-redux';
-import Toast from './components/ui/Toast/Toast';
 import { Fragment } from 'react';
-import Cookies from 'js-cookie';
 import AxiosHelpers from '~/utils/axiosHelpers';
+import ToastContainer from './components/ui/ToastContainer/ToastContainer';
 
 const ROLES = {
     ADMIN: 'ROLE_ADMIN',
     USER: 'ROLE_USER',
 };
 export default function App() {
-    const jwtClaims = AxiosHelpers.checkAndReadBase64Token(Cookies.get('accessToken'));
-    const { toasts } = useSelector((state) => state.toast);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const jwtClaims = AxiosHelpers.checkAndReadBase64Token(accessToken);
     return (
         <Router>
             <div className="App">
-                <div className="toast-container">
-                    {toasts.map(toast => <Toast key={toast.id} toast={toast} />)}
-                </div>
+                <ToastContainer />
                 {CurrentRoutes(jwtClaims)}
             </div>
         </Router>
@@ -27,12 +24,12 @@ export default function App() {
 
 function CurrentRoutes(jwtClaims) {
     const navigatedIncasePrivate = [
-        index => <Route key={index} path="*" element={<Navigate to="/" />} />,      
+        index => <Route key={index} path="*" element={<Navigate to="/" />} />,
     ];
     const navigatedIncasePublic = [
-        index => <Route key={index} path="*" element={<Navigate to="/login" /> } />   //--Assume that public "/" as Home doesn't exist.
+        index => <Route key={index} path="*" element={<Navigate to="/login" />} />   //--Assume that public "/" as Home doesn't exist.
     ]
-    switch(jwtClaims["scope"]) {
+    switch (jwtClaims["scope"]) {
         case ROLES.ADMIN:
             return <Routes> {BuilderRoutes(adminRoutes, navigatedIncasePrivate)} </Routes>;
         case ROLES.USER:

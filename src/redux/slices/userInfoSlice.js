@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { UserInfoAdminThunk, UserInfoUserThunk } from '../thunks/userInfoThunk';
+import { UserInfoAdminThunk } from '../thunks/userInfoThunk';
 import { formatResponseLocalDate, formatResponseLocalDateTime } from '~/utils/formatters';
 
 const userInfoSlice = createSlice({
@@ -40,7 +40,7 @@ const userInfoSlice = createSlice({
             .addCase(UserInfoAdminThunk.updateUserStatusThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 for (var ind = 0; ind < state.data.length; ind++) {
-                    if (state.data[ind]["userId"] == action.payload.data["userId"]) {
+                    if (state.data[ind]["userId"] === action.payload.data["userId"]) {
                         state.data[ind]["active"] = action.payload.data["newStatus"];
                         break;
                     }
@@ -50,7 +50,7 @@ const userInfoSlice = createSlice({
             .addCase(UserInfoAdminThunk.updateUserStatusThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
-            });        
+            });
     },
 });
 

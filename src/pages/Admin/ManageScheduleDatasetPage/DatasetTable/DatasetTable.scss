@@ -5,14 +5,14 @@
     --female-gender-bg: rgb(0, 121, 115);
 }
 
-.table-wrapper {
-    margin: 0;
-}
 .decision-schedule-dataset {
     font-size: 13px;
     border: 1px solid #ccc;
     border-radius: 20px;
     background-color: #fff;
+    .table-wrapper {
+        margin: 0;
+    }
     .table-header,
     .table-body {
         .table-row {
@@ -36,10 +36,10 @@
                     color: #fff;
                     padding: 1px 6px;
                     border-radius: 4px;
-                    &[plain=MALE] {
+                    &[plain='MALE'] {
                         background-color: var(--male-gender-bg);
                     }
-                    &[plain=FEMALE] {
+                    &[plain='FEMALE'] {
                         background-color: var(--female-gender-bg);
                     }
                 }
@@ -97,14 +97,13 @@
                     width: 29.5%;
                     display: flex;
                     flex-wrap: wrap;
-
                 }
                 &:hover {
                     background-color: #ddd;
                 }
                 span.datalines_adding-form_schedule_id {
                     display: block;
-                    width: 100%!important;
+                    width: 100% !important;
                     text-align: center;
                     padding: 5px 0;
                 }

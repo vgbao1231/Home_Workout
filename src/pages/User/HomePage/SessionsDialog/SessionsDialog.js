@@ -7,7 +7,7 @@ export default function SessionsDialog({ scheduleId }) {
 
     const handleClickSession = useCallback((e, dataObj) => {
         document.location.href = `/start-session?id=${scheduleId}&ordinal=${dataObj.ordinal}`;
-    }, []);
+    }, [scheduleId]);
 
     useEffect(() => {
         SessionUserService.getSessionsOfScheduleRelationship(scheduleId)
@@ -15,7 +15,7 @@ export default function SessionsDialog({ scheduleId }) {
                 setSessionsData(response.data.sort((a, b) => a.ordinal - b.ordinal));
             })
             .catch(error => setSessionsData([]));
-    }, []);
+    }, [scheduleId]);
 
     return <ul className="sessions-dialog-in-home">
         {sessionsData.length === 0

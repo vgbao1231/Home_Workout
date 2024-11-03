@@ -10,7 +10,7 @@ function InfoForm({ back }) {
         { value: '0', text: 'Female' },
     ];
     return (
-        <>
+        <div className="info-form">
             <div className={'title'}>Information</div>
             <Input
                 name="lastName"
@@ -28,8 +28,8 @@ function InfoForm({ back }) {
                     onChange: [trimWords],
                 }}
             />
-            <Select name="genderId" label="Gender" options={gender} defaultValue="1" />
             <Input name="dob" type="date" label="Date of Birth" />
+            <Select name="genderId" label="Gender" options={gender} defaultValue="1" />
             <div className="form-button">
                 <button className="center" type="button" onClick={back}>
                     <ArrowLeft />
@@ -40,7 +40,7 @@ function InfoForm({ back }) {
                     <ArrowRight />
                 </button>
             </div>
-        </>
+        </div>
     );
 }
 

@@ -8,11 +8,12 @@ import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 import SubscribeSchedulesPage from '~/pages/User/SubscribeSchedules/SubscribeSchedulesPage';
 import RegisterPage from '~/pages/RegisterPage/RegisterPage';
 import ManageScheduleDatasetPage from '~/pages/Admin/ManageScheduleDatasetPage/ManageScheduleDatasetPage';
+import ForgotPasswordPage from '~/pages/ForgotPasswordPage/ForgotPasswordPage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
     { path: '/register', component: RegisterPage },
-    { path: '/forgot-password', component: LoginPage }, // Test
+    { path: '/forgot-password', component: ForgotPasswordPage }, // Test
 ];
 
 const adminRoutes = [

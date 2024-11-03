@@ -12,9 +12,9 @@ const toastSlice = createSlice({
                 state.toasts = [action.payload, ...state.toasts].slice(0, 1);
             },
             // prepare function(Redux Toolkit) prepare the data (payload) before it is processed in the reducer.
-            prepare: (message, type) => {
+            prepare: (message, type, duration) => {
                 const id = Date.now();
-                return { payload: { id, message, type } };
+                return { payload: { id, message, type, duration: duration || 4000 } };
             },
         },
         removeToast: {

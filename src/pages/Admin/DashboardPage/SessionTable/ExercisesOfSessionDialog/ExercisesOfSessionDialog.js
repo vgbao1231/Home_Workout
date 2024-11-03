@@ -112,7 +112,7 @@ function ExercisesOfSessionDialog({ id, onClose }) {
                 tableModes={{ enableEdit: true }}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-            <button className="update-exercise-of-session-btn" onClick={handleSubmit}>Update</button>
+            <button className="btn" onClick={handleSubmit}>Update</button>
         </>
     );
 }

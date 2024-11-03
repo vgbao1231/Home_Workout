@@ -23,9 +23,9 @@
     min-width: 300px;
     max-width: 350px;
     background-color: white;
+    border-radius: 4px;
     border-left: 4px solid;
     box-shadow: 1px 2px 10px #333;
-    animation: slideInLeft 0.5s ease, fadeOut 1s ease 3s forwards;
     transition: all 0.3s ease;
 }
 
@@ -34,7 +34,8 @@
 }
 
 .toast__icon {
-    font-size: 24px;
+    width: 40px;
+    height: 40px;
 }
 
 .toast__icon,
@@ -62,4 +63,13 @@
 .toast__error .toast__icon,
 .toast__error .toast__title {
     color: #e04d28;
+}
+
+.toast__info {
+    border-color: #2d9cdb;
+}
+
+.toast__info .toast__icon,
+.toast__info .toast__title {
+    color: #2d9cdb;
 }

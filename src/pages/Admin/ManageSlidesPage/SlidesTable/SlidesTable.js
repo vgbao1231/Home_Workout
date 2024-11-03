@@ -71,9 +71,8 @@ export default function SlidesTable() {
     ]), []);
 
     return (
-        <>
+        <div className="slides-table">
             <Table
-                className="slides-table"
                 title="Slide Images"
                 tableState={slidesState}
                 pageState={0}
@@ -84,6 +83,6 @@ export default function SlidesTable() {
             />
             <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-        </>
+        </div>
     );
 }

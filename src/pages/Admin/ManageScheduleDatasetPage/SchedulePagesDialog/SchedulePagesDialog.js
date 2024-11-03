@@ -13,8 +13,8 @@ import ScheduleInfo from "../ScheduleInfo/ScheduleInfo";
 export default function SchedulePagesDialog({ scheduleIdTag, rootDialogPropsSetter }) {
     const scheduleState = useSelector((state) => state.schedule);
     const levelData = useSelector((state) => state.enum.data.levels);
-    const [ currentPage, setCurrentPage ] = useState(1);
-    const [ dialogProps, setDialogProps ] = useState({ isOpen: false, title: '', body: null });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
     const tableComponents = useMemo(() => FormatterDict.TableComponents({
         reduxInfo: {
@@ -23,7 +23,7 @@ export default function SchedulePagesDialog({ scheduleIdTag, rootDialogPropsSett
             }
         },
         tableInfo: {
-            columnsInfo:[
+            columnsInfo: [
                 FormatterDict.ColumnInfo('name', 'Name'),
                 FormatterDict.ColumnInfo('description', 'Discription'),
                 FormatterDict.ColumnInfo('levelEnum', 'Level', null, rowData =>
@@ -31,15 +31,15 @@ export default function SchedulePagesDialog({ scheduleIdTag, rootDialogPropsSett
                 FormatterDict.ColumnInfo('coins', 'Coins', null, rowData =>
                     <span className="coins">{rowData.coins}$</span>),
             ],
-            filterFields:[
+            filterFields: [
                 FormatterDict.FilterField("Name", <Input name="name" />),
                 FormatterDict.FilterField("Description", <Input name="description" />),
                 FormatterDict.FilterField("Level", <Select name="level" options={levelData.map(dataObj => (
                     { value: dataObj.value, text: dataObj.raw }
                 ))} />),
-                FormatterDict.FilterField("Coins", <Input type="number" name="coins" validators={{ isNotNegative, isInteger }}/>),
+                FormatterDict.FilterField("Coins", <Input type="number" name="coins" validators={{ isNotNegative, isInteger }} />),
             ],
-            sortingFields:[
+            sortingFields: [
                 FormatterDict.SortingField('name', 'Name'),
                 FormatterDict.SortingField('description', 'Description'),
                 FormatterDict.SortingField('levelEnum', 'Level Enum'),
@@ -57,7 +57,7 @@ export default function SchedulePagesDialog({ scheduleIdTag, rootDialogPropsSett
             globalToastEngine: addToast
         }
     }), [levelData, rootDialogPropsSetter]);
-    
+
     const contextMenuComponents = useMemo(() => FormatterDict.ContextMenuComponents([
         rowData => ({
             text: 'Show Schedule',
@@ -71,21 +71,22 @@ export default function SchedulePagesDialog({ scheduleIdTag, rootDialogPropsSett
         }),
     ]), []);
 
-    return <>
-        <Table
-            className="schedule-table-dialog"
-            title="Schedule Table Dialog"
-            tableState={scheduleState}
-            pageState={currentPage}
-            tableComponents={tableComponents}
-            contextMenuComponents={contextMenuComponents}
-            tableModes={FormatterDict.TableModes(false, false, false, false, true)}
-        />
-        <Pagination
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            totalPages={scheduleState.totalPages}
-        />
-        <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-    </>;
+    return (
+        <div className="schedule-table-dialog">
+            <Table
+                title="Schedule Table Dialog"
+                tableState={scheduleState}
+                pageState={currentPage}
+                tableComponents={tableComponents}
+                contextMenuComponents={contextMenuComponents}
+                tableModes={FormatterDict.TableModes(false, false, false, false, true)}
+            />
+            <Pagination
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={scheduleState.totalPages}
+            />
+            <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
+        </div>
+    );
 }

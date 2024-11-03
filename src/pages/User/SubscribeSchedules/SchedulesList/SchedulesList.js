@@ -57,20 +57,23 @@ export default function SchedulesList() {
         }
     }), []);
 
-    return <>
-        <Table
-            className="available-schedules-list"
-            title="Available Schedules"
-            tableState={scheduleData}
-            pageState={currentPage}
-            tableComponents={tableComponents}
-            tableModes={FormatterDict.TableModes(false, false, false, false, false)}
-        />
-        <Pagination
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            totalPages={scheduleData.totalPages}
-        />
-        <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-    </>;
+    return (
+        <div className="available-schedules-list">
+            <Table
+
+                title="Available Schedules"
+                tableState={scheduleData}
+                pageState={currentPage}
+                tableComponents={tableComponents}
+                tableModes={FormatterDict.TableModes(false, false, false, false, false)}
+            />
+            <Pagination
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={scheduleData.totalPages}
+            />
+            <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
+        </div>
+    );
+
 }

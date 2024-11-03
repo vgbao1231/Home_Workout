@@ -1,0 +1,12 @@
+.profile-form {
+    .name-wrapper {
+        display: flex;
+        gap: 10px;
+    }
+    .field {
+        margin-top: 20px;
+        .field-wrapper {
+            min-height: 40px;
+        }
+    }
+}

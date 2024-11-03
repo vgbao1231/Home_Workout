@@ -1,58 +1,47 @@
-.dialog-description {
-    color: #aaa;
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-}
-.image-container {
-    position: relative;
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    .upload-icon {
-        width: 40px;
-        height: 40px;
-        color: white;
+.exercise-image-dialog {
+    .dialog-description {
+        color: #aaa;
+        font-size: 1.4rem;
+        margin-bottom: 20px;
     }
-}
+    .image-container {
+        position: relative;
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+    }
 
-.current-image {
-    width: 100%;
-    max-width: 50vw;
-    max-height: 50vh;
-    object-fit: contain;
-    transition: opacity 0.3s;
-    display: block;
-}
+    .current-image {
+        width: 100%;
+        max-width: 50vw;
+        max-height: 50vh;
+        object-fit: contain;
+        transition: opacity 0.3s;
+        display: block;
+    }
 
-.current-image:hover {
-    opacity: 0.75;
-}
+    .current-image:hover {
+        opacity: 0.75;
+    }
 
-.upload-label {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.4);
-    opacity: 0;
-    transition: opacity 0.3s;
-    cursor: pointer;
-}
+    .upload-label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: opacity 0.3s;
+        cursor: pointer;
+    }
 
-.image-container:hover .upload-label {
-    opacity: 1;
-}
-.upload-btn {
-    display: flex;
-    background-color: #fff;
-    border: 2px solid #555;
-    border-radius: 20px;
-    padding: 10px 30px;
-    margin: 10px auto;
-    transition: all 0.2s ease;
-    &:hover {
-        background-color: #333;
-        color: #fff;
+    .image-container:hover .upload-label {
+        opacity: 1;
     }
 }

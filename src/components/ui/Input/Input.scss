@@ -26,6 +26,9 @@
         -webkit-appearance: none;
         margin: 0;
     }
+    .input-icon {
+        display: none;
+    }
     &[data-active='true'],
     &:focus-within {
         input:not([type='radio']):not([type='checkbox']) + label {
@@ -37,6 +40,9 @@
         }
         input[type='date'] {
             color: black;
+        }
+        .input-icon {
+            display: unset;
         }
     }
     &:has(input[type='radio']) {

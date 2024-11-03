@@ -102,7 +102,7 @@ function SessionsOfScheduleDialog({ id, onClose }) {
                 tableModes={{ enableEdit: true }}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-            <button className="update-sessions-of-schedule-btn" onClick={handleSubmit}>Update</button>
+            <button className="btn" onClick={handleSubmit}>Update</button>
         </>
     );
 }

@@ -53,7 +53,12 @@ function ExerciseTable() {
                 x: e.pageX,
                 y: e.pageY,
                 menuItems: [
-                    { text: 'Update Exercise', icon: <Pencil />, action: () => setUpdatingRowId(rowData.exerciseId) },
+                    {
+                        text: 'Update Exercise', icon: <Pencil />, action: () => {
+                            setUpdatingRowId(rowData.exerciseId)
+                            dispatch(addToast("Press Enter to save, Escape to cancel", "info", 6000))
+                        }
+                    },
                     {
                         text: 'Delete Exercise', icon: <Trash2 />,
                         action: () => window.confirm('Delete ?') && dispatch(ExerciseAdminThunk.deleteExerciseThunk(rowData.exerciseId))
@@ -64,6 +69,7 @@ function ExerciseTable() {
                             setDialogProps({
                                 isOpen: true,
                                 title: 'Exercise Image',
+                                className: 'exercise-image-dialog',
                                 body: <ExerciseImageDialog id={rowData.exerciseId} imageUrl={rowData.imageUrl} />,
                             }),
                     },

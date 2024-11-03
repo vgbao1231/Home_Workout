@@ -6,31 +6,32 @@ import OtpForm from './OtpForm/OtpForm';
 import { cloneElement, useState } from 'react';
 import RegisterForm from './RegisterForm/RegisterForm';
 import { AuthPublicService } from '~/services/authService';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
     const { currentStepIndex, step, isLastStep, next } = useMultistepForm([
-        <OtpForm />,
         <RegisterForm />,
         <InfoForm />,
+        <OtpForm />,
     ]);
     const [formData, setFormData] = useState()
     const [otpExpiredTime, setOtpExpiredTime] = useState()
+    const navigate = useNavigate()
 
     // Handle logic
     const handleRegister = async (data) => {
         setFormData(data)
         // Before going to the otp form, send the api to get the otp code
         if (currentStepIndex === 1) {
-            const response = await AuthPublicService.getOtp(data.email)
-            setOtpExpiredTime(response.ageInSeconds);
+            const response = await AuthPublicService.getRegisterOtp(data.email)
+            setOtpExpiredTime(response.data.ageInSeconds);
             return next();
         }
         if (!isLastStep) return next();
         else {
             const { confirmPassword, ...formData } = data
-            console.log(formData);
-
             AuthPublicService.register(formData)
+            navigate('/login')
         };
     };
 
