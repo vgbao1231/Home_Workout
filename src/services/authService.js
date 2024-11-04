@@ -55,9 +55,19 @@ export class AuthPublicService {
         }
     };
 
-    static async getOtp(email) {
+    static async getRegisterOtp(email) {
         try {
-            const response = await springService.post(`${API_PUBLIC_PREFIX}/auth/v1/get-otp`, { email });
+            const response = await springService.post(`${API_PUBLIC_PREFIX}/auth/v1/get-register-otp`, { email });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    };
+
+    static async getForgotPasswordOtp(email) {
+        try {
+            const response = await springService.post(`${API_PUBLIC_PREFIX}/auth/v1/get-forgot-password-otp`, { email });
             return response.data;
         } catch (error) {
             console.error(error);
@@ -67,7 +77,17 @@ export class AuthPublicService {
 
     static async verifyOtp(formData) {
         try {
-            const response = await springService.post(`${API_PUBLIC_PREFIX}/auth/v1/verify-otp`, formData);
+            const response = await springService.post(`${API_PUBLIC_PREFIX}/auth/v1/verify-register-otp`, formData);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    };
+
+    static async generateRandomPassword(formData) {
+        try {
+            const response = await springService.post(`${API_PUBLIC_PREFIX}/auth/v1/generate-random-password`, formData);
             return response.data;
         } catch (error) {
             console.error(error);

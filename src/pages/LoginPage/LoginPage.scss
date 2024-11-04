@@ -10,7 +10,8 @@
         font-size: 10rem;
     }
     .login-background {
-        background: url(../../assets/workout.jpg) center center / cover no-repeat;
+        background: url(../../assets/workout.jpg) center center / cover
+            no-repeat;
         position: fixed;
         z-index: -1;
         width: 100vw;
@@ -49,7 +50,7 @@
                 .field-wrapper {
                     font-size: 1.6rem;
                     padding: 12px;
-                    height: 42px;
+                    max-height: 42px;
                     input {
                         font-size: 1.6rem;
                     }

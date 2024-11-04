@@ -27,7 +27,7 @@ export class ExerciseAdminService {
         }
     }
 
-    static async uploadExerciseImage(img, exerciseId) {
+    static async uploadExerciseImage(exerciseId, img) {
         try {
             const formData = new FormData();
             if (img && img.length > 0) {
@@ -37,6 +37,7 @@ export class ExerciseAdminService {
                 formData.append('fileName', file.name); // Append file name
                 formData.append('fileSize', file.size); // Append file size
             }
+
             const response = await springService.post(`${API_ADMIN_PREFIX}/v1/upload-exercise-image`, formData);
             return response.data;
         } catch (error) {

@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './Pagination.scss';
 
 function Pagination({ currentPage, setCurrentPage, totalPages }) {
@@ -24,18 +25,18 @@ function Pagination({ currentPage, setCurrentPage, totalPages }) {
     }
 
     return (
-        <div className="center">
+        <div className="pagination center">
             <button
-                className="page-button"
+                className="page-button center"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
             >
-                &lt;
+                <ChevronLeft />
             </button>
             {pagesArray.map((page, index) => {
                 return page !== '...' ? (
                     <button
-                        className={`page-button${page === currentPage ? ' active' : ''}`}
+                        className={`page-button center${page === currentPage ? ' active' : ''}`}
                         key={index}
                         onClick={() => setCurrentPage(page)}
                     >
@@ -46,11 +47,11 @@ function Pagination({ currentPage, setCurrentPage, totalPages }) {
                 );
             })}
             <button
-                className="page-button"
+                className="page-button center"
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
             >
-                &gt;
+                <ChevronRight />
             </button>
         </div>
     );

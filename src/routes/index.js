@@ -8,11 +8,13 @@ import StartSessionPage from '~/pages/User/StartSessionPage/StartSessionPage';
 import SubscribeSchedulesPage from '~/pages/User/SubscribeSchedules/SubscribeSchedulesPage';
 import RegisterPage from '~/pages/RegisterPage/RegisterPage';
 import ManageScheduleDatasetPage from '~/pages/Admin/ManageScheduleDatasetPage/ManageScheduleDatasetPage';
+import ForgotPasswordPage from '~/pages/ForgotPasswordPage/ForgotPasswordPage';
+import GenerateSchedulePage from '~/pages/User/GenerateSchedulePage/GenerateSchedulePage';
 
 const publicRoutes = [
     { path: '/login', component: LoginPage },
     { path: '/register', component: RegisterPage },
-    { path: '/forgot-password', component: LoginPage }, // Test
+    { path: '/forgot-password', component: ForgotPasswordPage },
 ];
 
 const adminRoutes = [
@@ -27,6 +29,7 @@ const userRoutes = [
     { path: '/', component: UserHomePage, layout: UserSidebarLayout },
     { path: '/start-session', component: StartSessionPage, layout: UserSidebarLayout },
     { path: '/subscribe-schedules', component: SubscribeSchedulesPage, layout: UserSidebarLayout },
+    { path: '/generate-schedules', component: GenerateSchedulePage, layout: UserSidebarLayout },
 ];
 
 export { publicRoutes, adminRoutes, userRoutes };

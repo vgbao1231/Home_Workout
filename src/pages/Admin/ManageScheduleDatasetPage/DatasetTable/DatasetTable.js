@@ -15,8 +15,8 @@ export default function DatasetTable({ set_schedule_id }) {
     const dispatch = useDispatch();
     const datalines = useSelector(state => state.datalines);
     const genderData = useSelector(state => state.enum.data.genders);
-    const [ currentPage, setCurrentPage ] = useState(1);
-    const [ dialogProps, setDialogProps ] = useState({ isOpen: false, title: '', body: null });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [dialogProps, setDialogProps] = useState({ isOpen: false, title: '', body: null });
 
     const deleteButtonReplacedContent = useCallback((rowData) => <button type="button" name="deleteBtn" plain={`${rowData.id}`}
         onClick={async (e) => {
@@ -28,7 +28,7 @@ export default function DatasetTable({ set_schedule_id }) {
                 })
                 .catch(error => dispatch(addToast(error.message, "error")))
         }}>Delete</button>
-    , [dispatch, currentPage]);
+        , [dispatch, currentPage]);
 
     const tableComponents = useMemo(() => FormatterDict.TableComponents({
         reduxInfo: {
@@ -37,7 +37,7 @@ export default function DatasetTable({ set_schedule_id }) {
             }
         },
         tableInfo: {
-            columnsInfo:[
+            columnsInfo: [
                 FormatterDict.ColumnInfo('id', 'Id'),
                 FormatterDict.ColumnInfo('age', 'Age'),
                 FormatterDict.ColumnInfo('gender', 'Gender', null, rowData =>
@@ -52,7 +52,7 @@ export default function DatasetTable({ set_schedule_id }) {
                     <span className="schedule-id">{rowData.schedule_id}</span>),
                 FormatterDict.ColumnInfo('delete_id', 'Delete Dataline', null, deleteButtonReplacedContent),
             ],
-            filterFields:[
+            filterFields: [
                 FormatterDict.FilterField("Age", <Input type="number" name="age" />),
                 FormatterDict.FilterField("Gender", <Select name="gender" options={genderData.map(dataObj => (
                     { value: dataObj.id, text: dataObj.raw }
@@ -62,7 +62,7 @@ export default function DatasetTable({ set_schedule_id }) {
                 FormatterDict.FilterField("Session", <Input type="number" name="session" />),
                 FormatterDict.FilterField("Schedule Id", <Input type="number" name="schedule_id" />),
             ],
-            sortingFields:[
+            sortingFields: [
                 FormatterDict.SortingField('age', 'Age'),
                 FormatterDict.SortingField('gender', 'Gender'),
                 FormatterDict.SortingField('weight', 'Weight'),
@@ -80,21 +80,21 @@ export default function DatasetTable({ set_schedule_id }) {
     const addingFormComponents = useMemo(() => FormatterDict.AddingField({
         inputCompos: [
             FormatterDict.AddingField(<Input type="number" name="age" placeholder="Age"
-                validators={{ isInteger, isNotNegative }} required/>),
+                validators={{ isInteger, isNotNegative }} required />),
             FormatterDict.AddingField(<Select name="gender" placeholder="Select Gender" options={genderData.map(dataObj => (
                 { value: dataObj.id, text: dataObj.raw }
             ))} />),
             FormatterDict.AddingField(<Input type="number" name="weight" placeholder="Weight"
-                validators={{ isInteger, isNotNegative }} required/>),
+                validators={{ isInteger, isNotNegative }} required />),
             FormatterDict.AddingField(<Input type="number" name="body_fat_threshold" placeholder="Body Fat Threshold"
-                validators={{ isAMultipleOf: isAMultipleOf(5), isInteger, isNotNegative }} required/>),
+                validators={{ isAMultipleOf: isAMultipleOf(5), isInteger, isNotNegative }} required />),
             FormatterDict.AddingField(<span ><i>Don't Fill</i></span>),
             FormatterDict.AddingField(<span className="datalines_adding-form_schedule_id"
                 onClick={e => {
                     console.log("Click")
                     setDialogProps({
                         isOpen: true, title: '',
-                        body: <SchedulePagesDialog scheduleIdTag={e.target} rootDialogPropsSetter={setDialogProps}/>
+                        body: <SchedulePagesDialog scheduleIdTag={e.target} rootDialogPropsSetter={setDialogProps} />
                     })
                 }}
             >Select Schedule from dialog</span>),
@@ -112,21 +112,22 @@ export default function DatasetTable({ set_schedule_id }) {
         },
     }), [dispatch, genderData]);
 
-    return <>
-        <Table
-            className="decision-schedule-dataset"
-            title="Decision Schedule Dataset"
-            tableState={datalines}
-            pageState={currentPage}
-            tableComponents={tableComponents}
-            addingFormComponents={addingFormComponents}
-            tableModes={FormatterDict.TableModes(false, false, false, true, false)}
-        />
-        <Pagination
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            totalPages={datalines.totalPages}
-        />
-        <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-    </>;
+    return (
+        <div className="decision-schedule-dataset">
+            <Table
+                title="Decision Schedule Dataset"
+                tableState={datalines}
+                pageState={currentPage}
+                tableComponents={tableComponents}
+                addingFormComponents={addingFormComponents}
+                tableModes={FormatterDict.TableModes(false, false, false, true, false)}
+            />
+            <Pagination
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={datalines.totalPages}
+            />
+            <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
+        </div>
+    );
 }

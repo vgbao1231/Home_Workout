@@ -20,7 +20,6 @@ export default function SubscribeSchedulesPage() {
     }, [dispatch]);
 
     return <div className="subscribe-schedules-page">
-        <h1>Subscribe Schedules Page </h1>
-        {isLoading ? <div>Locading...</div> : <SchedulesList />}
+        {isLoading ? <div>Loading...</div> : <SchedulesList />}
     </div>;
 }

@@ -1,12 +1,12 @@
 import { ChevronFirst, ChevronLast, LogOut } from 'lucide-react';
-import './Sidebar.scss';
-import { useState, Children, cloneElement } from 'react';
+import { useState, Children, cloneElement, useCallback } from 'react';
 import { AuthPrivateThunk } from '~/redux/thunks/authThunk';
 import { addToast } from '~/redux/slices/toastSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import '../Sidebar.scss';
 
-function Sidebar({ children }) {
+function AdminSidebar({ children }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -24,7 +24,7 @@ function Sidebar({ children }) {
     };
 
     return (
-        <aside className={`sidebar`}>
+        <aside className="sidebar">
             <div className="logo-container center">
                 <div className={`logo${isExpanded ? ' expand' : ''}`}>
                     <img src="https://img.logoipsum.com/297.svg" alt="" />
@@ -40,6 +40,7 @@ function Sidebar({ children }) {
                 <LogOut className="logout-icon" />
                 <span className={`logout${isExpanded ? ' expand' : ''}`}>Log out</span>
             </div>
+            <div className="divider"></div>
             <div className="profile-container center">
                 <div className="avatar center">A</div>
                 <div className={`info${isExpanded ? ' expand' : ''}`}>
@@ -51,4 +52,4 @@ function Sidebar({ children }) {
     );
 }
 
-export default Sidebar;
+export default AdminSidebar;

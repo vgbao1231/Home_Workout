@@ -8,7 +8,7 @@ import { addToast } from '~/redux/slices/toastSlice';
 import noImage from '~/assets/no_image.jpg';
 import { ExerciseAdminService } from '~/services/exerciseService';
 
-function ExerciseImageDialog({ id, imageUrl }) {
+function ExerciseImageDialog({ id, imageUrl, onClose }) {
     const [image, setImage] = useState(imageUrl || noImage);
 
     const dispatch = useDispatch();
@@ -20,10 +20,11 @@ function ExerciseImageDialog({ id, imageUrl }) {
             setImage(imgUrl);
         }
     };
-    const handleSubmit = async (img) => {
+    const handleSubmit = async (data) => {
         try {
-            const response = await ExerciseAdminService.uploadExerciseImage(img, id);
+            const response = await ExerciseAdminService.uploadExerciseImage(id, data.image);
             dispatch(addToast(response.message, 'success'));
+            onClose()
         } catch (error) {
             dispatch(addToast(error.message, 'error'));
         }
@@ -35,7 +36,7 @@ function ExerciseImageDialog({ id, imageUrl }) {
             </div>
             <Form onSubmit={handleSubmit}>
                 <div className="image-container">
-                    {image && <img src={image} alt="123" className="current-image" />}
+                    {image && <img src={image} alt="no-image" className="current-image" />}
                     <label htmlFor="image-upload" className="upload-label">
                         <Upload className="upload-icon" />
                     </label>
@@ -48,7 +49,7 @@ function ExerciseImageDialog({ id, imageUrl }) {
                     onChange={handleImageUpload}
                     hidden
                 />
-                <button className="upload-btn">Upload</button>
+                <button className="btn">Upload</button>
             </Form>
         </>
     );

@@ -1,5 +1,5 @@
 import AxiosHelpers from "~/utils/axiosHelpers";
-import { springService } from "./apiService";
+import { fastApiService, springService } from "./apiService";
 
 const API_ADMIN_PREFIX = process.env.REACT_APP_API_ADMIN_PREFIX;
 const API_USER_PREFIX = process.env.REACT_APP_API_USER_PREFIX;
@@ -49,7 +49,7 @@ export class ScheduleAdminService {
             throw error.response ? error.response.data : error;
         }
     }
-    
+
     static async getPreviewScheduleInfo(scheduleId) {
         try {
             const response = await springService.get(`${API_ADMIN_PREFIX}/v1/get-preview-schedule`, {
@@ -61,7 +61,7 @@ export class ScheduleAdminService {
             throw error.response ? error.response.data : error;
         }
     }
-    
+
     static async getSessionsQuantityOfSchedule(id) {
         try {
             const response = await springService.get(`${API_ADMIN_PREFIX}/v1/get-sessions-quantity-of-schedule`, {
@@ -88,7 +88,7 @@ export class ScheduleUserService {
             throw error.response ? error.response.data : error;
         }
     }
-    
+
     static async getAvailableSchedulesOfUser(page, filterFields, sortedField, sortedMode) {
         try {
             const response = await springService.get(`${API_USER_PREFIX}/v1/get-available-schedules-of-user-pages`, {
@@ -118,6 +118,16 @@ export class ScheduleUserService {
     static async updateRepRatio(formData) {
         try {
             const response = await springService.put(`${API_USER_PREFIX}/v1/update-subscribed-schedule-rep-ratio`, formData);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
+
+    static async decideScheduleId(formData) {
+        try {
+            const response = await fastApiService.post(`${API_USER_PREFIX}/v1/decide-schedule-id`, formData);
             return response.data;
         } catch (error) {
             console.error(error);

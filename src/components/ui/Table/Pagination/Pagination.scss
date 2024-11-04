@@ -1,6 +1,28 @@
-.page-button {
-    padding: 10px;
-    &.active {
-        background-color: #ccc;
+.pagination {
+    margin-bottom: 20px;
+    span {
+        margin: 0 10px;
+    }
+    .page-button {
+        width: 32px;
+        height: 32px;
+        background-color: #fff;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        &:hover {
+            background-color: #eee;
+        }
+        &.active {
+            background-color: #ddd;
+        }
+        svg {
+            width: 1.8rem;
+            height: 1.8rem;
+        }
+    }
+
+    .page-button + .page-button {
+        margin-left: 4px;
     }
 }

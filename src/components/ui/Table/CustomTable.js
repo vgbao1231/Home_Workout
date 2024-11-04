@@ -49,7 +49,7 @@ export const FormatterDict = {
     AddingField: (inputCompo = (<></>)) => inputCompo,
 }
 
-export function Table({ className, title, tableState, pageState, tableComponents, addingFormComponents, contextMenuComponents, tableModes }) {
+export function Table({ title, tableState, pageState, tableComponents, addingFormComponents, contextMenuComponents, tableModes }) {
     console.log("table")
     const dispatch = useDispatch();
     const { data, selectedRows } = useMemo(() => tableState, [tableState]);
@@ -145,7 +145,7 @@ export function Table({ className, title, tableState, pageState, tableComponents
     
     return (
         <>
-            <div className={`table-wrapper ${className}`}>
+            <div className="table-wrapper">
                 <div className="table-feature">
                     <div className="table-title">{title}</div>
                     <div className="table-tool center">

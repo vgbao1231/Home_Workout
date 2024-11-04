@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { UserInfoAdminService, UserInfoUserService } from '~/services/userInfoService';
+import { UserInfoAdminService } from '~/services/userInfoService';
 
 export class UserInfoAdminThunk {
     static getAllUserInfoThunk = createAsyncThunk('userInfo/admin/getAllUserInfo',

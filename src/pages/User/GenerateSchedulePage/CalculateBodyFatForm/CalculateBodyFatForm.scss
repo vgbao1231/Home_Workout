@@ -1,0 +1,67 @@
+.calculate-body-fat-form {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 2px 2px 16px #ddd;
+    padding: 20px;
+    background-color: #fff;
+    width: 40vw;
+    flex-direction: column;
+    .form-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 2.4rem;
+        font-weight: 500;
+        color: #0969da;
+    }
+    .form-description {
+        font-size: 1.4rem;
+        text-align: center;
+        color: #aaa;
+    }
+    #image-upload {
+        display: none;
+    }
+    .image-container {
+        margin: 20px 0;
+        position: relative;
+        width: 36vw;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 2px 2px 16px #eee;
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+    }
+
+    .current-image {
+        background-color: #fff;
+        width: 100%;
+        max-width: 50vw;
+        max-height: 50vh;
+        object-fit: contain;
+        transition: opacity 0.3s;
+        display: block;
+        &:hover {
+            opacity: 0.75;
+        }
+    }
+
+    .upload-label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: opacity 0.3s;
+        cursor: pointer;
+    }
+
+    .image-container:hover .upload-label {
+        opacity: 1;
+    }
+}

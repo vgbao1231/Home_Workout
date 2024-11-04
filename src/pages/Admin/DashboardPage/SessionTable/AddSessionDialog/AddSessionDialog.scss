@@ -69,6 +69,7 @@
             }
             &:nth-of-type(11) {
                 justify-content: center;
+                width: 6%;
                 svg {
                     border-radius: 10px;
                     padding: 8px;
@@ -93,19 +94,6 @@
                     margin-left: 10px;
                 }
             }
-        }
-    }
-    .add-session-btn {
-        display: flex;
-        background-color: #fff;
-        border: 2px solid #555;
-        border-radius: 20px;
-        padding: 10px 30px;
-        margin: 10px auto;
-        transition: all 0.2s ease;
-        &:hover {
-            background-color: #333;
-            color: #fff;
         }
     }
 }

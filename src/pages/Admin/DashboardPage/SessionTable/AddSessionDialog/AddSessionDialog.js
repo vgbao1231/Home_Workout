@@ -8,7 +8,6 @@ import './AddSessionDialog.scss';
 import AddExercisesOfSessionDialog from '../AddExercisesOfSessionDialog/AddExercisesOfSessionDialog';
 import { Dialog } from '~/components';
 import { Trash2 } from 'lucide-react';
-import { SessionAdminService } from '~/services/sessionService';
 import { SessionAdminThunk } from '~/redux/thunks/sessionThunk';
 
 function AddSessionDialog({ sessionData, setIsAddingSession, onClose }) {
@@ -116,7 +115,7 @@ function AddSessionDialog({ sessionData, setIsAddingSession, onClose }) {
                 tableModes={{ enableEdit: true }}
             />
             <Dialog dialogProps={dialogProps} setDialogProps={setDialogProps} />
-            <button className='add-session-btn' onClick={handleSubmit}>Submit</button>
+            <button className='btn' onClick={handleSubmit}>Submit</button>
         </>
     );
 }

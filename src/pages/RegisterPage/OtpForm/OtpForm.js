@@ -64,7 +64,7 @@ function OtpForm({ email, otpExpiredTime = 0, back }) {
     }, []);
 
     return (
-        <>
+        <div className='otp-form'>
             <div className={'title'}>OTP</div>
             <div className="otp-fields center">
                 {Array(4)
@@ -90,7 +90,7 @@ function OtpForm({ email, otpExpiredTime = 0, back }) {
                     Confirm
                 </button>
             </div>
-        </>
+        </div>
     );
 }
 

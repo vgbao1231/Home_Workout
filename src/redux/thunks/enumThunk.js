@@ -63,4 +63,13 @@ export class EnumUserThunk {
             }
         }
     )
+    static getAllAimsEnumThunk = createAsyncThunk('enums/user/getAllAimsEnum',
+        async (_, { rejectWithValue }) => {
+            try {
+                return await EnumUserService.getAllAimsEnum();
+            } catch (err) {
+                return rejectWithValue(err);
+            }
+        }
+    )
 }

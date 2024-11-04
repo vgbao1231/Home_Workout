@@ -19,7 +19,7 @@ export default function SubscriptionsDialog({ userInfoId }) {
             }
         },
         tableInfo: {
-            columnsInfo:[
+            columnsInfo: [
                 FormatterDict.ColumnInfo("firstName", "First Name"),
                 FormatterDict.ColumnInfo("lastName", "Last Name"),
                 FormatterDict.ColumnInfo("subscribedTime", "Subscribed Time"),
@@ -28,7 +28,7 @@ export default function SubscriptionsDialog({ userInfoId }) {
                 FormatterDict.ColumnInfo("scheduleCoins", "Schedule Coins"),
                 FormatterDict.ColumnInfo("completedTime", "Completed Time"),
             ],
-            filterFields:[
+            filterFields: [
                 FormatterDict.FilterField("First Name", <Input name="fisrtName" />),
                 FormatterDict.FilterField("Last Name", <Input name="lastName" />),
                 FormatterDict.FilterField("From Subscribed Time", <Input type="datetime-local" name="fromSubscribedTime" />),
@@ -40,7 +40,7 @@ export default function SubscriptionsDialog({ userInfoId }) {
                 FormatterDict.FilterField("From Completed Time", <Input type="datetime-local" name="fromCompletedTime" />),
                 FormatterDict.FilterField("To Completed Time", <Input type="datetime-local" name="toCompletedTime" />),
             ],
-            sortingFields:[
+            sortingFields: [
                 FormatterDict.SortingField("firstName", "First Name"),
                 FormatterDict.SortingField("lastName", "Last Name"),
                 FormatterDict.SortingField("subscribedTime", "Subscribed Time"),
@@ -58,7 +58,6 @@ export default function SubscriptionsDialog({ userInfoId }) {
     return (
         <>
             <Table
-                className="subscriptions-dialog"
                 title="Subscriptions"
                 tableState={subscriptionsState}
                 pageState={currentPage}

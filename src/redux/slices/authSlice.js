@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AuthPrivateThunk, AuthPublicThunk } from '../thunks/authThunk';
+import Cookies from 'js-cookie';
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
+        accessToken: Cookies.get('accessToken'),
         loading: false,
         message: null,
     },
@@ -15,7 +17,7 @@ const authSlice = createSlice({
                 state.loading = true;
             })
             .addCase(AuthPublicThunk.loginThunk.fulfilled, (state) => {
-                state.isAuthenticated = true;
+                state.accessToken = Cookies.get('accessToken');
                 state.loading = false;
             })
             .addCase(AuthPublicThunk.loginThunk.rejected, (state, action) => {
@@ -28,11 +30,11 @@ const authSlice = createSlice({
                 state.loading = true;
             })
             .addCase(AuthPrivateThunk.logoutThunk.fulfilled, (state) => {
-                state.isAuthenticated = false;
+                state.accessToken = '';
                 state.loading = false;
             })
             .addCase(AuthPrivateThunk.logoutThunk.rejected, (state, action) => {
-                state.isAuthenticated = false;
+                state.accessToken = '';
                 state.loading = false;
                 state.message = action.payload.message;
             });

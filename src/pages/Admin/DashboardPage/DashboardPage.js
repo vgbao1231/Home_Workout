@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { addToast } from '~/redux/slices/toastSlice';
 import './DashboardPage.scss';
-import { AuthPrivateThunk } from '~/redux/thunks/authThunk';
 import { EnumAdminThunk } from '~/redux/thunks/enumThunk';
 import ExerciseTable from './ExerciseTable/ExerciseTable';
 import SessionTable from './SessionTable/SessionTable';
