@@ -36,6 +36,15 @@ body {
     }
 }
 
+.disabled-btn {
+    display: flex;
+    background-color: #fff;
+    border: 2px solid #aaa;
+    border-radius: 20px;
+    padding: 10px 30px;
+    margin: 20px auto 0 auto;
+}
+
 .flex-col {
     display: flex;
     flex-direction: column;

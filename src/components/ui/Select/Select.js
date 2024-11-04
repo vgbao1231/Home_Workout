@@ -33,12 +33,9 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
         { events: {}, props: {} },
     );
 
-    const eventNames = [...new Set([...Object.keys(formatters), ...Object.keys(events)])];
+    const eventNames = [...new Set([...Object.keys(formatters), ...Object.keys(events), 'onChange', 'onBlur'])];
     const eventHandlers = Object.fromEntries(
-        eventNames.map((eventName) => [
-            eventName,
-            (e) => handleEvent(eventName, e)
-        ]),
+        eventNames.map((eventName) => [eventName, (e) => handleEvent(eventName, e)]),
     );
 
     // Handle format value by event
@@ -62,7 +59,7 @@ function Select({ name, className = '', validators = {}, formatters = {}, option
                     <span>{builtOptions[field.value]}</span>
                 ) : (
                     <select {...field} {...eventHandlers} {...props} >
-                        <option value="" hidden> {props.placeholder} </option>
+                        {props.placeholder && <option value="" hidden> {props.placeholder} </option>}
                         {options.map((option, index) => (
                             <option key={index} value={option.value}>
                                 {option.text}

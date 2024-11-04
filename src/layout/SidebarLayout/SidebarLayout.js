@@ -1,4 +1,4 @@
-import { CalendarCheck2, House, Images, LayoutDashboard, SquareUserRound, TableProperties } from 'lucide-react';
+import { CalendarCheck2, Dumbbell, House, Images, LayoutDashboard, SquareUserRound, TableProperties } from 'lucide-react';
 import AdminSidebar from '~/components/ui/Sidebar/AdminSidebar/AdminSidebar';
 import SidebarItem from '~/components/ui/Sidebar/SidebarItem/SidebarItem';
 import UserSidebar from '~/components/ui/Sidebar/UserSidebar/UserSidebar';
@@ -28,6 +28,7 @@ export function UserSidebarLayout({ children }) {
             <UserSidebar>
                 <SidebarItem icon={<House />} text="Home" path='/' />
                 <SidebarItem icon={<CalendarCheck2 />} text="Schedules" path='/subscribe-schedules' />
+                <SidebarItem icon={<Dumbbell />} text="Generate Schedules" path='/generate-schedules' />
             </UserSidebar>
             <div className="content" style={{ flex: 1 }}>
                 {children}

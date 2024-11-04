@@ -20,9 +20,9 @@ function ExerciseImageDialog({ id, imageUrl, onClose }) {
             setImage(imgUrl);
         }
     };
-    const handleSubmit = async (img) => {
+    const handleSubmit = async (data) => {
         try {
-            const response = await ExerciseAdminService.uploadExerciseImage(id, img);
+            const response = await ExerciseAdminService.uploadExerciseImage(id, data.image);
             dispatch(addToast(response.message, 'success'));
             onClose()
         } catch (error) {

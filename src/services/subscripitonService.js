@@ -62,4 +62,14 @@ export class SubscriptionUserService {
             throw error.response ? error.response.data : error;
         }
     }
+
+    static async subscribeScheduleWithAI(formData) {
+        try {
+            const response = await springService.post(`${API_USER_PREFIX}/v1/subscribe-schedule-with-AI`, formData);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
 }

@@ -7,7 +7,8 @@ const enumSlice = createSlice({
         data: {
             genders: [],
             levels: [],
-            muscles: []
+            muscles: [],
+            aims: [],
         },
         loading: true, // Default is true so that when there is no data, loading will appear
         message: '',
@@ -22,12 +23,12 @@ const enumSlice = createSlice({
                 state.loading = false;
                 state.data.levels = action.payload.data;
                 state.message = action.payload.message;
-                
+
             })
             .addCase(EnumAdminThunk.getAllLevelsEnumThunk.rejected, (state) => {
                 state.loading = false;
             });
-            
+
         // Get all musclesEnum
         builder
             .addCase(EnumAdminThunk.getAllMusclesEnumThunk.pending, (state) => {
@@ -41,7 +42,7 @@ const enumSlice = createSlice({
             .addCase(EnumAdminThunk.getAllMusclesEnumThunk.rejected, (state) => {
                 state.loading = false;
             });
-        
+
         // Get all gendersEnum
         builder
             .addCase(EnumAdminThunk.getAllGendersEnumThunk.pending, (state) => {
@@ -56,7 +57,7 @@ const enumSlice = createSlice({
                 state.loading = false;
             });
 
-            
+
         // Get all levelsEnum
         builder
             .addCase(EnumUserThunk.getAllLevelsEnumThunk.pending, (state) => {
@@ -70,7 +71,7 @@ const enumSlice = createSlice({
             .addCase(EnumUserThunk.getAllLevelsEnumThunk.rejected, (state) => {
                 state.loading = false;
             });
-        
+
         // Get all musclesEnum
         builder
             .addCase(EnumUserThunk.getAllMusclesEnumThunk.pending, (state) => {
@@ -84,7 +85,7 @@ const enumSlice = createSlice({
             .addCase(EnumUserThunk.getAllMusclesEnumThunk.rejected, (state) => {
                 state.loading = false;
             });
-        
+
         // Get all gendersEnum
         builder
             .addCase(EnumUserThunk.getAllGendersEnumThunk.pending, (state) => {
@@ -98,7 +99,21 @@ const enumSlice = createSlice({
             .addCase(EnumUserThunk.getAllGendersEnumThunk.rejected, (state) => {
                 state.loading = false;
             });
-        },
+
+        // Get all gendersEnum
+        builder
+            .addCase(EnumUserThunk.getAllAimsEnumThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(EnumUserThunk.getAllAimsEnumThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.data.aims = action.payload.data;
+                state.message = action.payload.message;
+            })
+            .addCase(EnumUserThunk.getAllAimsEnumThunk.rejected, (state) => {
+                state.loading = false;
+            });
+    },
 });
 
 export default enumSlice.reducer;
