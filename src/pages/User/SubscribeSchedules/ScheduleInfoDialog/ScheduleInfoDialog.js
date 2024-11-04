@@ -33,8 +33,6 @@ export default function ScheduleInfoDialog({ scheduleId }) {
         const formData = {
             aimType: Number.parseInt(e.target.querySelector("select[name=aimType]").value),
             repRatio: Number.parseInt(e.target.querySelector("select[name=repRatio]").value),
-            height: Number.parseFloat(e.target.querySelector("input[name=height]").value),
-            weight: Number.parseInt(e.target.querySelector("input[name=weight]").value),
             scheduleId
         };
         console.log(formData);
@@ -112,9 +110,9 @@ export default function ScheduleInfoDialog({ scheduleId }) {
                     <fieldset>
                         <legend>Level's Difficulty</legend>
                         <select name="repRatio">
-                            <option value="3">Original Level (100% level)</option>
-                            <option value="2">Average (90% level)</option>
-                            <option value="1">Easy (80% level)</option>
+                            <option value="100">Original Level (100% level)</option>
+                            <option value="90">Average (90% level)</option>
+                            <option value="80">Easy (80% level)</option>
                         </select>
                     </fieldset>
                     <div className="subscribe-btn">

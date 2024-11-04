@@ -101,4 +101,27 @@ export class ScheduleUserService {
             throw error.response ? error.response.data : error;
         }
     }
+    
+    static async getPreviewScheduleToPerform(scheduleId) {
+        try {
+            const response = await springService.get(`${API_USER_PREFIX}/v1/get-preview-schedule-to-perform`, {
+                params: { id: scheduleId },
+                paramsSerializer: AxiosHelpers.paramsSerializerForGet,
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
+
+    static async updateRepRatio(formData) {
+        try {
+            const response = await springService.put(`${API_USER_PREFIX}/v1/update-subscribed-schedule-rep-ratio`, formData);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error.response ? error.response.data : error;
+        }
+    }
 }

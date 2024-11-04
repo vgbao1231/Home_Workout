@@ -4,7 +4,7 @@ import { addToast } from "~/redux/slices/toastSlice";
 import { ScheduleUserService } from "~/services/scheduleService";
 import './SchedulePanel.scss';
 import { ListTodo } from "lucide-react";
-import SessionsDialog from "../SessionsDialog/SessionsDialog";
+import SessionsDialog from "../PreviewScheduleDialog/PreviewScheduleDialog";
 import { Dialog } from "~/components";
 
 export default function SchedulePanel() {
