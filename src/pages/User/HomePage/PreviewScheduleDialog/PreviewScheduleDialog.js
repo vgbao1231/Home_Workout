@@ -53,9 +53,8 @@ export default function PreviewScheduleDialog({ scheduleId }) {
                                 {previewScheduleData.schedule.levelEnum}
                             </span>
                             <span>{previewScheduleData.subscription.aim.replaceAll("_", " ")}</span>
-                            {previewScheduleData.subscription.weightAim !== undefined ?
-                                <span>Aim {previewScheduleData.subscription.weightAim}kg</span> : <></>}
-                            <span>{previewScheduleData.tdee}Cal/Day</span>
+                            <span>Aim {previewScheduleData.subscription.weightAim}kg{previewScheduleData.subscription.aim.includes("UP") ? "+" : ""}</span>
+                            <span>TDEE {previewScheduleData.tdee}Cal/Day</span>
                         </li>
                         {previewScheduleData.subscribedTimeAsDateObj !== undefined ? <li className="subscribed-time">
                             Subscribed Time:
