@@ -52,14 +52,22 @@ export default function PreviewScheduleDialog({ scheduleId }) {
                             <span plain={previewScheduleData.schedule.levelEnum}>
                                 {previewScheduleData.schedule.levelEnum}
                             </span>
-                            <span>{previewScheduleData.subscription.aim.replaceAll("_", " ")}</span>
-                            <span>Aim {previewScheduleData.subscription.weightAim}kg{previewScheduleData.subscription.aim.includes("UP") ? "+" : ""}</span>
-                            <span>TDEE {previewScheduleData.tdee}Cal/Day</span>
+                            {previewScheduleData.subscription.aim
+                                ? <span>{previewScheduleData.subscription.aim.replaceAll("_", " ")}</span>
+                                : <></>}
+                            {previewScheduleData.subscription.weightAim
+                                ? <span>Aim {previewScheduleData.subscription.weightAim}kg{previewScheduleData.subscription.aim.includes("UP") ? "+" : ""}</span>
+                                : <></>}
+                            {previewScheduleData.tdee
+                                ? <span>TDEE {previewScheduleData.tdee}Cal/Day</span>
+                                : <></>}
                         </li>
                         {previewScheduleData.subscribedTimeAsDateObj !== undefined ? <li className="subscribed-time">
                             Subscribed Time:
                             {separateDateTime(previewScheduleData.subscribedTimeAsDateObj)}
-                            {estimatedDateTime(previewScheduleData.timeReachedEfficientDays)}
+                            {previewScheduleData.timeReachedEfficientDays
+                                ? estimatedDateTime(previewScheduleData.timeReachedEfficientDays)
+                                : <></>}
                         </li> : <></>}
                         <li className="rep-ratio">
                             Level's Difficulty: <select name="repRatio" onChange={changeLevelsDifficulty} defaultValue={repRatio}>
